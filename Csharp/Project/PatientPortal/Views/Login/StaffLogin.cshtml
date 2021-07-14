@@ -1,0 +1,25 @@
+@model LoginStaff
+
+<h3>Staff Login: </h3>
+<form asp-action="StaffLogin" asp-controller="Login" method="post">
+    <div class="form-group">
+        <label class="form-label"asp-for="StaffUsername"></label>
+        <span class="text-danger" asp-validation-for="StaffUsername"></span>
+        <input class="form-control"asp-for="StaffUsername">
+    </div>
+    <div class="form-group">
+        <label class="form-label"asp-for="LoginPassword"></label>
+        <span class="text-danger" asp-validation-for="LoginPassword"></span>
+        <input class="form-control"asp-for="LoginPassword">
+    </div>
+    <button class="btn btn-info">Login</button>
+</form>
+
+
+<div class="container m-3">
+    <form class="d-flex" asp-controller="Test" asp-action="TestLogin">
+        <button name="role" class="mx-1 btn btn-sm btn-warning" value="Admin">Admin</button>
+        <button name="role" class="mx-1 btn btn-sm btn-warning" value="Data">Staff</button>
+        <button name="role" class="mx-1 btn btn-sm btn-warning" value="Wes">Staff</button>
+    </form>
+</div>

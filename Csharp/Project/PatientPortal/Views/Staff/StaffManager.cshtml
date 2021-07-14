@@ -1,0 +1,40 @@
+@model List<Staff>
+
+<div class="form-group">
+    <label for="" class="form-label">Future Search Field</label>
+    <input type="text" class="form-control">
+</div>
+<div class="form-group">
+    <label for="" class="form-label">Future Role Search</label>
+    <select name="" id="" class="form-control">
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+    </select>
+</div>
+<hr>
+<div class="d-flex">
+    <h4 class="mr-auto">Staff:</h4>
+    <a asp-controller="Staff" asp-action="StaffAdd" class="btn btn-outline-primary btn-sm">+</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Patients</th>
+            <th>Registered Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Staff staffmember in @Model)
+        {
+        <tr>
+            <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.FullName()</a></td>
+            <td>@staffmember.Role</td>
+            <td>@staffmember.Patients.Count</td>
+            <td>@staffmember.CreatedAt</td>
+        </tr>
+        }
+    </tbody>
+</table>

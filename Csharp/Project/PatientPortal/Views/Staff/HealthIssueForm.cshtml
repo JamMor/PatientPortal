@@ -1,0 +1,20 @@
+@model HealthIssue
+
+<h3>New Health Issue: </h3>
+<form asp-action="HealthIssueCreate" asp-controller="Staff" asp-route-patientId="@ViewBag.patientId" method="post">
+    <div class="form-group">
+        <label class="form-label" asp-for="ShortDescription"></label>
+        <span class="text-danger" asp-validation-for="ShortDescription"></span>
+        <input class="form-control" asp-for="ShortDescription">
+    </div>
+    <div class="form-group">
+        <label class="form-label" asp-for="LongDescription"></label>
+        <span class="text-danger" asp-validation-for="LongDescription"></span>
+        <input class="form-control" asp-for="LongDescription">
+    </div>
+    <div class="form-group">
+        <label class="form-label" for="Upload"></label>
+        <input class="form-control"type="file" name="Upload" id="Upload">
+    </div>
+    <button class="btn btn-info">Add Health Issue</button>
+</form>

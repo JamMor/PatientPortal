@@ -1,0 +1,26 @@
+@model Staff
+
+<table class="table">
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <td>@Model.FullName()</td>
+        </tr>
+        <tr>
+            <th>Role</th>
+            <td>@Model.Role</td>
+        </tr>
+        <tr>
+            <th>Patients</th>
+            <td>@Model.Patients.Count</td>
+        </tr>
+        <tr>
+            <th>Added to System</th>
+            <td>@Model.CreatedAt</td>
+        </tr>
+        <tr>
+            <th>Last Updated</th>
+            <td>@Model.UpdatedAt</td>
+        </tr>
+    </tbody>
+</table>
