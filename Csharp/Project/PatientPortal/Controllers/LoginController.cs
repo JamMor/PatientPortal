@@ -41,7 +41,7 @@ namespace PatientPortal.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("PatientManager", "Staff");
+                    return RedirectToAction("PatientManager", "Patients");
                 }
                 
             }
@@ -70,7 +70,7 @@ namespace PatientPortal.Controllers
                         }
                         else
                         {
-                            return RedirectToAction("PatientManager", "Staff");
+                            return RedirectToAction("PatientManager", "Patients");
                         }
                     }
                 }

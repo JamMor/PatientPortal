@@ -1,7 +1,7 @@
 @model HealthIssue
 
 <h3>New Health Issue: </h3>
-<form asp-action="HealthIssueCreate" asp-controller="Staff" asp-route-patientId="@ViewBag.patientId" method="post">
+<form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@ViewBag.patientId" method="post">
     <div class="form-group">
         <label class="form-label" asp-for="ShortDescription"></label>
         <span class="text-danger" asp-validation-for="ShortDescription"></span>

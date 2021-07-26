@@ -45,14 +45,14 @@ namespace PatientPortal.Controllers
                 HttpContext.Session.SetInt32("UserId", 5);
                 HttpContext.Session.SetString("Name", "Data Dat-erson");
                 HttpContext.Session.SetString("Role", "MD");
-                return RedirectToAction("PatientManager", "Staff");
+                return RedirectToAction("PatientManager", "Patients");
             }
             else if(role == "Wes")
             {
                 HttpContext.Session.SetInt32("UserId", 3);
                 HttpContext.Session.SetString("Name", "Wesley Crusher");
                 HttpContext.Session.SetString("Role", "NP");
-                return RedirectToAction("PatientManager", "Staff");
+                return RedirectToAction("PatientManager", "Patients");
             }
             return RedirectToAction("Index", "Login");
         }

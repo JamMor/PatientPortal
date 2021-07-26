@@ -1,7 +1,7 @@
 @model Visit
 
 <h3>New Visit: </h3>
-<form asp-action="VisitCreate" asp-controller="Staff" asp-route-patientId="@ViewBag.patientId" method="post">
+<form asp-action="VisitCreate" asp-controller="Visit" asp-route-patientId="@ViewBag.patientId" method="post">
     <div class="form-group">
         <label class="form-label" asp-for="DateOfVisit"></label>
         <span class="text-danger" asp-validation-for="DateOfVisit"></span>

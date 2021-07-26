@@ -20,7 +20,7 @@
                             <p class="my-0 mr-auto">@person.Staff.FullName(), @person.Staff.Role</p> 
                             @if(@person.Staff.StaffId == @Context.Session.GetInt32("UserId"))
                             {
-                            <form asp-controller="Staff" asp-action="MedicalTeamLeave" asp-route-patientId="@Model.PatientId">
+                            <form asp-controller="Patients" asp-action="MedicalTeamLeave" asp-route-patientId="@Model.PatientId">
                                 <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
                             </form>
                             }
@@ -29,7 +29,7 @@
                     @if(!@Model.MedicalTeam.Any(team =>team.StaffId == @Context.Session.GetInt32("UserId")))
                     {
                         <li class="list-group-item text-right">
-                            <form asp-controller="Staff" asp-action="MedicalTeamJoin" asp-route-patientId="@Model.PatientId">
+                            <form asp-controller="Patients" asp-action="MedicalTeamJoin" asp-route-patientId="@Model.PatientId">
                                 <button class="btn btn-sm btn-outline-success" href="#">Join</button>
                             </form>
                         </li>
@@ -46,7 +46,7 @@
                         <li class="card list-group-item">
                             <div class="card-header d-flex">
                                 <h6 class="mr-auto">@issue.ShortDescription</h6>
-                                <form asp-controller="Staff" asp-action="IssueDelete" asp-route-patientId="@Model.PatientId" asp-route-issueId="@issue.HealthIssueId">
+                                <form asp-controller="HealthIssue" asp-action="IssueDelete" asp-route-patientId="@Model.PatientId" asp-route-issueId="@issue.HealthIssueId">
                                     <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
                                 </form>
                             </div>
@@ -58,7 +58,7 @@
                             <p class="card-footer">First Reported: @issue.CreatedAt</p>
                         </li>
                     }
-                    <li class="list-group-item text-right"><a class ="btn btn-sm btn-outline-success" asp-controller="Staff" asp-action="HealthIssueAdd" asp-route-patientId="@Model.PatientId">Add Health Issue</a></li>
+                    <li class="list-group-item text-right"><a class ="btn btn-sm btn-outline-success" asp-controller="HealthIssue" asp-action="HealthIssueAdd" asp-route-patientId="@Model.PatientId">Add Health Issue</a></li>
                 </ul>
             </td>
         </tr>
@@ -71,7 +71,7 @@
                         <li class="card list-group-item">
                             <div class="card-header d-flex">
                                 <h6 class="mr-auto">@visit.DateOfVisit</h6>
-                                <form asp-controller="Staff" asp-action="VisitDelete" asp-route-patientId="@Model.PatientId" asp-route-visitId="@visit.VisitId">
+                                <form asp-controller="Visit" asp-action="VisitDelete" asp-route-patientId="@Model.PatientId" asp-route-visitId="@visit.VisitId">
                                     <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
                                 </form>
                             </div>
@@ -81,7 +81,7 @@
                             <p class="card-footer">@visit.Staff.FullName(), @visit.Staff.Role</p>
                         </li>
                     }
-                    <li class="list-group-item text-right"><a class ="btn btn-sm btn-outline-success" asp-controller="Staff" asp-action="VisitAdd" asp-route-patientId="@Model.PatientId">Add Visit</a></li>
+                    <li class="list-group-item text-right"><a class ="btn btn-sm btn-outline-success" asp-controller="Visit" asp-action="VisitAdd" asp-route-patientId="@Model.PatientId">Add Visit</a></li>
                 </ul>
             </td>
         </tr>
@@ -94,7 +94,7 @@
                         <li class="card list-group-item">
                             <div class="card-header d-flex">
                                 <h6 class="mr-auto">@test.Type - @test.CreatedAt</h6>
-                                <form asp-controller="Staff" asp-action="TestResultDelete" asp-route-patientId="@Model.PatientId" asp-route-testId="@test.TestResultId">
+                                <form asp-controller="TestResult" asp-action="TestResultDelete" asp-route-patientId="@Model.PatientId" asp-route-testId="@test.TestResultId">
                                     <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
                                 </form>
                             </div>
@@ -104,7 +104,7 @@
                             <p class="card-footer">@test.Staff.FullName(), @test.Staff.Role</p>
                         </li>
                     }
-                    <li class="list-group-item text-right"><a class ="btn btn-sm btn-outline-success" asp-controller="Staff" asp-action="TestResultAdd" asp-route-patientId="@Model.PatientId">Add Test</a></li>
+                    <li class="list-group-item text-right"><a class ="btn btn-sm btn-outline-success" asp-controller="TestResult" asp-action="TestResultAdd" asp-route-patientId="@Model.PatientId">Add Test</a></li>
                 </ul>
             </td>
         </tr>
@@ -119,6 +119,6 @@
         </tr>
     </tbody>
 </table>
-<form class="text-right" asp-controller="Staff" asp-action="PatientDelete" asp-route-patientId="@Model.PatientId">
+<form class="text-right" asp-controller="Patients" asp-action="PatientDelete" asp-route-patientId="@Model.PatientId">
     <button class="btn btn-sm btn-outline-danger" href="#">Delete Patient</button>
 </form>
