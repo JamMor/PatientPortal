@@ -8,7 +8,7 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
 {
-    [Route("/provider")]
+    [Route("/provider/staff")]
     public class StaffController : Controller
     {
         private int? uuid
@@ -33,7 +33,7 @@ namespace PatientPortal.Controllers
         }
 
 //==============Staff Manager==============================
-        [HttpGet("admin")]
+        [HttpGet("")]
         public IActionResult StaffManager()
         {
             List<Staff> allStaff = _context.Staff

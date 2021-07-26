@@ -8,7 +8,7 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
 {
-    [Route("/provider")]
+    [Route("/provider/patients")]
     public class PatientsController : Controller
     {
         private int? uuid
@@ -33,20 +33,20 @@ namespace PatientPortal.Controllers
         }
 
 //===========================Patient Manager==============================
-        [HttpGet("patients")]
+        [HttpGet("")]
         public IActionResult PatientManager()
         {
             List<Patient> allPatients = _context.Patients.ToList();
             return View("PatientManager", allPatients);
         }
 
-        [HttpGet("patients/add")]
+        [HttpGet("add")]
         public IActionResult PatientAdd()
         {
             return View("PatientForm");
         }
 
-        [HttpPost("patients/add")]
+        [HttpPost("add")]
         public IActionResult PatientCreate(Patient newPatient)
         {
             
@@ -71,7 +71,7 @@ namespace PatientPortal.Controllers
             return View("PatientForm");
         }
         
-        [HttpGet("patients/{patientId}")]
+        [HttpGet("{patientId}")]
         public IActionResult PatientInfo(int patientId)
         {
             Patient patient = _context.Patients
@@ -89,7 +89,7 @@ namespace PatientPortal.Controllers
             return View("PatientInfo", patient);
         }
 
-        [HttpPost("patients/{patientId}/delete")]
+        [HttpPost("{patientId}/delete")]
         public IActionResult PatientDelete(int patientId)
         {
             Patient deletedPatient = _context.Patients.SingleOrDefault(patient => patient.PatientId == patientId);
@@ -102,7 +102,7 @@ namespace PatientPortal.Controllers
         }
         
         //======================Medical Team================================
-        [HttpPost("patients/{patientId}/join")]
+        [HttpPost("{patientId}/join")]
         public IActionResult MedicalTeamJoin(int patientId)
         {
             PatientStaffConnection oldLink = _context.PatientStaffConnections.FirstOrDefault(link => link.PatientId == patientId && link.StaffId == (int)uuid);
@@ -119,7 +119,7 @@ namespace PatientPortal.Controllers
             }
             return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
         }
-        [HttpPost("patients/{patientId}/leave")]
+        [HttpPost("{patientId}/leave")]
         public IActionResult MedicalTeamLeave(int patientId)
         {
             PatientStaffConnection oldLink = _context.PatientStaffConnections.FirstOrDefault(link => link.PatientId == patientId && link.StaffId == (int)uuid);

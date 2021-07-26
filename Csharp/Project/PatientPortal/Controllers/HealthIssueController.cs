@@ -8,7 +8,7 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
 {
-    [Route("/provider")]
+    [Route("/provider/patients/{patientId}/issue")]
     public class HealthIssueController : Controller
     {
         private int? uuid
@@ -33,14 +33,14 @@ namespace PatientPortal.Controllers
         }
 
         //=====================Create HealthIssue===========================
-        [HttpGet("patients/{patientId}/issue")]
+        [HttpGet("")]
         public IActionResult HealthIssueAdd(int patientId)
         {
             ViewBag.patientId = patientId;
             return View("HealthIssueForm");
         }
         
-        [HttpPost("patients/{patientId}/issue")]
+        [HttpPost("")]
         public IActionResult HealthIssueCreate(int patientId, HealthIssue newIssue)
         {
             if(ModelState.IsValid)
@@ -54,7 +54,7 @@ namespace PatientPortal.Controllers
         }
         
 
-        [HttpPost("patients/{patientId}/issue/{issueId}/delete")]
+        [HttpPost("{issueId}/delete")]
         public IActionResult IssueDelete(int patientId, int issueId)
         {
             HealthIssue deletedHealthIssue = _context.HealthIssues.SingleOrDefault(issue => issue.HealthIssueId == issueId);

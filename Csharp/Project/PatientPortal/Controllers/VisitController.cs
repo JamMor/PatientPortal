@@ -8,7 +8,7 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
 {
-    [Route("/provider")]
+    [Route("/provider/patients/{patientId}/visit")]
     public class VisitController : Controller
     {
         private int? uuid
@@ -33,7 +33,7 @@ namespace PatientPortal.Controllers
         }
 
 //=========================Create Visit=============================
-        [HttpGet("patients/{patientId}/visit")]
+        [HttpGet("")]
         public IActionResult VisitAdd(int patientId)
         {
             ViewBag.patientId = patientId;
@@ -41,7 +41,7 @@ namespace PatientPortal.Controllers
             return View("VisitForm");
         }
 
-        [HttpPost("patients/{patientId}/visit")]
+        [HttpPost("")]
         public IActionResult VisitCreate(int patientId, Visit newVisit, List<int> issues)
         {
             if(ModelState.IsValid)
@@ -66,7 +66,7 @@ namespace PatientPortal.Controllers
             return View("VisitForm");
         }
         
-        [HttpPost("patients/{patientId}/visit/{visitId}/delete")]
+        [HttpPost("{visitId}/delete")]
         public IActionResult VisitDelete(int patientId, int visitId)
         {
             Visit deletedVisit = _context.Visits.SingleOrDefault(visit => visit.VisitId == visitId);
