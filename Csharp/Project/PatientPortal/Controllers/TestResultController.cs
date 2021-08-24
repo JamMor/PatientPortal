@@ -63,7 +63,7 @@ namespace PatientPortal.Controllers
                 }
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
-            return View("VisitForm");
+            return View("TestResultForm");
         }
     
         [HttpPost("{testId}/delete")]
