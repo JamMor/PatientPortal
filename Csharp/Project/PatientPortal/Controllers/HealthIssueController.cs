@@ -50,6 +50,7 @@ namespace PatientPortal.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
+            ViewBag.patientId = patientId;
             return View("HealthIssueForm");
         }
         

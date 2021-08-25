@@ -63,6 +63,8 @@ namespace PatientPortal.Controllers
                 }
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
+            ViewBag.patientId = patientId;
+            ViewBag.HealthIssues = _context.HealthIssues.Where(issue => issue.PatientId == patientId).ToList();
             return View("VisitForm");
         }
         
