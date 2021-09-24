@@ -72,12 +72,12 @@ namespace PatientPortal.Models
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if(value == null)
-            {
-                return new ValidationResult("Must enter a date.");
-            }
+            // if(value == null)
+            // {
+            //     return new ValidationResult("Must enter a date.");
+            // }
             DateTime today = DateTime.Today;
-            if ((DateTime)value > today)
+            if (value != null && (DateTime)value > today)
             {
                 return new ValidationResult("Date must be in the past.");
             }
