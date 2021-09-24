@@ -1,0 +1,33 @@
+@model PatientSearch
+
+
+<form asp-controller="Patients" asp-action="PatientManagerQuery" method="post">
+    <div class="form-row justify-content-around align-items-center">
+        <div class="form-group col-auto">
+            <input class="form-control" asp-for="SearchPatientId">
+            <span class="text-danger" asp-validation-for="SearchPatientId"></span>
+            <label class="form-label" asp-for="SearchPatientId"></label>
+        </div>
+        <div class="form-group col-auto">
+            <input class="form-control" asp-for="SearchFirstName">
+            <span class="text-danger" asp-validation-for="SearchFirstName"></span>
+            <label class="form-label" asp-for="SearchFirstName"></label>
+        </div>
+        <div class="form-group col-auto">
+            <input class="form-control" asp-for="SearchLastName">
+            <span class="text-danger" asp-validation-for="SearchLastName"></span>
+            <label class="form-label" asp-for="SearchLastName"></label>
+        </div>
+        <div class="form-group col-auto">
+            <input class="form-control" asp-for="SearchBirthdate">
+            <span class="text-danger" asp-validation-for="SearchBirthdate"></span>
+            <label class="form-label" asp-for="SearchBirthdate"></label>
+        </div>
+        <div class="form-group col-auto">
+            <input class="form-control" asp-for="SearchSSN">
+            <span class="text-danger" asp-validation-for="SearchSSN"></span>
+            <label class="form-label" asp-for="SearchSSN"></label>
+        </div>
+    </div>
+    <button class="btn btn-secondary d-block mx-auto">Search</button>
+</form>

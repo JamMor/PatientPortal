@@ -1,0 +1,28 @@
+@model List<Patient>
+
+
+<div class="d-flex">
+    <h4 class="my-0 mr-auto">Patients (@Model.Count):</h4>
+    <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-outline-primary btn-sm">+</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>DOB</th>
+            <th>Patient ID</th>
+            <th>Registered Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Patient patient in @Model)
+        {
+        <tr>
+            <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.FullName()</a></td>
+            <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB)</td>
+            <td>@patient.PatientId</td>
+            <td>@patient.CreatedAt</td>
+        </tr>
+        }
+    </tbody>
+</table>

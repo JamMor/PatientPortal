@@ -36,8 +36,38 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult PatientManager()
         {
-            List<Patient> allPatients = _context.Patients.ToList();
-            return View("PatientManager", allPatients);
+            PatientSearch EmptySearch = new PatientSearch();
+
+            List<Patient> AllResults = _context.Patients
+                .ToList();
+
+            PatientManagerView ViewModel = new PatientManagerView
+            {
+                SearchBar = EmptySearch,
+                SearchResults = AllResults
+            };
+
+            return View("PatientManager", ViewModel);
+        }
+        
+        [HttpPost("")]
+        public IActionResult PatientManagerQuery(PatientSearch PatientQuery)
+        {
+            List<Patient> QueryResults = _context.Patients
+                .Where(patient => PatientQuery.SearchPatientId == null || patient.PatientId == PatientQuery.SearchPatientId)
+                .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchFirstName) || patient.FirstName.StartsWith(PatientQuery.SearchFirstName))
+                .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchLastName) || patient.LastName.StartsWith(PatientQuery.SearchLastName) )
+                .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchSSN) || patient.Last4SSN == PatientQuery.SearchSSN)
+                .Where(patient => PatientQuery.SearchBirthdate == null || patient.DOB == PatientQuery.SearchBirthdate )
+                .ToList();
+
+            PatientManagerView ViewModel = new PatientManagerView
+            {
+                SearchBar = PatientQuery,
+                SearchResults = QueryResults
+            };
+
+            return View("PatientManager", ViewModel);
         }
 
         [HttpGet("add")]
