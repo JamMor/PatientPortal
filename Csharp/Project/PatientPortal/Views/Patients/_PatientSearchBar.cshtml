@@ -2,7 +2,7 @@
 
 
 <form asp-controller="Patients" asp-action="PatientManagerQuery" method="post">
-    <div class="form-row justify-content-around align-items-center">
+    <div class="form-row justify-content-around align-items-center flex-wrap">
         <div class="form-group col-auto">
             <input class="form-control" asp-for="SearchPatientId">
             <span class="text-danger" asp-validation-for="SearchPatientId"></span>
@@ -29,5 +29,8 @@
             <label class="form-label" asp-for="SearchSSN"></label>
         </div>
     </div>
-    <button class="btn btn-secondary d-block mx-auto">Search</button>
+    <div class="text-center">
+        <button class="btn btn-secondary m-1">Search</button>
+        <a class="btn btn-outline-secondary m-1" asp-controller="Patients" asp-action="PatientManager">Clear</a>
+    </div>
 </form>

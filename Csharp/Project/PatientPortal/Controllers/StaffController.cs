@@ -36,10 +36,39 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult StaffManager()
         {
-            List<Staff> allStaff = _context.Staff
+            StaffSearch EmptySearch = new StaffSearch();
+
+            List<Staff> AllResults = _context.Staff
                 .Include(staff => staff.Patients)
                 .ToList();
-            return View("StaffManager", allStaff);
+
+            StaffManagerView ViewModel = new StaffManagerView
+            {
+                SearchBar = EmptySearch,
+                SearchResults = AllResults
+            };
+
+            return View("StaffManager", ViewModel);
+        }
+
+        [HttpPost("")]
+        public IActionResult StaffManagerQuery(StaffSearch StaffQuery)
+        {
+            List<Staff> QueryResults = _context.Staff
+                .Where(staff => StaffQuery.SearchStaffId == null || staff.StaffId == StaffQuery.SearchStaffId)
+                .Where(staff => string.IsNullOrEmpty(StaffQuery.SearchFirstName) || staff.FirstName.StartsWith(StaffQuery.SearchFirstName))
+                .Where(staff => string.IsNullOrEmpty(StaffQuery.SearchLastName) || staff.LastName.StartsWith(StaffQuery.SearchLastName) )
+                .Where(staff => string.IsNullOrEmpty(StaffQuery.SearchRole) || staff.Role == StaffQuery.SearchRole)
+                .Include(staff => staff.Patients)
+                .ToList();
+
+            StaffManagerView ViewModel = new StaffManagerView
+            {
+                SearchBar = StaffQuery,
+                SearchResults = QueryResults
+            };
+
+            return View("StaffManager", ViewModel);
         }
 
         [HttpGet("add")]

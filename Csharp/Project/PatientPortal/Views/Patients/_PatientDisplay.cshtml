@@ -8,9 +8,9 @@
 <table class="table">
     <thead>
         <tr>
+            <th>Patient ID</th>
             <th>Name</th>
             <th>DOB</th>
-            <th>Patient ID</th>
             <th>Registered Date</th>
         </tr>
     </thead>
@@ -18,9 +18,9 @@
         @foreach (Patient patient in @Model)
         {
         <tr>
+            <td>@patient.PatientId</td>
             <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.FullName()</a></td>
             <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB)</td>
-            <td>@patient.PatientId</td>
             <td>@patient.CreatedAt</td>
         </tr>
         }
