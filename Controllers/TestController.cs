@@ -33,7 +33,7 @@ namespace PatientPortal.Controllers
         [HttpPost("/test")]
         public IActionResult TestLogin(string role)
         {
-            if(role == "Admin")
+            if(role == "Picard")
             {
                 HttpContext.Session.SetInt32("UserId", 1);
                 HttpContext.Session.SetString("Name", "Jean-Luc Picard");
