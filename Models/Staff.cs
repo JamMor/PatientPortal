@@ -47,6 +47,8 @@ namespace PatientPortal.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
+        public int MessagingLinkId { get; set; }
+
         public string FullName()
         {
             return FirstName + " " + LastName;
@@ -57,7 +59,6 @@ namespace PatientPortal.Models
         public List<PatientStaffConnection> Patients { get; set; }
         public List<Visit> Visits { get; set; }
         public List<TestResult> TestsOrdered { get; set; }
-        public List<StafftoStaffConversation> StaffConversations { get; set; }
-        public List<S2PStaffAssociation> PatientConversations { get; set; }
+        public MessagingLink MessagingLink { get; set; } = new MessagingLink();
     }
 }

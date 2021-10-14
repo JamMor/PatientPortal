@@ -4,17 +4,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PatientPortal.Models
 {
-    public class S2SStaffAssociation
+    public class ConversationParticipant
     {
         [Key]
-        public int S2SStaffAssociationId { get; set; }
-        public int S2SId { get; set; }
-        public int StaffId { get; set; }
+        public int ConversationParticipantId { get; set; }
+        public int MessagingLinkId { get; set; }
+        public int ConversationId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         //====================================================================
-        public StafftoStaffConversation StafftoStaffConversation { get; set; }
-        public Staff Staff { get; set; }
+        public MessagingLink MessagingLink { get; set; }
+        public Conversation Conversation { get; set; }
     }
 }
