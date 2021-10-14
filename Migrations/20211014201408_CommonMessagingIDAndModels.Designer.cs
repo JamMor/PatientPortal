@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PatientPortal.Models;
 
 namespace PatientPortal.Migrations
 {
     [DbContext(typeof(PatientPortalContext))]
-    partial class PatientPortalContextModelSnapshot : ModelSnapshot
+    [Migration("20211014201408_CommonMessagingIDAndModels")]
+    partial class CommonMessagingIDAndModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,6 +22,7 @@ namespace PatientPortal.Migrations
             modelBuilder.Entity("PatientPortal.Models.Address", b =>
                 {
                     b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("City")
@@ -41,6 +44,9 @@ namespace PatientPortal.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("AddressId");
+
+                    b.HasIndex("PatientId")
+                        .IsUnique();
 
                     b.ToTable("Addresses");
                 });
@@ -445,7 +451,7 @@ namespace PatientPortal.Migrations
                 {
                     b.HasOne("PatientPortal.Models.Patient", "Patient")
                         .WithOne("Address")
-                        .HasForeignKey("PatientPortal.Models.Address", "AddressId")
+                        .HasForeignKey("PatientPortal.Models.Address", "PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
