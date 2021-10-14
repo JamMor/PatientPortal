@@ -58,6 +58,6 @@ namespace PatientPortal.Models
         public List<Visit> Visits { get; set; }
         public List<TestResult> TestsOrdered { get; set; }
         public List<StafftoStaffConversation> StaffConversations { get; set; }
-        public List<StafftoPatientConversation> PatientConversations { get; set; }
+        public List<S2PStaffAssociation> PatientConversations { get; set; }
     }
 }
