@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PatientPortal.Models
 {
     public class Address
     {
         [Key]
+        [ForeignKey("Patient")]
         public int AddressId { get; set; }
         
         [Required]
