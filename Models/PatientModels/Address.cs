@@ -15,7 +15,7 @@ namespace PatientPortal.Models
         public string State { get; set; }
         [Display(Name = "ZIP Code")]
         [DataType(DataType.PostalCode)]
-        public int? ZipCode { get; set; }
+        public string ZipCode { get; set; }
 
         public int PatientId { get; set; }
         public Patient Patient { get; set; }

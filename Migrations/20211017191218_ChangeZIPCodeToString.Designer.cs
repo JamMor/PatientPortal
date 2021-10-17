@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PatientPortal.Models;
 
 namespace PatientPortal.Migrations
 {
     [DbContext(typeof(PatientPortalContext))]
-    partial class PatientPortalContextModelSnapshot : ModelSnapshot
+    [Migration("20211017191218_ChangeZIPCodeToString")]
+    partial class ChangeZIPCodeToString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
