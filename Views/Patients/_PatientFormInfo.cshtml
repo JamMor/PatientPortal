@@ -1,0 +1,36 @@
+@model Patient
+
+<div class="col">
+    <div class="form-group">
+        <label class="form-label" asp-for="FirstName"></label>
+        <span class="text-danger" asp-validation-for="FirstName"></span>
+        <input class="form-control" asp-for="FirstName">
+    </div>
+    <div class="form-group">
+        <label class="form-label" asp-for="LastName"></label>
+        <span class="text-danger" asp-validation-for="LastName"></span>
+        <input class="form-control" asp-for="LastName">
+    </div>
+    <div class="form-group">
+        <label class="form-label" asp-for="DOB"></label>
+        <span class="text-danger" asp-validation-for="DOB"></span>
+        <input class="form-control" asp-for="DOB">
+    </div>
+    <div class="form-group">
+        <label class="form-label" asp-for="Last4SSN"></label>
+        <span class="text-danger" asp-validation-for="Last4SSN"></span>
+        <input class="form-control" asp-for="Last4SSN">
+    </div>
+</div>
+<div class="col">
+    <h4>Contact Info (optional)</h4>
+    <div class="form-group">
+        <label class="form-label" asp-for="PhoneNumber"></label>
+        <span class="text-danger" asp-validation-for="PhoneNumber"></span>
+        <input class="form-control" asp-for="PhoneNumber">
+    </div>
+    <div class="form-group">
+        <label class="form-label" asp-for="Email"></label>
+        <span class="text-danger" asp-validation-for="Email"></span>
+        <input class="form-control" asp-for="Email">
+    </div>
