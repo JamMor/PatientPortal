@@ -3,6 +3,8 @@ using PatientPortal.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+//Only needed for displaying staff logins for testing
+using System.Collections.Generic;
 
 namespace PatientPortal.Controllers
 {
@@ -45,7 +47,11 @@ namespace PatientPortal.Controllers
                 }
                 
             }
-            return View("StaffLogin");
+            //========================================================
+            //=================For Test Logins========================
+            List<Staff> allStaff = _context.Staff.ToList();
+            //========================================================
+            return View("StaffLogin", allStaff);
         }
         
         [HttpPost("login")]

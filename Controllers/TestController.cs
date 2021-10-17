@@ -30,31 +30,49 @@ namespace PatientPortal.Controllers
             _context = context;
         }
 
-        [HttpPost("/test")]
-        public IActionResult TestLogin(string role)
+        [HttpPost("/test/create")]
+        public IActionResult TestCreate(string role)
         {
-            if(role == "Picard")
+            Staff newAdmin = new Staff()
             {
-                HttpContext.Session.SetInt32("UserId", 1);
-                HttpContext.Session.SetString("Name", "Jean-Luc Picard");
-                HttpContext.Session.SetString("Role", "Admin");
-                return RedirectToAction("StaffManager", "Staff");
-            }
-            else if(role == "Data")
+                IsAdmin = true,
+                FirstName = "Jean-Luc",
+                LastName = "Picard",
+                Role = "Admin",
+                StaffUsername = "JPicardNumber1",
+                Password = "password0$"
+            };
+            PasswordHasher<Staff> hasher = new PasswordHasher<Staff>();
+            newAdmin.Password = hasher.HashPassword(newAdmin, newAdmin.Password);
+
+            _context.Staff.Add(newAdmin);
+            _context.SaveChanges();
+
+            MessagingLink newLink = new MessagingLink()
             {
-                HttpContext.Session.SetInt32("UserId", 5);
-                HttpContext.Session.SetString("Name", "Data Dat-erson");
-                HttpContext.Session.SetString("Role", "MD");
-                return RedirectToAction("PatientManager", "Patients");
-            }
-            else if(role == "Wes")
-            {
-                HttpContext.Session.SetInt32("UserId", 3);
-                HttpContext.Session.SetString("Name", "Wesley Crusher");
-                HttpContext.Session.SetString("Role", "NP");
-                return RedirectToAction("PatientManager", "Patients");
-            }
+                StaffId = newAdmin.StaffId
+            };
+
+            _context.MessagingLinks.Add(newLink);
+            _context.SaveChanges();
+
+            HttpContext.Session.SetInt32("UserId", newAdmin.StaffId);
+            HttpContext.Session.SetString("Name", newAdmin.FullName());
+            HttpContext.Session.SetString("Role", newAdmin.Role);
+            
+            return RedirectToAction("StaffManager", "Staff");
+        }
+
+        [HttpPost("/test/options")]
+        public IActionResult TestLoginOptions(int staffId)
+        {
+            Staff staffmember = _context.Staff.FirstOrDefault(s => s.StaffId == staffId);
+            HttpContext.Session.SetInt32("UserId", staffmember.StaffId);
+            HttpContext.Session.SetString("Name", staffmember.FullName());
+            HttpContext.Session.SetString("Role", staffmember.Role);
+
             return RedirectToAction("Index", "Login");
         }
+
     }
 }
