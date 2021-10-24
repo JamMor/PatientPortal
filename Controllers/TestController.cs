@@ -3,6 +3,7 @@ using PatientPortal.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace PatientPortal.Controllers
 {
@@ -59,6 +60,7 @@ namespace PatientPortal.Controllers
             HttpContext.Session.SetInt32("UserId", newAdmin.StaffId);
             HttpContext.Session.SetString("Name", newAdmin.FullName());
             HttpContext.Session.SetString("Role", newAdmin.Role);
+            HttpContext.Session.SetInt32("MessageLinkId", newLink.MessagingLinkId);
             
             return RedirectToAction("StaffManager", "Staff");
         }
@@ -66,10 +68,14 @@ namespace PatientPortal.Controllers
         [HttpPost("/test/options")]
         public IActionResult TestLoginOptions(int staffId)
         {
-            Staff staffmember = _context.Staff.FirstOrDefault(s => s.StaffId == staffId);
+            Staff staffmember = _context.Staff
+                .Include(staff => staff.MessagingLink)
+                .FirstOrDefault(s => s.StaffId == staffId);
+                
             HttpContext.Session.SetInt32("UserId", staffmember.StaffId);
             HttpContext.Session.SetString("Name", staffmember.FullName());
             HttpContext.Session.SetString("Role", staffmember.Role);
+            HttpContext.Session.SetInt32("MessageLinkId", staffmember.MessagingLink.MessagingLinkId);
 
             return RedirectToAction("Index", "Login");
         }

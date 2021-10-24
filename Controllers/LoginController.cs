@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 //Only needed for displaying staff logins for testing
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace PatientPortal.Controllers
 {
@@ -59,7 +60,9 @@ namespace PatientPortal.Controllers
         {
             if(ModelState.IsValid)
             {
-                Staff savedStaff = _context.Staff.FirstOrDefault(staff => staff.StaffUsername == loginInfo.StaffUsername);
+                Staff savedStaff = _context.Staff
+                    .Include(staff => staff.MessagingLink)
+                    .FirstOrDefault(staff => staff.StaffUsername == loginInfo.StaffUsername);
                 if(savedStaff != null)
                 {
                     PasswordHasher<LoginStaff> hasher = new PasswordHasher<LoginStaff>();
@@ -69,6 +72,7 @@ namespace PatientPortal.Controllers
                         HttpContext.Session.SetInt32("UserId", savedStaff.StaffId);
                         HttpContext.Session.SetString("Name", savedStaff.FullName());
                         HttpContext.Session.SetString("Role", savedStaff.Role);
+                        HttpContext.Session.SetInt32("MessageLinkId", savedStaff.MessagingLink.MessagingLinkId);
 
                         if(savedStaff.IsAdmin)
                         {
