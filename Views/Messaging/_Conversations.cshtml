@@ -1,0 +1,23 @@
+@model List<Conversation>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Members</th>
+            <th>Subject</th>
+            <th>Start Date</th>
+            <th>Latest Message Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Conversation conversation in @Model)
+        {
+            <tr>
+                <td>@conversation.ConversationParticipants</td>
+                <td>Future Subject</td>
+                <td>@conversation.CreatedAt</td>
+                <td>@conversation.UpdatedAt</td>
+            </tr>
+        }
+    </tbody>
+</table>

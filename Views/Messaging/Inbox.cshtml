@@ -1,0 +1,16 @@
+@model List<Conversation>
+
+<div class="d-flex">
+    <h4 class="my-0 mr-auto">Messages ():</h4>
+    @* <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-outline-primary btn-sm">+</a> *@
+</div>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="#">Staff (Active)</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Patient</a>
+    </li>
+</ul>
+<partial name="_Conversations.cshtml" />
