@@ -17,7 +17,6 @@ namespace PatientPortal.Models
         [DataType(DataType.PostalCode)]
         public string ZipCode { get; set; }
 
-        public int PatientId { get; set; }
         public Patient Patient { get; set; }
     }
 }

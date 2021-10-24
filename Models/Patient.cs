@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PatientPortal.Models
 {
@@ -41,8 +42,6 @@ namespace PatientPortal.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-        public int MessagingLinkId { get; set; }
-
         public string FullName()
         {
             return FirstName + " " + LastName;
@@ -55,6 +54,6 @@ namespace PatientPortal.Models
         public List<TestResult> Tests { get; set; }
         public List<Visit> Visits { get; set; }
         public Address Address { get; set; }
-        public MessagingLink MessagingLink { get; set; } = new MessagingLink();
+        public MessagingLink MessagingLink { get; set; }
     }
 }
