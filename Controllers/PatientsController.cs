@@ -83,11 +83,14 @@ namespace PatientPortal.Controllers
             bool IsNewPatientNull = newPatientInput.Patient is null;
             bool IsNewAddressNull = newPatientInput.Address is null;
 
-            if (!(newPatientInput.Address.StreetAddress == null
+            if (newPatientInput.Address.StreetAddress == null
                 && newPatientInput.Address.City == null
                 && newPatientInput.Address.State == null
                 && newPatientInput.Address.ZipCode == null)
-                && !(newPatientInput.Address.StreetAddress != null
+            {
+                newPatientInput.Address = null;
+            }
+            else if(!(newPatientInput.Address.StreetAddress != null
                 && newPatientInput.Address.City != null
                 && newPatientInput.Address.State != null
                 && newPatientInput.Address.ZipCode != null))
@@ -106,15 +109,20 @@ namespace PatientPortal.Controllers
                     && patient.FirstName == newPatient.FirstName
                     && patient.LastName == newPatient.LastName))
                 {
-                    _context.Patients.Add(newPatient);
-                    _context.SaveChanges();
 
                     MessagingLink newLink = new MessagingLink()
                     {
-                        PatientId = newPatient.PatientId
                     };
-
-                    _context.MessagingLinks.Add(newLink);
+                    // _context.MessagingLinks.Add(newLink);
+                    newPatient.MessagingLink = newLink;
+                    
+                    _context.Patients.Add(newPatient);
+                    
+                    if(newAddress != null)
+                    {
+                        newPatient.Address = newAddress;
+                    }
+                    
                     _context.SaveChanges();
 
                     return RedirectToAction("PatientManager", "Patients");
