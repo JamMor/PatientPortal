@@ -9,8 +9,8 @@ using PatientPortal.Models;
 namespace PatientPortal.Migrations
 {
     [DbContext(typeof(PatientPortalContext))]
-    [Migration("20211014202734_AddressOneToZeroOrOne")]
-    partial class AddressOneToZeroOrOne
+    [Migration("20211023231511_MessagingToConversationParticipantNavigationRemovedStaffLinkId")]
+    partial class MessagingToConversationParticipantNavigationRemovedStaffLinkId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,22 +25,16 @@ namespace PatientPortal.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("StreetAddress")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ZipCode")
-                        .HasColumnType("int");
+                    b.Property<string>("ZipCode")
+                        .HasColumnType("longtext");
 
                     b.HasKey("AddressId");
 
@@ -64,7 +58,7 @@ namespace PatientPortal.Migrations
 
                     b.HasKey("ConversationId");
 
-                    b.ToTable("Conversation");
+                    b.ToTable("Conversations");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.ConversationParticipant", b =>
@@ -91,7 +85,7 @@ namespace PatientPortal.Migrations
 
                     b.HasIndex("MessagingLinkId");
 
-                    b.ToTable("ConversationParticipant");
+                    b.ToTable("ConversationParticipants");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.HealthIssue", b =>
@@ -152,7 +146,7 @@ namespace PatientPortal.Migrations
 
                     b.HasIndex("MessagingLinkId");
 
-                    b.ToTable("Message");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.MessagingLink", b =>
@@ -175,7 +169,13 @@ namespace PatientPortal.Migrations
 
                     b.HasKey("MessagingLinkId");
 
-                    b.ToTable("MessagingLink");
+                    b.HasIndex("PatientId")
+                        .IsUnique();
+
+                    b.HasIndex("StaffId")
+                        .IsUnique();
+
+                    b.ToTable("MessagingLinks");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.Patient", b =>
@@ -205,12 +205,6 @@ namespace PatientPortal.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("MessagingLinkId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MessagingLinkId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext");
 
@@ -218,8 +212,6 @@ namespace PatientPortal.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("PatientId");
-
-                    b.HasIndex("MessagingLinkId1");
 
                     b.ToTable("Patients");
                 });
@@ -271,12 +263,6 @@ namespace PatientPortal.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("MessagingLinkId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MessagingLinkId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -293,8 +279,6 @@ namespace PatientPortal.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("StaffId");
-
-                    b.HasIndex("MessagingLinkId1");
 
                     b.ToTable("Staff");
                 });
@@ -379,7 +363,7 @@ namespace PatientPortal.Migrations
 
                     b.HasIndex("MessagingLinkId");
 
-                    b.ToTable("Unread");
+                    b.ToTable("UnreadMessages");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.Visit", b =>
@@ -463,7 +447,7 @@ namespace PatientPortal.Migrations
                         .IsRequired();
 
                     b.HasOne("PatientPortal.Models.MessagingLink", "MessagingLink")
-                        .WithMany()
+                        .WithMany("ParticipatingConversations")
                         .HasForeignKey("MessagingLinkId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -503,13 +487,19 @@ namespace PatientPortal.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("PatientPortal.Models.Patient", b =>
+            modelBuilder.Entity("PatientPortal.Models.MessagingLink", b =>
                 {
-                    b.HasOne("PatientPortal.Models.MessagingLink", "MessagingLink")
-                        .WithMany()
-                        .HasForeignKey("MessagingLinkId1");
+                    b.HasOne("PatientPortal.Models.Patient", "Patient")
+                        .WithOne("MessagingLink")
+                        .HasForeignKey("PatientPortal.Models.MessagingLink", "PatientId");
 
-                    b.Navigation("MessagingLink");
+                    b.HasOne("PatientPortal.Models.Staff", "Staff")
+                        .WithOne("MessagingLink")
+                        .HasForeignKey("PatientPortal.Models.MessagingLink", "StaffId");
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.PatientStaffConnection", b =>
@@ -529,15 +519,6 @@ namespace PatientPortal.Migrations
                     b.Navigation("Patient");
 
                     b.Navigation("Staff");
-                });
-
-            modelBuilder.Entity("PatientPortal.Models.Staff", b =>
-                {
-                    b.HasOne("PatientPortal.Models.MessagingLink", "MessagingLink")
-                        .WithMany()
-                        .HasForeignKey("MessagingLinkId1");
-
-                    b.Navigation("MessagingLink");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.TestHealthIssueAssociation", b =>
@@ -656,6 +637,8 @@ namespace PatientPortal.Migrations
 
             modelBuilder.Entity("PatientPortal.Models.MessagingLink", b =>
                 {
+                    b.Navigation("ParticipatingConversations");
+
                     b.Navigation("UnreadMessages");
                 });
 
@@ -667,6 +650,8 @@ namespace PatientPortal.Migrations
 
                     b.Navigation("MedicalTeam");
 
+                    b.Navigation("MessagingLink");
+
                     b.Navigation("Tests");
 
                     b.Navigation("Visits");
@@ -674,6 +659,8 @@ namespace PatientPortal.Migrations
 
             modelBuilder.Entity("PatientPortal.Models.Staff", b =>
                 {
+                    b.Navigation("MessagingLink");
+
                     b.Navigation("Patients");
 
                     b.Navigation("TestsOrdered");
