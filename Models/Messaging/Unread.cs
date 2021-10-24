@@ -12,6 +12,7 @@ namespace PatientPortal.Models
         public int UnreadId { get; set; }
         public int MessagingLinkId { get; set; }
         public int MessageId { get; set; }
+        public bool WithPatient { get; set; }
 
         //====================================================================
         public MessagingLink MessagingLink { get; set; }
