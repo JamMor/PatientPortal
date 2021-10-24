@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PatientPortal.Models
 {
@@ -11,13 +12,19 @@ namespace PatientPortal.Models
         [Key]
         public int MessagingLinkId { get; set; }
 
+        [ForeignKey("Staff")]
         public int? StaffId { get; set; }
 
+        [ForeignKey("Patient")]
         [OneUser]
         public int? PatientId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+        public Staff Staff { get; set; }
+        public Patient Patient { get; set; }
         public List<Unread> UnreadMessages { get; set; }
+        public List<ConversationParticipant> ParticipatingConversations { get; set; }
     }
     public class OneUser : ValidationAttribute
     {
