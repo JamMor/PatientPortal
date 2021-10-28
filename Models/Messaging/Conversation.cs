@@ -9,6 +9,7 @@ namespace PatientPortal.Models
         [Key]
         public int ConversationId { get; set; }
         public bool WithPatient { get; set; }
+        public string Subject { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
