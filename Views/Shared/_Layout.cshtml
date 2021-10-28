@@ -42,7 +42,7 @@
                 @if(@Context.Session.GetInt32("UserId") != null)
                 {
                     <h6 class="p-2 text-dark">Welcome, @Context.Session.GetString("Name")!</h6>
-                    <a asp-controller="Messaging" asp-action="StaffMessages"><i class="fas fa-envelope"></i></a>
+                    <a asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="patient"><i class="fas fa-envelope"></i></a>
                     <form class="p-2" asp-controller="Login" asp-action="Logout">
                         <button class="btn btn-secondary btn-sm">Logout</button>
                     </form>

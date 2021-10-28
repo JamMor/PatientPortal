@@ -1,16 +1,23 @@
 @model List<Conversation>
 
 <div class="d-flex">
-    <h4 class="my-0 mr-auto">Messages ():</h4>
-    @* <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-outline-primary btn-sm">+</a> *@
+    <h4 class="my-0 mr-auto">Messages (@ViewBag.unreadTotalCount):</h4>
+
+    <div class="dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" data-toggle="dropdown">+</button>
+        <div class="dropdown-menu">
+            <a href="#" class="dropdown-item">New Message to Patient</a>
+            <a asp-controller="Messaging" asp-action="NewMessageForm" class="dropdown-item">New Message to Staff</a>
+        </div>
+    </div>
 </div>
 
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs justify-content-end">
     <li class="nav-item">
-        <a class="nav-link active" href="#">Staff (Active)</a>
+        <a class='nav-link @(@ViewBag.inbox == "staff" ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="staff">Staff (@ViewBag.unreadStaffCount)</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">Patient</a>
+        <a class='nav-link @(@ViewBag.inbox == "patient" ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="patient">Patient (@ViewBag.unreadPatientCount)</a>
     </li>
 </ul>
 <partial name="_Conversations.cshtml" />

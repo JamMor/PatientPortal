@@ -40,65 +40,78 @@ namespace PatientPortal.Controllers
         }
 
         //===========================Inbox Manager==============================
-        [HttpGet("staff")]
-        public IActionResult StaffInbox()
+        [HttpGet("{inbox}")]
+        public IActionResult Inbox(string inbox)
         {
             MessagingLink userLink = _context.MessagingLinks
                 .TagWith("MessageLinkQuery")
                 .FirstOrDefault(link => link.MessagingLinkId == linkId);
 
-            int countAllMessages = userLink.UnreadMessages.Count;
-            int countPatientMessages = userLink.UnreadMessages
-                .Where(unread => unread.WithPatient == true)
-                .Count();
-            int countStaffMessages = countAllMessages - countPatientMessages;
+            int unreadTotalCount = userLink.UnreadMessages?.Count() ?? 0;
+            ViewBag.unreadTotalCount = unreadTotalCount;
 
-            List<Conversation> staffMessages = _context.Conversations
-                .Where(convo => convo.ConversationParticipants.Any(partic => partic.MessagingLinkId == linkId)
-                    && convo.WithPatient == false)
-                .ToList();
+            if(userLink.PatientId != null)
+            {
+                int unreadPatientCount = unreadTotalCount;
+            }
+            else if(userLink.StaffId != null)
+            {
+                int unreadPatientCount = userLink.UnreadMessages?.Where(unread => unread.WithPatient == true)
+                    .Count() ?? 0;
+                    
+                ViewBag.unreadPatientCount = unreadPatientCount;
+                ViewBag.unreadStaffCount = unreadTotalCount - unreadPatientCount;
+            }
 
-            return View("Inbox", staffMessages);
+            var messageQuery = _context.Conversations
+                    .Where(convo => convo.ConversationParticipants
+                        .Any(joined => joined.MessagingLinkId == linkId));
+
+            //Patient Inbox - If "patient" specified, or null (or any incorrect route) default here
+            if(inbox != "staff")
+            {
+
+                List<Conversation> conversations = messageQuery
+                    .Where(convo => convo.WithPatient == true)
+                    .ToList();
+
+                ViewBag.inbox = "patient";
+
+                return View("Inbox", conversations);
+            }
+            
+            //Staff Inbox
+            else
+            {
+                List<Conversation> conversations = messageQuery
+                    .Where(convo => convo.WithPatient == false)
+                    .ToList();
+
+                ViewBag.inbox = "staff";
+
+                return View("Inbox", conversations);
+            }
         }
-        
-        [HttpGet("patient")]
-        public IActionResult PatientInbox()
+
+        [HttpGet("new")]
+        public IActionResult NewMessageForm()
         {
-            MessagingLink userLink = _context.MessagingLinks
-                .TagWith("MessageLinkQuery")
-                .FirstOrDefault(link => link.MessagingLinkId == linkId);
-
-            int countAllMessages = userLink.UnreadMessages.Count;
-            int countPatientMessages = userLink.UnreadMessages
-                .Where(unread => unread.WithPatient == true)
-                .Count();
-            int countStaffMessages = countAllMessages - countPatientMessages;
-
-            List<Conversation> patientMessages = _context.Conversations
-                .Where(convo => convo.ConversationParticipants.Any(partic => partic.MessagingLinkId == linkId)
-                    && convo.WithPatient == true)
+            List<Recipient> otherStaff = _context.Staff
+                .Where(staff => staff.StaffId != linkId)
+                .Select(staff => new Recipient()
+                {
+                    LinkId = staff.MessagingLink.MessagingLinkId,
+                    Name = staff.FullName(),
+                    Role = staff.Role,
+                })
                 .ToList();
 
-            return View("Inbox", patientMessages);
+            NewMessageFormView newMessageFormViewModel = new NewMessageFormView()
+            {
+                Recipients = otherStaff
+            };
+
+            return View("NewMessage", newMessageFormViewModel);
         }
-
-        // [HttpGet("patient")]
-        // public IActionResult PatientMessages()
-        // {
-        // }
-        
-        // [HttpGet("")]
-        // public IActionResult StaffMessages()
-        // {
-        //     MessagingLink linkData = _context.MessagingLinks
-        //         .Include(link => link.ParticipatingConversations)
-        //         .ThenInclude(joinedconvos => joinedconvos.Conversation)
-        //         .ThenInclude(convos => convos.Messages)
-        //         .Include(link => link.UnreadMessages)
-        //         .FirstOrDefault(link => link.MessagingLinkId == linkId);
-
-        //     return View("Inbox", linkData);
-        // }
-        
     }
 }
