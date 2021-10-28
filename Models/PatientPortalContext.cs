@@ -15,6 +15,8 @@ namespace PatientPortal.Models
         public DbSet<TestResult> TestResults { get;set; }
         public DbSet<TestHealthIssueAssociation> TestHealthIssueAssociations { get;set; }
         public DbSet<VisitHealthIssueAssociation> VisitHealthIssueAssociations { get;set; }
+
+        //Messaging
         public DbSet<MessagingLink> MessagingLinks { get;set; }
         public DbSet<Conversation> Conversations { get;set; }
         public DbSet<ConversationParticipant> ConversationParticipants { get;set; }
