@@ -8,7 +8,7 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
 {
-    [Route("/provider/messages")]
+    [Route("/provider/inbox")]
     public class MessagingController : Controller
     {
         private int? linkId
@@ -40,22 +40,34 @@ namespace PatientPortal.Controllers
         }
 
         //===========================Inbox Manager==============================
-        [HttpGet("{inbox}")]
+        [HttpGet("{inbox?}")]
         public IActionResult Inbox(string inbox)
         {
             MessagingLink userLink = _context.MessagingLinks
                 .TagWith("MessageLinkQuery")
+                .Include(link => link.UnreadMessages)
                 .FirstOrDefault(link => link.MessagingLinkId == linkId);
 
+            //Unread Messages Count
             int unreadTotalCount = userLink.UnreadMessages?.Count() ?? 0;
             ViewBag.unreadTotalCount = unreadTotalCount;
 
             if(userLink.PatientId != null)
             {
+                if(inbox != "")
+                {
+                    RedirectToAction("Inbox", new {inbox = ""});
+                }
                 int unreadPatientCount = unreadTotalCount;
             }
             else if(userLink.StaffId != null)
             {
+                if(inbox != "staff" || inbox != "patient")
+                {
+                    RedirectToAction("Inbox", new {inbox = "patient"});
+                }
+
+                //Staff and Patient Specific Unread Counts
                 int unreadPatientCount = userLink.UnreadMessages?.Where(unread => unread.WithPatient == true)
                     .Count() ?? 0;
                     
@@ -94,10 +106,10 @@ namespace PatientPortal.Controllers
         }
 
         [HttpGet("new")]
-        public IActionResult NewMessageForm()
+        public IActionResult NewConversationForm()
         {
             List<Recipient> otherStaff = _context.Staff
-                .Where(staff => staff.StaffId != linkId)
+                .Where(staff => staff.MessagingLink.MessagingLinkId != linkId)
                 .Select(staff => new Recipient()
                 {
                     LinkId = staff.MessagingLink.MessagingLinkId,
@@ -106,12 +118,55 @@ namespace PatientPortal.Controllers
                 })
                 .ToList();
 
-            NewMessageFormView newMessageFormViewModel = new NewMessageFormView()
+            NewConversationFormView newConversationFormViewModel = new NewConversationFormView()
             {
                 Recipients = otherStaff
             };
 
-            return View("NewMessage", newMessageFormViewModel);
+            return View("NewMessage", newConversationFormViewModel);
+        }
+        
+        [HttpPost("new")]
+        public IActionResult NewConversation(NewConversationFormView newConversationFormView)
+        {
+            List<int> recipientIds = newConversationFormView.Recipients
+                .Where(recipient => recipient.Selected == true)
+                .Select(recipient => recipient.LinkId)
+                .ToList();
+
+            List<ConversationParticipant> conversationParticipants = recipientIds
+                .Select(id => new ConversationParticipant() {MessagingLinkId = id})
+                .ToList();
+            conversationParticipants.Add(new ConversationParticipant() {MessagingLinkId = (int)linkId});
+
+            List<Unread> unreadFor = recipientIds
+                .Select(id => new Unread() {MessagingLinkId = id, WithPatient = newConversationFormView.WithPatient})
+                .ToList();
+
+            // List<MessagingLink> recipients = _context.MessagingLinks
+            //     .Where(link => recipientIds.Contains(link.MessagingLinkId))
+            //     .ToList();
+            
+            Conversation newConversation = new Conversation()
+            {
+                Subject = newConversationFormView.Subject,
+                WithPatient = newConversationFormView.WithPatient,
+                Messages = new List<Message>
+                {
+                    new Message()
+                    {
+                        MessageText = newConversationFormView.MessageText,
+                        MessagingLinkId = (int)linkId,
+                        UnreadBy = unreadFor
+                    }
+                },
+                ConversationParticipants = conversationParticipants
+            };
+
+            _context.Conversations.Add(newConversation);
+            
+            _context.SaveChanges();
+            return RedirectToAction("Inbox");
         }
     }
 }
