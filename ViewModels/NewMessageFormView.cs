@@ -6,11 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PatientPortal.Models
 {
     [NotMapped]
-    public class NewMessageFormView
+    public class NewConversationFormView
     {
         public List<Recipient> Recipients { get; set; }
         public string Subject { get; set; }
         public string MessageText { get; set; }
+
+        public bool WithPatient { get; set; } = false;
 
     }
 
