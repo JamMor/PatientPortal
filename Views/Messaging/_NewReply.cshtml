@@ -1,0 +1,15 @@
+@model ReplyView
+
+<form asp-controller="Messaging" asp-action="NewReply" asp-route-conversationId="@Model.ConversationId" method="post">
+    <div class="input-group pl-3">
+        <div class="input-group-prepend">
+            <label class="form-label input-group-text" asp-for="MessageText"></label>
+        </div>
+        <input class="form-control" asp-for="MessageText" placeholder="Message...">
+        <div class="input-group-append">
+            <button class="btn btn-info">Send</button>
+        </div>
+    </div>
+</form>
+<span class="text-danger" asp-validation-for="MessageText"></span>
+

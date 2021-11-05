@@ -43,6 +43,10 @@ namespace PatientPortal.Controllers
         [HttpGet("{inbox?}")]
         public IActionResult Inbox(string inbox)
         {
+            //
+            MessageInboxView inboxView = new MessageInboxView();
+            //
+            //Get MessagingLink for user
             MessagingLink userLink = _context.MessagingLinks
                 .TagWith("MessageLinkQuery")
                 .Include(link => link.UnreadMessages)
@@ -52,6 +56,8 @@ namespace PatientPortal.Controllers
             int unreadTotalCount = userLink.UnreadMessages?.Count() ?? 0;
             ViewBag.unreadTotalCount = unreadTotalCount;
 
+            //Redirect to appropriate URL's for patient or staff member and 
+            //separate inbox counts for staff
             if(userLink.PatientId != null)
             {
                 if(inbox != "")
@@ -68,7 +74,8 @@ namespace PatientPortal.Controllers
                 }
 
                 //Staff and Patient Specific Unread Counts
-                int unreadPatientCount = userLink.UnreadMessages?.Where(unread => unread.WithPatient == true)
+                int unreadPatientCount = userLink.UnreadMessages
+                    ?.Where(unread => unread.WithPatient == true)
                     .Count() ?? 0;
                     
                 ViewBag.unreadPatientCount = unreadPatientCount;
@@ -76,33 +83,73 @@ namespace PatientPortal.Controllers
             }
 
             var messageQuery = _context.Conversations
+                    .Include(convo => convo.Messages)
+                        .ThenInclude(msg => msg.UnreadBy)
+                    .Include(convo => convo.ConversationParticipants)
+                        .ThenInclude(partic => partic.MessagingLink)
+                        .ThenInclude(link => link.Patient)
+                    .Include(convo => convo.ConversationParticipants)
+                        .ThenInclude(partic => partic.MessagingLink)
+                        .ThenInclude(link => link.Staff)
                     .Where(convo => convo.ConversationParticipants
                         .Any(joined => joined.MessagingLinkId == linkId));
 
-            //Patient Inbox - If "patient" specified, or null (or any incorrect route) default here
+            //Patient Inbox - If "patient" specified, or null default here
             if(inbox != "staff")
             {
-
-                List<Conversation> conversations = messageQuery
-                    .Where(convo => convo.WithPatient == true)
-                    .ToList();
+                messageQuery = messageQuery
+                    .Where(convo => convo.WithPatient == true);
 
                 ViewBag.inbox = "patient";
 
-                return View("Inbox", conversations);
             }
             
             //Staff Inbox
             else
             {
-                List<Conversation> conversations = messageQuery
-                    .Where(convo => convo.WithPatient == false)
-                    .ToList();
-
+                messageQuery = messageQuery
+                    .Where(convo => convo.WithPatient == false);
+                
                 ViewBag.inbox = "staff";
 
-                return View("Inbox", conversations);
             }
+
+            List<InboxConversation> conversations = messageQuery
+                    .Select( c => new InboxConversation()
+                    {
+                        ConversationId = c.ConversationId,
+                        Subject = c.Subject,
+                        Participating = c.ConversationParticipants
+                            .Select(p => new InboxRecipient()
+                            {
+                                LinkId = p.MessagingLinkId,
+                                Name = p.MessagingLink.UserType() == "Patient" ? 
+                                    p.MessagingLink.Patient.FullName() : p.MessagingLink.Staff.FullName(),
+                                Role = p.MessagingLink.UserType() == "Patient" ? 
+                                    "Patient" : p.MessagingLink.Staff.Role
+                            })
+                            .ToList(),
+                        Messages = c.Messages
+                            .Select(m => new InboxMessage()
+                            {
+                                MessageId = m.MessageId,
+                                SenderId = m.MessagingLinkId,
+                                MessageText = m.MessageText,
+                                Sent = m.CreatedAt,
+                                Unread = m.UnreadBy
+                                    .Any(u => u.MessagingLinkId == (int)linkId)
+                            })
+                            .OrderBy(m => m.Sent)
+                            .ToList(),
+                        DateCreated = c.CreatedAt,
+                        DateLastMessage = c.UpdatedAt
+                    })
+                    .OrderByDescending(c => c.DateLastMessage)
+                    .ToList();
+
+            inboxView.Conversations = conversations;
+
+            return View("Inbox", inboxView);
         }
 
         [HttpGet("new")]
@@ -162,11 +209,46 @@ namespace PatientPortal.Controllers
                 },
                 ConversationParticipants = conversationParticipants
             };
-
+            
             _context.Conversations.Add(newConversation);
             
             _context.SaveChanges();
             return RedirectToAction("Inbox");
+        }
+
+        [HttpPost("reply/{conversationId}/new")]
+        public IActionResult NewReply(int conversationId, ReplyView newReply)
+        {
+            if(ModelState.IsValid)
+            {
+                Conversation thisConversation = _context.Conversations
+                    .Include(c => c.ConversationParticipants)
+                    .SingleOrDefault(c => c.ConversationId == conversationId);
+
+                List<Unread> unreadFor = thisConversation.ConversationParticipants
+                    .Select(p => new Unread()
+                    {
+                        MessagingLinkId = p.MessagingLinkId,
+                        WithPatient = thisConversation.WithPatient
+                    })
+                    .Where(p => p.MessagingLinkId != (int)linkId)
+                    .ToList();
+
+                Message newMessage = new Message()
+                {
+                    MessagingLinkId = (int)linkId,
+                    ConversationId = conversationId,
+                    MessageText = newReply.MessageText,
+                    UnreadBy = unreadFor
+                };
+
+                _context.Messages.Add(newMessage);
+                _context.SaveChanges();
+
+                return RedirectToAction("Inbox");
+            }
+
+            return View("Inbox");
         }
     }
 }

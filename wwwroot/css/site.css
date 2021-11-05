@@ -82,3 +82,11 @@ body {
 .main-container {
   height: 100%;
 }
+
+.table-ellipsis {
+  table-layout: fixed;
+}
+
+.td-member {
+  max-width: 150px !important;
+}
