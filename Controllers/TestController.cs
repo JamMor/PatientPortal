@@ -32,7 +32,7 @@ namespace PatientPortal.Controllers
         }
 
         [HttpPost("/test/create")]
-        public IActionResult TestCreate(string role)
+        public IActionResult TestCreate()
         {
             Staff newAdmin = new Staff()
             {
@@ -41,7 +41,8 @@ namespace PatientPortal.Controllers
                 LastName = "Picard",
                 Role = "Admin",
                 StaffUsername = "JPicardNumber1",
-                Password = "password0$"
+                Password = "password0$",
+                MessagingLink = new MessagingLink()
             };
             PasswordHasher<Staff> hasher = new PasswordHasher<Staff>();
             newAdmin.Password = hasher.HashPassword(newAdmin, newAdmin.Password);
@@ -49,18 +50,10 @@ namespace PatientPortal.Controllers
             _context.Staff.Add(newAdmin);
             _context.SaveChanges();
 
-            MessagingLink newLink = new MessagingLink()
-            {
-                StaffId = newAdmin.StaffId
-            };
-
-            _context.MessagingLinks.Add(newLink);
-            _context.SaveChanges();
-
             HttpContext.Session.SetInt32("UserId", newAdmin.StaffId);
             HttpContext.Session.SetString("Name", newAdmin.FullName());
             HttpContext.Session.SetString("Role", newAdmin.Role);
-            HttpContext.Session.SetInt32("MessageLinkId", newLink.MessagingLinkId);
+            HttpContext.Session.SetInt32("MessageLinkId", newAdmin.MessagingLink.MessagingLinkId);
             
             return RedirectToAction("StaffManager", "Staff");
         }
