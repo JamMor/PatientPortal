@@ -25,6 +25,11 @@ namespace PatientPortal.Models
         public Patient Patient { get; set; }
         public List<Unread> UnreadMessages { get; set; }
         public List<ConversationParticipant> ParticipatingConversations { get; set; }
+
+        public string UserType()
+        {
+            return StaffId == null ? "Patient" : "Staff";
+        }
     }
     public class OneUser : ValidationAttribute
     {
