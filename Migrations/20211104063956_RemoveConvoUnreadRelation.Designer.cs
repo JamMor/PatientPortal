@@ -9,8 +9,8 @@ using PatientPortal.Models;
 namespace PatientPortal.Migrations
 {
     [DbContext(typeof(PatientPortalContext))]
-    [Migration("20211023231511_MessagingToConversationParticipantNavigationRemovedStaffLinkId")]
-    partial class MessagingToConversationParticipantNavigationRemovedStaffLinkId
+    [Migration("20211104063956_RemoveConvoUnreadRelation")]
+    partial class RemoveConvoUnreadRelation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,6 +49,9 @@ namespace PatientPortal.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -356,6 +359,9 @@ namespace PatientPortal.Migrations
 
                     b.Property<int>("MessagingLinkId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("WithPatient")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("UnreadId");
 

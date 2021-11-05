@@ -9,8 +9,8 @@ using PatientPortal.Models;
 namespace PatientPortal.Migrations
 {
     [DbContext(typeof(PatientPortalContext))]
-    [Migration("20211028061725_AddedSubjectFieldtoConversation")]
-    partial class AddedSubjectFieldtoConversation
+    [Migration("20211031015945_InitFour")]
+    partial class InitFour
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -354,6 +354,9 @@ namespace PatientPortal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
                     b.Property<int>("MessageId")
                         .HasColumnType("int");
 
@@ -364,6 +367,8 @@ namespace PatientPortal.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.HasKey("UnreadId");
+
+                    b.HasIndex("ConversationId");
 
                     b.HasIndex("MessageId");
 
@@ -567,6 +572,12 @@ namespace PatientPortal.Migrations
 
             modelBuilder.Entity("PatientPortal.Models.Unread", b =>
                 {
+                    b.HasOne("PatientPortal.Models.Conversation", "Conversation")
+                        .WithMany("UnreadBy")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PatientPortal.Models.Message", "Message")
                         .WithMany("UnreadBy")
                         .HasForeignKey("MessageId")
@@ -578,6 +589,8 @@ namespace PatientPortal.Migrations
                         .HasForeignKey("MessagingLinkId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Conversation");
 
                     b.Navigation("Message");
 
@@ -627,6 +640,8 @@ namespace PatientPortal.Migrations
                     b.Navigation("ConversationParticipants");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("UnreadBy");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.HealthIssue", b =>

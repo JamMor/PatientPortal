@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PatientPortal.Migrations
 {
-    public partial class ThirdInit : Migration
+    public partial class InitFour : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,6 +18,8 @@ namespace PatientPortal.Migrations
                     ConversationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     WithPatient = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Subject = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -71,8 +73,7 @@ namespace PatientPortal.Migrations
                     Password = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    MessagingLinkId = table.Column<int>(type: "int", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -380,11 +381,19 @@ namespace PatientPortal.Migrations
                     UnreadId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     MessagingLinkId = table.Column<int>(type: "int", nullable: false),
-                    MessageId = table.Column<int>(type: "int", nullable: false)
+                    MessageId = table.Column<int>(type: "int", nullable: false),
+                    ConversationId = table.Column<int>(type: "int", nullable: false),
+                    WithPatient = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UnreadMessages", x => x.UnreadId);
+                    table.ForeignKey(
+                        name: "FK_UnreadMessages_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "ConversationId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UnreadMessages_Messages_MessageId",
                         column: x => x.MessageId,
@@ -466,6 +475,11 @@ namespace PatientPortal.Migrations
                 name: "IX_TestResults_StaffId",
                 table: "TestResults",
                 column: "StaffId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UnreadMessages_ConversationId",
+                table: "UnreadMessages",
+                column: "ConversationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UnreadMessages_MessageId",
