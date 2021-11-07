@@ -1,0 +1,23 @@
+@model MessageInboxView
+
+<div class="d-flex">
+    <h4 class="my-0 mr-auto">Messages <span class="badge badge-pill badge-secondary">@Model.UnreadTotal</span>:</h4>
+
+    <div class="dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" data-toggle="dropdown">+</button>
+        <div class="dropdown-menu">
+            <a href="#" class="dropdown-item disabled">New Message to Patient</a>
+            <a asp-controller="Messaging" asp-action="NewConversationForm" class="dropdown-item">New Message to Staff</a>
+        </div>
+    </div>
+</div>
+
+<ul class="nav nav-tabs justify-content-end">
+    <li class="nav-item">
+        <a class='nav-link @(@Model.InboxType == "patient" ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="patient">Patient <span class="badge badge-pill badge-secondary">@Model.UnreadPatient</span></a>
+    </li>
+    <li class="nav-item">
+        <a class='nav-link @(@Model.InboxType == "staff" ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="staff">Staff <span class="badge badge-pill badge-secondary">@Model.UnreadStaff</span></a>
+    </li>
+</ul>
+<partial name="_Conversations.cshtml" />

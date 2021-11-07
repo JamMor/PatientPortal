@@ -91,6 +91,14 @@ namespace PatientPortal.Controllers
                     _context.Staff.Add(newStaff);
                     _context.SaveChanges();
 
+                    MessagingLink newLink = new MessagingLink()
+                    {
+                        StaffId = newStaff.StaffId
+                    };
+
+                    _context.MessagingLinks.Add(newLink);
+                    _context.SaveChanges();
+
                     return RedirectToAction("StaffManager", "Staff");
                 }
             }

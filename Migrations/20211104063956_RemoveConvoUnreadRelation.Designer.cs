@@ -9,46 +9,86 @@ using PatientPortal.Models;
 namespace PatientPortal.Migrations
 {
     [DbContext(typeof(PatientPortalContext))]
-    [Migration("20210702204229_AddedCurrentModelsToContext")]
-    partial class AddedCurrentModelsToContext
+    [Migration("20211104063956_RemoveConvoUnreadRelation")]
+    partial class RemoveConvoUnreadRelation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.7");
+                .HasAnnotation("ProductVersion", "5.0.10");
 
             modelBuilder.Entity("PatientPortal.Models.Address", b =>
                 {
                     b.Property<int>("AddressId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("StreetAddress")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ZipCode")
-                        .HasColumnType("int");
+                    b.Property<string>("ZipCode")
+                        .HasColumnType("longtext");
 
                     b.HasKey("AddressId");
 
-                    b.HasIndex("PatientId")
-                        .IsUnique();
-
                     b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("PatientPortal.Models.Conversation", b =>
+                {
+                    b.Property<int>("ConversationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("WithPatient")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("ConversationId");
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("PatientPortal.Models.ConversationParticipant", b =>
+                {
+                    b.Property<int>("ConversationParticipantId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("MessagingLinkId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("ConversationParticipantId");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("MessagingLinkId");
+
+                    b.ToTable("ConversationParticipants");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.HealthIssue", b =>
@@ -79,6 +119,66 @@ namespace PatientPortal.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("HealthIssues");
+                });
+
+            modelBuilder.Entity("PatientPortal.Models.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("MessageText")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("MessagingLinkId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("MessagingLinkId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("PatientPortal.Models.MessagingLink", b =>
+                {
+                    b.Property<int>("MessagingLinkId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StaffId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("MessagingLinkId");
+
+                    b.HasIndex("PatientId")
+                        .IsUnique();
+
+                    b.HasIndex("StaffId")
+                        .IsUnique();
+
+                    b.ToTable("MessagingLinks");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.Patient", b =>
@@ -248,6 +348,30 @@ namespace PatientPortal.Migrations
                     b.ToTable("TestResults");
                 });
 
+            modelBuilder.Entity("PatientPortal.Models.Unread", b =>
+                {
+                    b.Property<int>("UnreadId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessagingLinkId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("WithPatient")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("UnreadId");
+
+                    b.HasIndex("MessageId");
+
+                    b.HasIndex("MessagingLinkId");
+
+                    b.ToTable("UnreadMessages");
+                });
+
             modelBuilder.Entity("PatientPortal.Models.Visit", b =>
                 {
                     b.Property<int>("VisitId")
@@ -313,22 +437,75 @@ namespace PatientPortal.Migrations
                 {
                     b.HasOne("PatientPortal.Models.Patient", "Patient")
                         .WithOne("Address")
-                        .HasForeignKey("PatientPortal.Models.Address", "PatientId")
+                        .HasForeignKey("PatientPortal.Models.Address", "AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("PatientPortal.Models.ConversationParticipant", b =>
+                {
+                    b.HasOne("PatientPortal.Models.Conversation", "Conversation")
+                        .WithMany("ConversationParticipants")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PatientPortal.Models.MessagingLink", "MessagingLink")
+                        .WithMany("ParticipatingConversations")
+                        .HasForeignKey("MessagingLinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("MessagingLink");
+                });
+
             modelBuilder.Entity("PatientPortal.Models.HealthIssue", b =>
                 {
                     b.HasOne("PatientPortal.Models.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("HealthIssues")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("PatientPortal.Models.Message", b =>
+                {
+                    b.HasOne("PatientPortal.Models.Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PatientPortal.Models.MessagingLink", "Sender")
+                        .WithMany()
+                        .HasForeignKey("MessagingLinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("PatientPortal.Models.MessagingLink", b =>
+                {
+                    b.HasOne("PatientPortal.Models.Patient", "Patient")
+                        .WithOne("MessagingLink")
+                        .HasForeignKey("PatientPortal.Models.MessagingLink", "PatientId");
+
+                    b.HasOne("PatientPortal.Models.Staff", "Staff")
+                        .WithOne("MessagingLink")
+                        .HasForeignKey("PatientPortal.Models.MessagingLink", "StaffId");
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("PatientPortal.Models.PatientStaffConnection", b =>
@@ -388,6 +565,25 @@ namespace PatientPortal.Migrations
                     b.Navigation("Staff");
                 });
 
+            modelBuilder.Entity("PatientPortal.Models.Unread", b =>
+                {
+                    b.HasOne("PatientPortal.Models.Message", "Message")
+                        .WithMany("UnreadBy")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PatientPortal.Models.MessagingLink", "MessagingLink")
+                        .WithMany("UnreadMessages")
+                        .HasForeignKey("MessagingLinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Message");
+
+                    b.Navigation("MessagingLink");
+                });
+
             modelBuilder.Entity("PatientPortal.Models.Visit", b =>
                 {
                     b.HasOne("PatientPortal.Models.Patient", "Patient")
@@ -426,6 +622,13 @@ namespace PatientPortal.Migrations
                     b.Navigation("Visit");
                 });
 
+            modelBuilder.Entity("PatientPortal.Models.Conversation", b =>
+                {
+                    b.Navigation("ConversationParticipants");
+
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("PatientPortal.Models.HealthIssue", b =>
                 {
                     b.Navigation("AssociatedTestResults");
@@ -433,11 +636,27 @@ namespace PatientPortal.Migrations
                     b.Navigation("AssociatedVisits");
                 });
 
+            modelBuilder.Entity("PatientPortal.Models.Message", b =>
+                {
+                    b.Navigation("UnreadBy");
+                });
+
+            modelBuilder.Entity("PatientPortal.Models.MessagingLink", b =>
+                {
+                    b.Navigation("ParticipatingConversations");
+
+                    b.Navigation("UnreadMessages");
+                });
+
             modelBuilder.Entity("PatientPortal.Models.Patient", b =>
                 {
                     b.Navigation("Address");
 
+                    b.Navigation("HealthIssues");
+
                     b.Navigation("MedicalTeam");
+
+                    b.Navigation("MessagingLink");
 
                     b.Navigation("Tests");
 
@@ -446,6 +665,8 @@ namespace PatientPortal.Migrations
 
             modelBuilder.Entity("PatientPortal.Models.Staff", b =>
                 {
+                    b.Navigation("MessagingLink");
+
                     b.Navigation("Patients");
 
                     b.Navigation("TestsOrdered");

@@ -32,7 +32,7 @@ namespace PatientPortal.Controllers
             _context = context;
         }
 
-//===========================Patient Manager==============================
+        //===========================Patient Manager==============================
         [HttpGet("")]
         public IActionResult PatientManager()
         {
@@ -49,16 +49,16 @@ namespace PatientPortal.Controllers
 
             return View("PatientManager", ViewModel);
         }
-        
+
         [HttpPost("")]
         public IActionResult PatientManagerQuery(PatientSearch PatientQuery)
         {
             List<Patient> QueryResults = _context.Patients
                 .Where(patient => PatientQuery.SearchPatientId == null || patient.PatientId == PatientQuery.SearchPatientId)
                 .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchFirstName) || patient.FirstName.StartsWith(PatientQuery.SearchFirstName))
-                .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchLastName) || patient.LastName.StartsWith(PatientQuery.SearchLastName) )
+                .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchLastName) || patient.LastName.StartsWith(PatientQuery.SearchLastName))
                 .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchSSN) || patient.Last4SSN == PatientQuery.SearchSSN)
-                .Where(patient => PatientQuery.SearchBirthdate == null || patient.DOB == PatientQuery.SearchBirthdate )
+                .Where(patient => PatientQuery.SearchBirthdate == null || patient.DOB == PatientQuery.SearchBirthdate)
                 .ToList();
 
             PatientManagerView ViewModel = new PatientManagerView
@@ -77,30 +77,62 @@ namespace PatientPortal.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult PatientCreate(Patient newPatient)
+        public IActionResult PatientCreate(NewPatientInput newPatientInput)
         {
-            
-            if(ModelState.IsValid)
+
+            bool IsNewPatientNull = newPatientInput.Patient is null;
+            bool IsNewAddressNull = newPatientInput.Address is null;
+
+            if (newPatientInput.Address.StreetAddress == null
+                && newPatientInput.Address.City == null
+                && newPatientInput.Address.State == null
+                && newPatientInput.Address.ZipCode == null)
             {
-                if(!_context.Patients.Any(patient => patient.Last4SSN == newPatient.Last4SSN 
-                    && patient.DOB == newPatient.DOB 
-                    && patient.FirstName == newPatient.FirstName 
+                newPatientInput.Address = null;
+            }
+            else if(!(newPatientInput.Address.StreetAddress != null
+                && newPatientInput.Address.City != null
+                && newPatientInput.Address.State != null
+                && newPatientInput.Address.ZipCode != null))
+            {
+                TempData["AddressError"] = "Complete all fields if entering address.";
+            }
+
+            if (ModelState.IsValid && TempData["AddressError"] == null)
+            {
+                Patient newPatient = newPatientInput.Patient;
+                Address newAddress = newPatientInput.Address;
+
+                if (!_context.Patients.Any(patient =>
+                    patient.Last4SSN == newPatient.Last4SSN
+                    && patient.DOB == newPatient.DOB
+                    && patient.FirstName == newPatient.FirstName
                     && patient.LastName == newPatient.LastName))
                 {
+
+                    MessagingLink newLink = new MessagingLink();
+                    newPatient.MessagingLink = newLink;
+                    
                     _context.Patients.Add(newPatient);
+                    
+                    if(newAddress != null)
+                    {
+                        newPatient.Address = newAddress;
+                    }
+                    
                     _context.SaveChanges();
 
                     return RedirectToAction("PatientManager", "Patients");
                 }
-            
+
                 else
                 {
-                    ModelState.AddModelError("Last4SSN","A patient already exists with these criteria");
+                    ModelState.AddModelError("Last4SSN", "A patient already exists with these criteria.");
                 }
             }
             return View("PatientForm");
         }
-        
+
         [HttpGet("{patientId}")]
         public IActionResult PatientInfo(int patientId)
         {
@@ -123,21 +155,21 @@ namespace PatientPortal.Controllers
         public IActionResult PatientDelete(int patientId)
         {
             Patient deletedPatient = _context.Patients.SingleOrDefault(patient => patient.PatientId == patientId);
-            if(deletedPatient != null)
+            if (deletedPatient != null)
             {
                 _context.Patients.Remove(deletedPatient);
                 _context.SaveChanges();
             }
             return RedirectToAction("PatientManager", "Patients");
         }
-        
+
         //======================Medical Team================================
         [HttpPost("{patientId}/join")]
         public IActionResult MedicalTeamJoin(int patientId)
         {
             PatientStaffConnection oldLink = _context.PatientStaffConnections.FirstOrDefault(link => link.PatientId == patientId && link.StaffId == (int)uuid);
 
-            if(oldLink == null)
+            if (oldLink == null)
             {
                 PatientStaffConnection newLink = new PatientStaffConnection()
                 {
@@ -147,19 +179,19 @@ namespace PatientPortal.Controllers
                 _context.PatientStaffConnections.Add(newLink);
                 _context.SaveChanges();
             }
-            return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+            return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });
         }
         [HttpPost("{patientId}/leave")]
         public IActionResult MedicalTeamLeave(int patientId)
         {
             PatientStaffConnection oldLink = _context.PatientStaffConnections.FirstOrDefault(link => link.PatientId == patientId && link.StaffId == (int)uuid);
-            
-            if(oldLink != null)
+
+            if (oldLink != null)
             {
                 _context.PatientStaffConnections.Remove(oldLink);
                 _context.SaveChanges();
             }
-            return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+            return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });
         }
     }
 }
