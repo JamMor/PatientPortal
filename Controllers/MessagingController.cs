@@ -53,8 +53,7 @@ namespace PatientPortal.Controllers
                 .FirstOrDefault(link => link.MessagingLinkId == linkId);
 
             //Unread Messages Count
-            int unreadTotalCount = userLink.UnreadMessages?.Count() ?? 0;
-            ViewBag.unreadTotalCount = unreadTotalCount;
+            inboxView.UnreadTotal = userLink.UnreadMessages?.Count() ?? 0;
 
             //Redirect to appropriate URL's for patient or staff member and 
             //separate inbox counts for staff
@@ -64,7 +63,7 @@ namespace PatientPortal.Controllers
                 {
                     RedirectToAction("Inbox", new {inbox = ""});
                 }
-                int unreadPatientCount = unreadTotalCount;
+                inboxView.UnreadPatient = inboxView.UnreadTotal;
             }
             else if(userLink.StaffId != null)
             {
@@ -78,8 +77,8 @@ namespace PatientPortal.Controllers
                     ?.Where(unread => unread.WithPatient == true)
                     .Count() ?? 0;
                     
-                ViewBag.unreadPatientCount = unreadPatientCount;
-                ViewBag.unreadStaffCount = unreadTotalCount - unreadPatientCount;
+                inboxView.UnreadPatient = unreadPatientCount;
+                inboxView.UnreadStaff = inboxView.UnreadTotal - inboxView.UnreadPatient;
             }
 
             var messageQuery = _context.Conversations
@@ -100,7 +99,7 @@ namespace PatientPortal.Controllers
                 messageQuery = messageQuery
                     .Where(convo => convo.WithPatient == true);
 
-                ViewBag.inbox = "patient";
+                inboxView.InboxType = "patient";
 
             }
             
@@ -110,7 +109,7 @@ namespace PatientPortal.Controllers
                 messageQuery = messageQuery
                     .Where(convo => convo.WithPatient == false);
                 
-                ViewBag.inbox = "staff";
+                inboxView.InboxType = "staff";
 
             }
 
@@ -189,10 +188,6 @@ namespace PatientPortal.Controllers
             List<Unread> unreadFor = recipientIds
                 .Select(id => new Unread() {MessagingLinkId = id, WithPatient = newConversationFormView.WithPatient})
                 .ToList();
-
-            // List<MessagingLink> recipients = _context.MessagingLinks
-            //     .Where(link => recipientIds.Contains(link.MessagingLinkId))
-            //     .ToList();
             
             Conversation newConversation = new Conversation()
             {
@@ -243,6 +238,9 @@ namespace PatientPortal.Controllers
                 };
 
                 _context.Messages.Add(newMessage);
+
+                thisConversation.UpdatedAt = newMessage.CreatedAt;
+
                 _context.SaveChanges();
 
                 return RedirectToAction("Inbox");
@@ -250,5 +248,10 @@ namespace PatientPortal.Controllers
 
             return View("Inbox");
         }
+
+        // public IActionResult MarkRead()
+        // {
+
+        // }
     }
 }
