@@ -24,8 +24,10 @@ namespace PatientPortal
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionStringDocker = Configuration["DBInfo:DockerConnectionString"];
+            var connectionStringLocal = Configuration["DBInfo:ConnectionString"];
             services.AddDbContext<PatientPortalContext>(options => options.UseMySql(
-                Configuration["DBInfo:ConnectionString"], new MySqlServerVersion(new Version(8,0,23))
+                connectionStringLocal, new MySqlServerVersion(new Version(8,0,23))
             ));
             services.AddHttpContextAccessor();
             services.AddSession();
