@@ -110,8 +110,8 @@ namespace PatientPortal.Controllers
                     && patient.LastName == newPatient.LastName))
                 {
 
-                    MessagingLink newLink = new MessagingLink();
-                    newPatient.MessagingLink = newLink;
+                    // MessagingLink newLink = new MessagingLink();
+                    // newPatient.MessagingLink = newLink;
                     
                     _context.Patients.Add(newPatient);
                     

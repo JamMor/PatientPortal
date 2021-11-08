@@ -57,6 +57,6 @@ namespace PatientPortal.Models
         public List<PatientStaffConnection> Patients { get; set; }
         public List<Visit> Visits { get; set; }
         public List<TestResult> TestsOrdered { get; set; }
-        public MessagingLink MessagingLink { get; set; }
+        public MessagingLink MessagingLink { get; set; } = new MessagingLink();
     }
 }
