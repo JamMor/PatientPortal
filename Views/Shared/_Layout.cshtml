@@ -8,17 +8,21 @@
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="https://kit.fontawesome.com/bb93b9a982.js" crossorigin="anonymous"></script>
 </head>
-<body class="bg-light">
+<body class="bg-light overflow-hidden">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PatientPortal</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <a class="navbar-brand text-nowrap" asp-area="" asp-controller="Home" asp-action="Index">PatientPortal</a>
+                <div class="navbar-collapse collapse d-sm-inline-flex">
                     <ul class="navbar-nav flex-grow-1">
+                         @if(@Context.Session.GetInt32("UserId") != null)
+                        {
+                            <h6 class="p-2 text-dark">Welcome, @Context.Session.GetString("Name")!</h6>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
@@ -38,20 +42,30 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                     @if(@Context.Session.GetInt32("UserId") != null)
+                    {
+                        <form class="p-2" asp-controller="Login" asp-action="Logout">
+                            <button class="btn btn-secondary btn-sm">Logout</button>
+                        </form>
+                    }
                 </div>
                 @if(@Context.Session.GetInt32("UserId") != null)
+                    {
+                        <a asp-controller="Messaging" asp-action="Inbox"><i class="fas fa-envelope fa-2x"></i></a>
+                    }
+                @* @if(@Context.Session.GetInt32("UserId") != null)
                 {
                     <h6 class="p-2 text-dark">Welcome, @Context.Session.GetString("Name")!</h6>
                     <a asp-controller="Messaging" asp-action="Inbox"><i class="fas fa-envelope"></i></a>
                     <form class="p-2" asp-controller="Login" asp-action="Logout">
                         <button class="btn btn-secondary btn-sm">Logout</button>
                     </form>
-                }
+                } *@
             </div>
         </nav>
     </header>
-    <div class="container main-container pt-3 bg-white overflow-auto">
-        <main role="main" class="pb-3">
+    <div class="container main-container pt-3 pb-3 bg-white box-shadow">
+        <main role="main">
             @RenderBody()
         </main>
     </div>

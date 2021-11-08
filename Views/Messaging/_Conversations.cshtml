@@ -22,7 +22,7 @@
             </tr>
             <tr>
                 <td colspan="4" class="p-0">
-                    <div class="pl-5 collapse" id="messages-@conversation.ConversationId" data-parent="#conversation-container">
+                    <div class="m-2 pl-5 collapse shadow-sm" id="messages-@conversation.ConversationId" data-parent="#conversation-container">
                         @foreach (InboxMessage message in conversation.Messages)
                         {
                             <div class='d-flex @(@message.Unread ? "bg-light font-weight-bold" : "")'>
