@@ -1,0 +1,28 @@
+@model SeedTestView
+
+<table class="table">
+    <tbody>
+        <tr>
+            <th>Staff</th>
+            <td>@ViewBag.currentStaff</td>
+        </tr>
+        <tr>
+            <th>Patients</th>
+            <td>@ViewBag.currentPatients</td>
+        </tr>
+    </tbody>
+</table>
+<form asp-controller="Test" asp-action="Seed" method="post">
+    <div class="form-group">
+        <label class="form-label" asp-for="Patients"></label>
+        <input class="form-control" asp-for="Patients">
+        <span class="text-danger" asp-validation-for="Patients"></span>
+    </div>
+    <div class="form-group">
+        <label class="form-label" asp-for="Staff"></label>
+        <input class="form-control" asp-for="Staff">
+        <span class="text-danger" asp-validation-for="Staff"></span>
+    </div>
+    <button name="option" class="btn btn-danger" value="cancel">Cancel</button>
+    <button name="option" class="btn btn-outline-success" value="seed">Seed</button>
+</form>
