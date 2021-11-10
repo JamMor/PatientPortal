@@ -36,13 +36,13 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult PatientManager(PatientSearch SearchBar, ListResultAttributes DisplayProperties)
         {
+
             var patientQuery = _context.Patients
                 .Where(patient => SearchBar.SearchPatientId == null || patient.PatientId == SearchBar.SearchPatientId)
                 .Where(patient => string.IsNullOrEmpty(SearchBar.SearchFirstName) || patient.FirstName.StartsWith(SearchBar.SearchFirstName))
                 .Where(patient => string.IsNullOrEmpty(SearchBar.SearchLastName) || patient.LastName.StartsWith(SearchBar.SearchLastName))
                 .Where(patient => string.IsNullOrEmpty(SearchBar.SearchSSN) || patient.Last4SSN == SearchBar.SearchSSN)
                 .Where(patient => SearchBar.SearchBirthdate == null || patient.DOB == SearchBar.SearchBirthdate);
-
 
             switch (DisplayProperties.SortOrder)
             {
@@ -85,29 +85,6 @@ namespace PatientPortal.Controllers
 
             return View("PatientManager", ViewModel);
         }
-
-        // [HttpPost("")]
-        // public IActionResult PatientManagerQuery(PatientManagerView PatientManagerInfo)
-        // {
-        //     PatientSearch PatientQuery = PatientManagerInfo.SearchBar;
-        //     var SearchBarResults = _context.Patients
-        //         .Where(patient => PatientQuery.SearchPatientId == null || patient.PatientId == PatientQuery.SearchPatientId)
-        //         .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchFirstName) || patient.FirstName.StartsWith(PatientQuery.SearchFirstName))
-        //         .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchLastName) || patient.LastName.StartsWith(PatientQuery.SearchLastName))
-        //         .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchSSN) || patient.Last4SSN == PatientQuery.SearchSSN)
-        //         .Where(patient => PatientQuery.SearchBirthdate == null || patient.DOB == PatientQuery.SearchBirthdate);
-
-        //     List<Patient> queryResults = SearchBarResults.ToList();
-
-        //     PatientManagerView ViewModel = new PatientManagerView
-        //     {
-        //         SearchBar = PatientQuery,
-        //         SearchResults = queryResults,
-        //         DisplayProperties = PatientManagerInfo.DisplayProperties
-        //     };
-
-        //     return View("PatientManager", ViewModel);
-        // }
 
         [HttpGet("add")]
         public IActionResult PatientAdd()
