@@ -47,6 +47,23 @@ namespace PatientPortal.Models
             return FirstName + " " + LastName;
         }
 
+        [NotMapped]
+        public int Age 
+        {
+            get 
+            {
+                DateTime now = DateTime.Now;
+                if(now.DayOfYear >= DOB.DayOfYear)
+                {
+                    return now.Year - DOB.Year;
+                }
+                else
+                {
+                    return now.Year - DOB.Year - 1;
+                }
+            }
+        }
+
         //Relationship Properties=============
 
         public List<PatientStaffConnection> MedicalTeam { get; set; }
