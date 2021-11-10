@@ -1,10 +1,7 @@
 @model PatientManagerView
 
 
-<form asp-controller="Patients" asp-action="PatientManagerQuery" method="get"
-    asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder"
-    asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
-    method="get" >
+<form asp-controller="Patients" asp-action="PatientManager" method="get" >
     <div class="form-row justify-content-around align-items-center flex-wrap">
         <div class="form-group col-auto">
             <input class="form-control" asp-for="@Model.SearchBar.SearchPatientId">
@@ -32,6 +29,8 @@
             <label class="form-label" asp-for="@Model.SearchBar.SearchSSN"></label>
         </div>
     </div>
+    <input type="hidden" name="DisplayProperties.SortOrder" value="@Model.DisplayProperties.SortOrder">
+    <input type="hidden" name="DisplayProperties.ResultsPerPage" value="@Model.DisplayProperties.ResultsPerPage">
     <div class="text-center">
         <button class="btn btn-secondary m-1">Search</button>
         <a class="btn btn-outline-secondary m-1" asp-controller="Patients" asp-action="PatientManager">Clear</a>

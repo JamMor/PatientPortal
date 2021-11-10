@@ -1,59 +1,76 @@
 @model PatientManagerView
 
+@{
+var search = new Dictionary<string, string>
+            {
+                {"DisplayProperties.SortOrder", @Model.DisplayProperties.SortOrder},
+                {"SearchBar.SearchPatientId", @Model.SearchBar.SearchPatientId.ToString()},
+                {"SearchBar.SearchFirstName", @Model.SearchBar.SearchFirstName},
+                {"SearchBar.SearchLastName", @Model.SearchBar.SearchLastName}
+            };
+}
 
 <div class="d-flex">
     <h4 class="my-0 mr-auto">Patients <span class="badge badge-secondary">@Model.DisplayProperties.ResultsCount</span>:</h4>
-    <form asp-controller="Patients" asp-action="PatientManagerQuery" 
-        asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder"
-        asp-route-SearchBar.SearchPatientId="@Model.SearchBar.SearchPatientId" 
-        asp-route-SearchBar.SearchFirstName="@Model.SearchBar.SearchFirstName" 
-        asp-route-SearchBar.SearchLastName="@Model.SearchBar.SearchLastName" 
-        asp-route-SearchBar.SearchBirthdate="@Model.SearchBar.SearchBirthdate"
-        method="get" 
-        >
-        <div class="dropdown">
-            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                Results per page...
-            </button>
-            <div class="dropdown-menu">
-                <button class="dropdown-item" name="DisplayProperties.ResultsPerPage" value="10">10</button>
-                <button class="dropdown-item" name="DisplayProperties.ResultsPerPage" value="20">20</button>
-                <button class="dropdown-item" name="DisplayProperties.ResultsPerPage" value="50">50</button>
-                <button class="dropdown-item" name="DisplayProperties.ResultsPerPage" value="100">100</button>
-            </div>
+    
+    <div class="dropdown">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+            Results per page...
+        </button>
+        <div class="dropdown-menu">
+            @{int[] options = {5,10,20,50,100};
+                foreach(int option in options)
+                {
+                    <a asp-controller="Patients" asp-action="PatientManager" 
+                    asp-all-route-data="search" class="dropdown-item"
+                    asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder" 
+                    asp-route-DisplayProperties.ResultsPerPage="@option"
+                    >@option</a>
+                }
+            }
         </div>
-    </form>
+    </div>
     <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-outline-primary btn-sm">+</a>
 </div>
 <table class="table">
     <thead>
         <tr>
-            <form asp-controller="Patients" asp-action="PatientManagerQuery" 
-                asp-route-SearchBar.SearchPatientId="@Model.SearchBar.SearchPatientId" 
-                asp-route-SearchBar.SearchFirstName="@Model.SearchBar.SearchFirstName" 
-                asp-route-SearchBar.SearchLastName="@Model.SearchBar.SearchLastName" 
-                asp-route-SearchBar.SearchBirthdate="@Model.SearchBar.SearchBirthdate"
-                asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
-                method="get">
+            <th class="align-middle text-muted">#</th>
+            @* Already selected sort column link is changed to reverse direction *@
+            @{
+                var sorted = @Model.DisplayProperties;
+                string[] sortFields = {"LastName", "DOB", "PatientId"};
+                @* class="btn btn-link font-weight-bold"  *@
+                foreach(string sortField in sortFields)
+                {
+                <th>
+                    <a asp-controller="Patients" asp-action="PatientManager" 
+                    asp-all-route-data="search"
+                    asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                    asp-route-DisplayProperties.SortOrder='@(sortField)_@(@sorted.SortColumn() == @sortField ? sorted.Reverse() : "desc")'>
+                        @sortField
+                    </a>
+                </th>
 
-                @* Already selected sort column link is changed to reverse direction *@
-                @{var sorted = @Model.DisplayProperties;}
-                <th><button class="btn btn-link font-weight-bold" name="DisplayProperties.SortOrder" value='PatientId_@(@sorted.SortColumn() == "PatientId" ? sorted.Reverse() : "desc")'>Patient ID</button></th>
-                <th><button class="btn btn-link font-weight-bold" name="DisplayProperties.SortOrder" value='LastName_@(@sorted.SortColumn() == "LastName" ? sorted.Reverse() : "desc")'>Name</button></th>
-                <th><button class="btn btn-link font-weight-bold" name="DisplayProperties.SortOrder" value='DOB_@(@sorted.SortColumn() == "DOB" ? sorted.Reverse() : "desc")'>DOB</button></th>
-                <th class="align-middle">Registered Date</th>
-            </form>
+                }
+            }
+            <th class="align-middle">SSN</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (Patient patient in @Model.SearchResults)
-        {
-        <tr>
-            <td>@patient.PatientId</td>
-            <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
-            <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB)</td>
-            <td>@patient.CreatedAt</td>
-        </tr>
+        @{
+            int i = 1;
+            foreach (Patient patient in @Model.SearchResults)
+            {
+                <tr>
+                    <td class="text-muted">@(Model.DisplayProperties.ResultsPerPage*(Model.DisplayProperties.CurrentPage - 1) + i)</td>
+                    <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
+                    <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
+                    <td>@patient.PatientId</td>
+                    <td>@patient.Last4SSN</td>
+                </tr>
+                i++;
+            }
         }
     </tbody>
 </table>
