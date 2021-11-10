@@ -1,0 +1,105 @@
+@model PatientManagerView
+
+@if(@Model.DisplayProperties.TotalPages() > 1)
+{
+    <nav aria-label="Result Pages Nav">
+        <ul class="pagination justify-content-center">
+
+            @if(@Model.DisplayProperties.StartPage() > 2)
+            {
+                <li class="page-item">
+                    <a class='page-link @(@Model.DisplayProperties.CurrentPage == @Model.DisplayProperties.TotalPages() ? "disabled" : "")' 
+                    data-toggle="tooltip" data-placement="left" title="1"
+                    asp-controller="Patients" asp-action="PatientManagerQuery" 
+                    asp-route-SearchBar.SearchPatientId="@Model.SearchBar.SearchPatientId"
+                    asp-route-SearchBar.SearchFirstName="@Model.SearchBar.SearchFirstName"
+                    asp-route-SearchBar.SearchLastName="@Model.SearchBar.SearchLastName"
+                    asp-route-SearchBar.SearchBirthdate="@Model.SearchBar.SearchBirthdate"
+                    asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder"
+                    asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                    asp-route-DisplayProperties.CurrentPage="1">
+                        &laquo;
+                    </a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link">
+                        ...
+                    </a>
+                </li>
+            }
+            <li class='page-item @(@Model.DisplayProperties.CurrentPage > 1 ? "" : "disabled")'>
+                <a class="page-link" asp-controller="Patients" asp-action="PatientManagerQuery" 
+                asp-route-SearchBar.SearchPatientId="@Model.SearchBar.SearchPatientId"
+                asp-route-SearchBar.SearchFirstName="@Model.SearchBar.SearchFirstName"
+                asp-route-SearchBar.SearchLastName="@Model.SearchBar.SearchLastName"
+                asp-route-SearchBar.SearchBirthdate="@Model.SearchBar.SearchBirthdate"
+                asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder"
+                asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                asp-route-DisplayProperties.CurrentPage="@(@Model.DisplayProperties.CurrentPage-1)">
+                    Previous
+                </a>
+            </li>
+            
+            @for(int i = @Model.DisplayProperties.StartPage(); 
+                i <= @Model.DisplayProperties.TotalPages() && i < @Model.DisplayProperties.MaxPageLinksPerPage + @Model.DisplayProperties.StartPage(); 
+                i++)
+            {
+                if(i == @Model.DisplayProperties.CurrentPage)
+                {
+                    <li class="page-item font-weight-bold"><span class="page-link disabled">@i</span></li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Patients" asp-action="PatientManagerQuery" 
+                        asp-route-SearchBar.SearchPatientId="@Model.SearchBar.SearchPatientId"
+                        asp-route-SearchBar.SearchFirstName="@Model.SearchBar.SearchFirstName"
+                        asp-route-SearchBar.SearchLastName="@Model.SearchBar.SearchLastName"
+                        asp-route-SearchBar.SearchBirthdate="@Model.SearchBar.SearchBirthdate"
+                        asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder"
+                        asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                        asp-route-DisplayProperties.CurrentPage="@i">
+                            @i
+                        </a>
+                    </li>
+                }
+            }
+
+            <li class='page-item @(@Model.DisplayProperties.CurrentPage < @Model.DisplayProperties.TotalPages() ? "" : "disabled")'>
+                <a class="page-link" asp-controller="Patients" asp-action="PatientManagerQuery" 
+                asp-route-SearchBar.SearchPatientId="@Model.SearchBar.SearchPatientId"
+                asp-route-SearchBar.SearchFirstName="@Model.SearchBar.SearchFirstName"
+                asp-route-SearchBar.SearchLastName="@Model.SearchBar.SearchLastName"
+                asp-route-SearchBar.SearchBirthdate="@Model.SearchBar.SearchBirthdate"
+                asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder"
+                asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                asp-route-DisplayProperties.CurrentPage="@(@Model.DisplayProperties.CurrentPage+1)">
+                    Next
+                </a>
+            </li>
+
+            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage < @Model.DisplayProperties.TotalPages())
+            {
+                <li class="page-item disabled">
+                    <a class="page-link">
+                        ...
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class='page-link @(@Model.DisplayProperties.CurrentPage == @Model.DisplayProperties.TotalPages() ? "disabled" : "")' 
+                    data-toggle="tooltip" data-placement="right" title="@Model.DisplayProperties.TotalPages()"
+                    asp-controller="Patients" asp-action="PatientManagerQuery" 
+                    asp-route-SearchBar.SearchPatientId="@Model.SearchBar.SearchPatientId"
+                    asp-route-SearchBar.SearchFirstName="@Model.SearchBar.SearchFirstName"
+                    asp-route-SearchBar.SearchLastName="@Model.SearchBar.SearchLastName"
+                    asp-route-SearchBar.SearchBirthdate="@Model.SearchBar.SearchBirthdate"
+                    asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder"
+                    asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                    asp-route-DisplayProperties.CurrentPage="@Model.DisplayProperties.TotalPages()">
+                        &raquo;
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

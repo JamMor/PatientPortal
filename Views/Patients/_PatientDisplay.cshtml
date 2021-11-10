@@ -1,38 +1,59 @@
-@model List<Patient>
+@model PatientManagerView
 
 
 <div class="d-flex">
-    <h4 class="my-0 mr-auto">Patients <span class="badge badge-secondary">@Model.Count</span>:</h4>
+    <h4 class="my-0 mr-auto">Patients <span class="badge badge-secondary">@Model.DisplayProperties.ResultsCount</span>:</h4>
+    <form asp-controller="Patients" asp-action="PatientManagerQuery" 
+        asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder"
+        asp-route-SearchBar.SearchPatientId="@Model.SearchBar.SearchPatientId" 
+        asp-route-SearchBar.SearchFirstName="@Model.SearchBar.SearchFirstName" 
+        asp-route-SearchBar.SearchLastName="@Model.SearchBar.SearchLastName" 
+        asp-route-SearchBar.SearchBirthdate="@Model.SearchBar.SearchBirthdate"
+        method="get" 
+        >
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                Results per page...
+            </button>
+            <div class="dropdown-menu">
+                <button class="dropdown-item" name="DisplayProperties.ResultsPerPage" value="10">10</button>
+                <button class="dropdown-item" name="DisplayProperties.ResultsPerPage" value="20">20</button>
+                <button class="dropdown-item" name="DisplayProperties.ResultsPerPage" value="50">50</button>
+                <button class="dropdown-item" name="DisplayProperties.ResultsPerPage" value="100">100</button>
+            </div>
+        </div>
+    </form>
     <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-outline-primary btn-sm">+</a>
 </div>
 <table class="table">
     <thead>
         <tr>
-            <th>Patient ID</th>
-            <th>Name</th>
-            <th>DOB</th>
-            <th>Registered Date</th>
+            <form asp-controller="Patients" asp-action="PatientManagerQuery" 
+                asp-route-SearchBar.SearchPatientId="@Model.SearchBar.SearchPatientId" 
+                asp-route-SearchBar.SearchFirstName="@Model.SearchBar.SearchFirstName" 
+                asp-route-SearchBar.SearchLastName="@Model.SearchBar.SearchLastName" 
+                asp-route-SearchBar.SearchBirthdate="@Model.SearchBar.SearchBirthdate"
+                asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                method="get">
+
+                @* Already selected sort column link is changed to reverse direction *@
+                @{var sorted = @Model.DisplayProperties;}
+                <th><button class="btn btn-link font-weight-bold" name="DisplayProperties.SortOrder" value='PatientId_@(@sorted.SortColumn() == "PatientId" ? sorted.Reverse() : "desc")'>Patient ID</button></th>
+                <th><button class="btn btn-link font-weight-bold" name="DisplayProperties.SortOrder" value='LastName_@(@sorted.SortColumn() == "LastName" ? sorted.Reverse() : "desc")'>Name</button></th>
+                <th><button class="btn btn-link font-weight-bold" name="DisplayProperties.SortOrder" value='DOB_@(@sorted.SortColumn() == "DOB" ? sorted.Reverse() : "desc")'>DOB</button></th>
+                <th class="align-middle">Registered Date</th>
+            </form>
         </tr>
     </thead>
     <tbody>
-        @foreach (Patient patient in @Model)
+        @foreach (Patient patient in @Model.SearchResults)
         {
         <tr>
             <td>@patient.PatientId</td>
-            <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.FullName()</a></td>
+            <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
             <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB)</td>
             <td>@patient.CreatedAt</td>
         </tr>
         }
     </tbody>
 </table>
-<nav aria-label="Result Pages Nav">
-  <ul class="pagination justify-content-center">
-    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-    @for(int i = 1; i <= Math.Ceiling((double)@Model.Count/10); i++)
-    {
-        <li class="page-item"><a class="page-link" href="#">@i</a></li>
-    }
-    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-  </ul>
-</nav>

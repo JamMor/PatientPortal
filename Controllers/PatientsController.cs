@@ -34,41 +34,80 @@ namespace PatientPortal.Controllers
 
         //===========================Patient Manager==============================
         [HttpGet("")]
-        public IActionResult PatientManager()
+        public IActionResult PatientManager(PatientSearch SearchBar, ListResultAttributes DisplayProperties)
         {
-            PatientSearch EmptySearch = new PatientSearch();
+            var patientQuery = _context.Patients
+                .Where(patient => SearchBar.SearchPatientId == null || patient.PatientId == SearchBar.SearchPatientId)
+                .Where(patient => string.IsNullOrEmpty(SearchBar.SearchFirstName) || patient.FirstName.StartsWith(SearchBar.SearchFirstName))
+                .Where(patient => string.IsNullOrEmpty(SearchBar.SearchLastName) || patient.LastName.StartsWith(SearchBar.SearchLastName))
+                .Where(patient => string.IsNullOrEmpty(SearchBar.SearchSSN) || patient.Last4SSN == SearchBar.SearchSSN)
+                .Where(patient => SearchBar.SearchBirthdate == null || patient.DOB == SearchBar.SearchBirthdate);
 
-            List<Patient> AllResults = _context.Patients
+
+            switch (DisplayProperties.SortOrder)
+            {
+                case "PatientId_desc":
+                    patientQuery = patientQuery.OrderByDescending(p => p.PatientId);
+                    break;
+                case "PatientId_asc":
+                    patientQuery = patientQuery.OrderBy(p => p.PatientId);
+                    break;
+                case "LastName_desc":
+                    patientQuery = patientQuery.OrderByDescending(p => p.LastName);
+                    break;
+                case "LastName_asc":
+                    patientQuery = patientQuery.OrderBy(p => p.LastName);
+                    break;
+                case "DOB_desc":
+                    patientQuery = patientQuery.OrderByDescending(p => p.DOB);
+                    break;
+                case "DOB_asc":
+                    patientQuery = patientQuery.OrderBy(p => p.DOB);
+                    break;
+                default:
+                    patientQuery = patientQuery.OrderBy(s => s.LastName);
+                    break;
+            }
+
+            DisplayProperties.ResultsCount = patientQuery.Count();
+            
+            List<Patient> queryResults = patientQuery
+                .Skip(DisplayProperties.ResultsPerPage*(DisplayProperties.CurrentPage-1))
+                .Take(DisplayProperties.ResultsPerPage)
                 .ToList();
 
             PatientManagerView ViewModel = new PatientManagerView
             {
-                SearchBar = EmptySearch,
-                SearchResults = AllResults
+                SearchBar = SearchBar,
+                SearchResults = queryResults,
+                DisplayProperties = DisplayProperties
             };
 
             return View("PatientManager", ViewModel);
         }
 
-        [HttpPost("")]
-        public IActionResult PatientManagerQuery(PatientSearch PatientQuery)
-        {
-            List<Patient> QueryResults = _context.Patients
-                .Where(patient => PatientQuery.SearchPatientId == null || patient.PatientId == PatientQuery.SearchPatientId)
-                .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchFirstName) || patient.FirstName.StartsWith(PatientQuery.SearchFirstName))
-                .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchLastName) || patient.LastName.StartsWith(PatientQuery.SearchLastName))
-                .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchSSN) || patient.Last4SSN == PatientQuery.SearchSSN)
-                .Where(patient => PatientQuery.SearchBirthdate == null || patient.DOB == PatientQuery.SearchBirthdate)
-                .ToList();
+        // [HttpPost("")]
+        // public IActionResult PatientManagerQuery(PatientManagerView PatientManagerInfo)
+        // {
+        //     PatientSearch PatientQuery = PatientManagerInfo.SearchBar;
+        //     var SearchBarResults = _context.Patients
+        //         .Where(patient => PatientQuery.SearchPatientId == null || patient.PatientId == PatientQuery.SearchPatientId)
+        //         .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchFirstName) || patient.FirstName.StartsWith(PatientQuery.SearchFirstName))
+        //         .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchLastName) || patient.LastName.StartsWith(PatientQuery.SearchLastName))
+        //         .Where(patient => string.IsNullOrEmpty(PatientQuery.SearchSSN) || patient.Last4SSN == PatientQuery.SearchSSN)
+        //         .Where(patient => PatientQuery.SearchBirthdate == null || patient.DOB == PatientQuery.SearchBirthdate);
 
-            PatientManagerView ViewModel = new PatientManagerView
-            {
-                SearchBar = PatientQuery,
-                SearchResults = QueryResults
-            };
+        //     List<Patient> queryResults = SearchBarResults.ToList();
 
-            return View("PatientManager", ViewModel);
-        }
+        //     PatientManagerView ViewModel = new PatientManagerView
+        //     {
+        //         SearchBar = PatientQuery,
+        //         SearchResults = queryResults,
+        //         DisplayProperties = PatientManagerInfo.DisplayProperties
+        //     };
+
+        //     return View("PatientManager", ViewModel);
+        // }
 
         [HttpGet("add")]
         public IActionResult PatientAdd()

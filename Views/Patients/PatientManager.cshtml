@@ -1,5 +1,7 @@
 @model PatientManagerView
 
-<partial name="_PatientSearchBar.cshtml" model=@Model.SearchBar />
+<partial name="_PatientSearchBar.cshtml" />
 <hr>
-<partial name="_PatientDisplay.cshtml" model=@Model.SearchResults />
+<partial name="_PatientDisplay.cshtml" />
+<hr>
+<partial name="_PatientPagination.cshtml" />
