@@ -75,7 +75,7 @@ var search = new Dictionary<string, string>
                 </a>
             </li>
 
-            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage -1 < @Model.DisplayProperties.TotalPages())
+            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage < @Model.DisplayProperties.TotalPages())
             {
                 <li class="page-item disabled">
                     <a class="page-link">
@@ -83,7 +83,7 @@ var search = new Dictionary<string, string>
                     </a>
                 </li>
             }
-            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage < @Model.DisplayProperties.TotalPages())
+            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage - 1 < @Model.DisplayProperties.TotalPages())
             {
                 <li class="page-item">
                     <a class='page-link @(@Model.DisplayProperties.CurrentPage == @Model.DisplayProperties.TotalPages() ? "disabled" : "")' 
