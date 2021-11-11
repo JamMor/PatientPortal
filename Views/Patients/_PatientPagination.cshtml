@@ -3,12 +3,13 @@
 @{
 var search = new Dictionary<string, string>
             {
-                {"SearchBar.SearchPatientId",@Model.SearchBar.SearchPatientId.ToString()},
-                {"SearchBar.SearchFirstName",@Model.SearchBar.SearchFirstName},
-                {"SearchBar.SearchLastName",@Model.SearchBar.SearchLastName},
-                {"SearchBar.SearchBirthdate",@Model.SearchBar.SearchBirthdate.ToString()},
-                {"DisplayProperties.SortOrder",@Model.DisplayProperties.SortOrder},
-                {"DisplayProperties.ResultsPerPage",@Model.DisplayProperties.ResultsPerPage.ToString()}
+                {"SearchPatientId",@Model.SearchBar.SearchPatientId.ToString()},
+                {"SearchFirstName",@Model.SearchBar.SearchFirstName},
+                {"SearchLastName",@Model.SearchBar.SearchLastName},
+                {"SearchBirthdate",@Model.SearchBar.SearchBirthdate.ToString()},
+                {"SearchSSN", @Model.SearchBar.SearchSSN},
+                {"SortOrder",@Model.DisplayProperties.SortOrder},
+                {"ResultsPerPage",@Model.DisplayProperties.ResultsPerPage.ToString()}
             };
 
 
@@ -19,17 +20,20 @@ var search = new Dictionary<string, string>
     <nav aria-label="Result Pages Nav">
         <ul class="pagination justify-content-center">
 
-            @if(@Model.DisplayProperties.StartPage() > 2)
+            @if(@Model.DisplayProperties.StartPage() > 1)
             {
                 <li class="page-item">
                     <a class='page-link @(@Model.DisplayProperties.CurrentPage == @Model.DisplayProperties.TotalPages() ? "disabled" : "")' 
                     data-toggle="tooltip" data-placement="left" title="1"
                     asp-controller="Patients" asp-action="PatientManager" 
                     asp-all-route-data="search"
-                    asp-route-DisplayProperties.CurrentPage="1">
+                    asp-route-CurrentPage="1">
                         &laquo;
                     </a>
                 </li>
+            }
+            @if(@Model.DisplayProperties.StartPage() > 2)
+            {
                 <li class="page-item disabled">
                     <a class="page-link">
                         ...
@@ -39,7 +43,7 @@ var search = new Dictionary<string, string>
             <li class='page-item @(@Model.DisplayProperties.CurrentPage > 1 ? "" : "disabled")'>
                 <a class="page-link" asp-controller="Patients" asp-action="PatientManager" 
                 asp-all-route-data="search"
-                asp-route-DisplayProperties.CurrentPage="@(@Model.DisplayProperties.CurrentPage-1)">
+                asp-route-CurrentPage="@(@Model.DisplayProperties.CurrentPage-1)">
                     Previous
                 </a>
             </li>
@@ -57,7 +61,7 @@ var search = new Dictionary<string, string>
                     <li class="page-item">
                         <a class="page-link" asp-controller="Patients" asp-action="PatientManager" 
                         asp-all-route-data="search"
-                        asp-route-DisplayProperties.CurrentPage="@i">
+                        asp-route-CurrentPage="@i">
                             @i
                         </a>
                     </li>
@@ -67,24 +71,27 @@ var search = new Dictionary<string, string>
             <li class='page-item @(@Model.DisplayProperties.CurrentPage < @Model.DisplayProperties.TotalPages() ? "" : "disabled")'>
                 <a class="page-link" asp-controller="Patients" asp-action="PatientManager" 
                 asp-all-route-data="search"
-                asp-route-DisplayProperties.CurrentPage="@(@Model.DisplayProperties.CurrentPage+1)">
+                asp-route-CurrentPage="@(@Model.DisplayProperties.CurrentPage+1)">
                     Next
                 </a>
             </li>
 
-            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage < @Model.DisplayProperties.TotalPages())
+            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage -1 < @Model.DisplayProperties.TotalPages())
             {
                 <li class="page-item disabled">
                     <a class="page-link">
                         ...
                     </a>
                 </li>
+            }
+            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage < @Model.DisplayProperties.TotalPages())
+            {
                 <li class="page-item">
                     <a class='page-link @(@Model.DisplayProperties.CurrentPage == @Model.DisplayProperties.TotalPages() ? "disabled" : "")' 
                     data-toggle="tooltip" data-placement="right" title="@Model.DisplayProperties.TotalPages()"
                     asp-controller="Patients" asp-action="PatientManager" 
                     asp-all-route-data="search"
-                    asp-route-DisplayProperties.CurrentPage="@Model.DisplayProperties.TotalPages()">
+                    asp-route-CurrentPage="@Model.DisplayProperties.TotalPages()">
                         &raquo;
                     </a>
                 </li>

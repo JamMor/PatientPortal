@@ -1,36 +1,35 @@
 @model PatientManagerView
 
-
 <form asp-controller="Patients" asp-action="PatientManager" method="get" >
     <div class="form-row justify-content-around align-items-center flex-wrap">
         <div class="form-group col-auto">
-            <input class="form-control" asp-for="@Model.SearchBar.SearchPatientId">
-            <span class="text-danger" asp-validation-for="@Model.SearchBar.SearchPatientId"></span>
-            <label class="form-label" asp-for="@Model.SearchBar.SearchPatientId"></label>
+            <input class="form-control" asp-for="SearchBar.SearchPatientId">
+            <span class="text-danger" asp-validation-for="SearchBar.SearchPatientId"></span>
+            <label class="form-label" asp-for="SearchBar.SearchPatientId"></label>
         </div>
         <div class="form-group col-auto">
-            <input class="form-control" asp-for="@Model.SearchBar.SearchFirstName">
-            <span class="text-danger" asp-validation-for="@Model.SearchBar.SearchFirstName"></span>
-            <label class="form-label" asp-for="@Model.SearchBar.SearchFirstName"></label>
+            <input class="form-control" asp-for="SearchBar.SearchFirstName">
+            <span class="text-danger" asp-validation-for="SearchBar.SearchFirstName"></span>
+            <label class="form-label" asp-for="SearchBar.SearchFirstName"></label>
         </div>
         <div class="form-group col-auto">
-            <input class="form-control" asp-for="@Model.SearchBar.SearchLastName">
-            <span class="text-danger" asp-validation-for="@Model.SearchBar.SearchLastName"></span>
-            <label class="form-label" asp-for="@Model.SearchBar.SearchLastName"></label>
+            <input class="form-control" asp-for="SearchBar.SearchLastName">
+            <span class="text-danger" asp-validation-for="SearchBar.SearchLastName"></span>
+            <label class="form-label" asp-for="SearchBar.SearchLastName"></label>
         </div>
         <div class="form-group col-auto">
-            <input class="form-control" asp-for="@Model.SearchBar.SearchBirthdate">
-            <span class="text-danger" asp-validation-for="@Model.SearchBar.SearchBirthdate"></span>
-            <label class="form-label" asp-for="@Model.SearchBar.SearchBirthdate"></label>
+            <input class="form-control" asp-for="SearchBar.SearchBirthdate">
+            <span class="text-danger" asp-validation-for="SearchBar.SearchBirthdate"></span>
+            <label class="form-label" asp-for="SearchBar.SearchBirthdate"></label>
         </div>
         <div class="form-group col-auto">
-            <input class="form-control" asp-for="@Model.SearchBar.SearchSSN">
-            <span class="text-danger" asp-validation-for="@Model.SearchBar.SearchSSN"></span>
-            <label class="form-label" asp-for="@Model.SearchBar.SearchSSN"></label>
+            <input class="form-control" asp-for="SearchBar.SearchSSN">
+            <span class="text-danger" asp-validation-for="SearchBar.SearchSSN"></span>
+            <label class="form-label" asp-for="SearchBar.SearchSSN"></label>
         </div>
     </div>
-    <input type="hidden" name="DisplayProperties.SortOrder" value="@Model.DisplayProperties.SortOrder">
-    <input type="hidden" name="DisplayProperties.ResultsPerPage" value="@Model.DisplayProperties.ResultsPerPage">
+    <input type="hidden" name="SortOrder" value="@Model.DisplayProperties.SortOrder">
+    <input type="hidden" name="ResultsPerPage" value="@Model.DisplayProperties.ResultsPerPage">
     <div class="text-center">
         <button class="btn btn-secondary m-1">Search</button>
         <a class="btn btn-outline-secondary m-1" asp-controller="Patients" asp-action="PatientManager">Clear</a>

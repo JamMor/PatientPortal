@@ -3,16 +3,16 @@
 @{
 var search = new Dictionary<string, string>
             {
-                {"DisplayProperties.SortOrder", @Model.DisplayProperties.SortOrder},
-                {"SearchBar.SearchPatientId", @Model.SearchBar.SearchPatientId.ToString()},
-                {"SearchBar.SearchFirstName", @Model.SearchBar.SearchFirstName},
-                {"SearchBar.SearchLastName", @Model.SearchBar.SearchLastName}
+                {"SearchPatientId", @Model.SearchBar.SearchPatientId.ToString()},
+                {"SearchFirstName", @Model.SearchBar.SearchFirstName},
+                {"SearchLastName", @Model.SearchBar.SearchLastName},
+                {"SearchBirthdate", @Model.SearchBar.SearchBirthdate.ToString()},
+                {"SearchSSN", @Model.SearchBar.SearchSSN}
             };
 }
 
 <div class="d-flex">
     <h4 class="my-0 mr-auto">Patients <span class="badge badge-secondary">@Model.DisplayProperties.ResultsCount</span>:</h4>
-    
     <div class="dropdown">
         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
             Results per page...
@@ -21,10 +21,11 @@ var search = new Dictionary<string, string>
             @{int[] options = {5,10,20,50,100};
                 foreach(int option in options)
                 {
-                    <a asp-controller="Patients" asp-action="PatientManager" 
-                    asp-all-route-data="search" class="dropdown-item"
-                    asp-route-DisplayProperties.SortOrder="@Model.DisplayProperties.SortOrder" 
-                    asp-route-DisplayProperties.ResultsPerPage="@option"
+                    <a  class="dropdown-item" 
+                    asp-controller="Patients" asp-action="PatientManager" 
+                    asp-all-route-data="search"
+                    asp-route-SortOrder="@Model.DisplayProperties.SortOrder" 
+                    asp-route-ResultsPerPage="@option"
                     >@option</a>
                 }
             }
@@ -40,14 +41,13 @@ var search = new Dictionary<string, string>
             @{
                 var sorted = @Model.DisplayProperties;
                 string[] sortFields = {"LastName", "DOB", "PatientId"};
-                @* class="btn btn-link font-weight-bold"  *@
                 foreach(string sortField in sortFields)
                 {
                 <th>
                     <a asp-controller="Patients" asp-action="PatientManager" 
                     asp-all-route-data="search"
-                    asp-route-DisplayProperties.ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
-                    asp-route-DisplayProperties.SortOrder='@(sortField)_@(@sorted.SortColumn() == @sortField ? sorted.Reverse() : "desc")'>
+                    asp-route-ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                    asp-route-SortOrder='@(sortField)_@(@sorted.SortColumn() == @sortField ? sorted.Reverse() : "desc")'>
                         @sortField
                     </a>
                 </th>
