@@ -1,29 +1,30 @@
-@model StaffSearch
+@model StaffManagerView
 
-
-<form asp-controller="Staff" asp-action="StaffManagerQuery" method="post">
+<form asp-controller="Staff" asp-action="StaffManager" method="get">
     <div class="form-row justify-content-around align-items-center flex-wrap">
         <div class="form-group col-auto">
-            <input class="form-control" asp-for="SearchStaffId">
-            <span class="text-danger" asp-validation-for="SearchStaffId"></span>
-            <label class="form-label" asp-for="SearchStaffId"></label>
+            <input class="form-control" asp-for="SearchBar.SearchStaffId">
+            <span class="text-danger" asp-validation-for="SearchBar.SearchStaffId"></span>
+            <label class="form-label" asp-for="SearchBar.SearchStaffId"></label>
         </div>
         <div class="form-group col-auto">
-            <input class="form-control" asp-for="SearchFirstName">
-            <span class="text-danger" asp-validation-for="SearchFirstName"></span>
-            <label class="form-label" asp-for="SearchFirstName"></label>
+            <input class="form-control" asp-for="SearchBar.SearchFirstName">
+            <span class="text-danger" asp-validation-for="SearchBar.SearchFirstName"></span>
+            <label class="form-label" asp-for="SearchBar.SearchFirstName"></label>
         </div>
         <div class="form-group col-auto">
-            <input class="form-control" asp-for="SearchLastName">
-            <span class="text-danger" asp-validation-for="SearchLastName"></span>
-            <label class="form-label" asp-for="SearchLastName"></label>
+            <input class="form-control" asp-for="SearchBar.SearchLastName">
+            <span class="text-danger" asp-validation-for="SearchBar.SearchLastName"></span>
+            <label class="form-label" asp-for="SearchBar.SearchLastName"></label>
         </div>
         <div class="form-group col-auto">
-            <input class="form-control" asp-for="SearchRole">
-            <span class="text-danger" asp-validation-for="SearchRole"></span>
-            <label class="form-label" asp-for="SearchRole"></label>
+            <input class="form-control" asp-for="SearchBar.SearchRole">
+            <span class="text-danger" asp-validation-for="SearchBar.SearchRole"></span>
+            <label class="form-label" asp-for="SearchBar.SearchRole"></label>
         </div>
     </div>
+    <input type="hidden" name="SortOrder" value="@Model.DisplayProperties.SortOrder">
+    <input type="hidden" name="ResultsPerPage" value="@Model.DisplayProperties.ResultsPerPage">
     <div class="text-center">
         <button class="btn btn-secondary m-1">Search</button>
         <a class="btn btn-outline-secondary m-1" asp-controller="Staff" asp-action="StaffManager">Clear</a>

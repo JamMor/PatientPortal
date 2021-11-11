@@ -7,18 +7,18 @@ namespace PatientPortal.Models
     [NotMapped]
     public class StaffSearch
     {
-        [Display(Name ="Staff ID #")]
+        [Display(Name = "Staff ID #")]
         public int? SearchStaffId { get; set; }
-        
-        [Display(Name ="First Name")]
+
+        [Display(Name = "First Name")]
         [RegularExpression("^[a-zA-Z\\s]*$", ErrorMessage = "May only contain letters.")]
         public string SearchFirstName { get; set; }
-        
-        [Display(Name ="Last Name")]
+
+        [Display(Name = "Last Name")]
         [RegularExpression("^[a-zA-Z\\s]*$", ErrorMessage = "May only contain letters.")]
         public string SearchLastName { get; set; }
 
-        [Display(Name ="Role")]
+        [Display(Name = "Role")]
         public string SearchRole { get; set; }
     }
 }

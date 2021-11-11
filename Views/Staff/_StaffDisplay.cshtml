@@ -1,30 +1,77 @@
-@model List<Staff>
+@model StaffManagerView
 
+@{
+var search = new Dictionary<string, string>
+            {
+                {"SearchPatientId", @Model.SearchBar.SearchStaffId.ToString()},
+                {"SearchFirstName", @Model.SearchBar.SearchFirstName},
+                {"SearchLastName", @Model.SearchBar.SearchLastName},
+                {"SearchRole", @Model.SearchBar.SearchRole}
+            };
+}
 
 <div class="d-flex">
-    <h4 class="my-0 mr-auto">Staff <span class="badge badge-pill badge-secondary">@Model.Count</span>:</h4>
+    <h4 class="my-0 mr-auto">Staff <span class="badge badge-secondary">@Model.DisplayProperties.ResultsCount</span>:</h4>
+    <div class="dropdown">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+            Results per page...
+        </button>
+        <div class="dropdown-menu">
+            @{int[] options = {5,10,20,50,100};
+                foreach(int option in options)
+                {
+                    <a  class="dropdown-item" 
+                    asp-controller="Staff" asp-action="StaffManager" 
+                    asp-all-route-data="search"
+                    asp-route-SortOrder="@Model.DisplayProperties.SortOrder" 
+                    asp-route-ResultsPerPage="@option"
+                    >@option</a>
+                }
+            }
+        </div>
+    </div>
     <a asp-controller="Staff" asp-action="StaffAdd" class="btn btn-outline-primary btn-sm">+</a>
 </div>
 <table class="table">
     <thead>
         <tr>
-            <th>Staff ID</th>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Patients</th>
-            <th>Registered Date</th>
+            <th class="align-middle text-muted">#</th>
+            @* Already selected sort column link is changed to reverse direction *@
+            @{
+                var sorted = @Model.DisplayProperties;
+                string[] sortFields = {"LastName", "Role", "StaffId"};
+                foreach(string sortField in sortFields)
+                {
+                <th>
+                    <a asp-controller="Staff" asp-action="StaffManager" 
+                    asp-all-route-data="search"
+                    asp-route-ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                    asp-route-SortOrder='@(sortField)_@(@sorted.SortColumn() == @sortField ? sorted.Reverse() : "desc")'>
+                        @sortField
+                    </a>
+                </th>
+
+                }
+            }
+            <th class="align-middle">Patients</th>
+            <th class="align-middle">Registered</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (Staff staffmember in @Model)
-        {
-        <tr>
-            <td>@staffmember.StaffId</td>
-            <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.FullName()</a></td>
-            <td>@staffmember.Role</td>
-            <td>@staffmember.Patients.Count</td>
-            <td>@staffmember.CreatedAt</td>
-        </tr>
+        @{
+            int i = 1;
+            foreach (Staff staffmember in @Model.SearchResults)
+            {
+                <tr>
+                    <td class="text-muted">@(Model.DisplayProperties.ResultsPerPage*(Model.DisplayProperties.CurrentPage - 1) + i)</td>
+                    <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.FullName()</a></td>
+                    <td>@staffmember.Role</td>
+                    <td>@staffmember.StaffId</td>
+                    <td>@staffmember.Patients.Count</td>
+                    <td>@staffmember.CreatedAt</td>
+                </tr>
+                i++;
+            }
         }
     </tbody>
 </table>

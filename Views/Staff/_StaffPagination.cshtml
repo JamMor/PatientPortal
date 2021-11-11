@@ -1,0 +1,100 @@
+@model StaffManagerView
+
+@{
+var search = new Dictionary<string, string>
+            {
+                {"SearchStaffId",@Model.SearchBar.SearchStaffId.ToString()},
+                {"SearchFirstName",@Model.SearchBar.SearchFirstName},
+                {"SearchLastName",@Model.SearchBar.SearchLastName},
+                {"SearchRole",@Model.SearchBar.SearchRole},
+                {"SortOrder",@Model.DisplayProperties.SortOrder},
+                {"ResultsPerPage",@Model.DisplayProperties.ResultsPerPage.ToString()}
+            };
+
+
+}
+
+@if(@Model.DisplayProperties.TotalPages() > 1)
+{
+    <nav aria-label="Result Pages Nav">
+        <ul class="pagination justify-content-center">
+
+            @if(@Model.DisplayProperties.StartPage() > 1)
+            {
+                <li class="page-item">
+                    <a class='page-link @(@Model.DisplayProperties.CurrentPage == @Model.DisplayProperties.TotalPages() ? "disabled" : "")' 
+                    data-toggle="tooltip" data-placement="left" title="1"
+                    asp-controller="Staff" asp-action="StaffManager" 
+                    asp-all-route-data="search"
+                    asp-route-CurrentPage="1">
+                        &laquo;
+                    </a>
+                </li>
+            }
+            @if(@Model.DisplayProperties.StartPage() > 2)
+            {
+                <li class="page-item disabled">
+                    <a class="page-link">
+                        ...
+                    </a>
+                </li>
+            }
+            <li class='page-item @(@Model.DisplayProperties.CurrentPage > 1 ? "" : "disabled")'>
+                <a class="page-link" asp-controller="Staff" asp-action="StaffManager" 
+                asp-all-route-data="search"
+                asp-route-CurrentPage="@(@Model.DisplayProperties.CurrentPage-1)">
+                    Previous
+                </a>
+            </li>
+            
+            @for(int i = @Model.DisplayProperties.StartPage(); 
+                i <= @Model.DisplayProperties.TotalPages() && i < @Model.DisplayProperties.MaxPageLinksPerPage + @Model.DisplayProperties.StartPage(); 
+                i++)
+            {
+                if(i == @Model.DisplayProperties.CurrentPage)
+                {
+                    <li class="page-item font-weight-bold"><span class="page-link disabled">@i</span></li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Staff" asp-action="StaffManager" 
+                        asp-all-route-data="search"
+                        asp-route-CurrentPage="@i">
+                            @i
+                        </a>
+                    </li>
+                }
+            }
+
+            <li class='page-item @(@Model.DisplayProperties.CurrentPage < @Model.DisplayProperties.TotalPages() ? "" : "disabled")'>
+                <a class="page-link" asp-controller="Staff" asp-action="StaffManager" 
+                asp-all-route-data="search"
+                asp-route-CurrentPage="@(@Model.DisplayProperties.CurrentPage+1)">
+                    Next
+                </a>
+            </li>
+
+            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage -1 < @Model.DisplayProperties.TotalPages())
+            {
+                <li class="page-item disabled">
+                    <a class="page-link">
+                        ...
+                    </a>
+                </li>
+            }
+            @if(@Model.DisplayProperties.StartPage() + @Model.DisplayProperties.MaxPageLinksPerPage < @Model.DisplayProperties.TotalPages())
+            {
+                <li class="page-item">
+                    <a class='page-link @(@Model.DisplayProperties.CurrentPage == @Model.DisplayProperties.TotalPages() ? "disabled" : "")' 
+                    data-toggle="tooltip" data-placement="right" title="@Model.DisplayProperties.TotalPages()"
+                    asp-controller="Staff" asp-action="StaffManager" 
+                    asp-all-route-data="search"
+                    asp-route-CurrentPage="@Model.DisplayProperties.TotalPages()">
+                        &raquo;
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

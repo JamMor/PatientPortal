@@ -34,38 +34,52 @@ namespace PatientPortal.Controllers
 
 //==============Staff Manager==============================
         [HttpGet("")]
-        public IActionResult StaffManager()
+        public IActionResult StaffManager(StaffSearch SearchBar, ListResultAttributes DisplayProperties)
         {
-            StaffSearch EmptySearch = new StaffSearch();
+            var staffQuery = _context.Staff
+                .Where(staff => SearchBar.SearchStaffId == null || staff.StaffId == SearchBar.SearchStaffId)
+                .Where(staff => string.IsNullOrEmpty(SearchBar.SearchFirstName) || staff.FirstName.StartsWith(SearchBar.SearchFirstName))
+                .Where(staff => string.IsNullOrEmpty(SearchBar.SearchLastName) || staff.LastName.StartsWith(SearchBar.SearchLastName) )
+                .Where(staff => string.IsNullOrEmpty(SearchBar.SearchRole) || staff.Role == SearchBar.SearchRole);
 
-            List<Staff> AllResults = _context.Staff
+            switch (DisplayProperties.SortOrder)
+            {
+                case "StaffId_desc":
+                    staffQuery = staffQuery.OrderByDescending(s => s.StaffId);
+                    break;
+                case "StaffId_asc":
+                    staffQuery = staffQuery.OrderBy(s => s.StaffId);
+                    break;
+                case "LastName_desc":
+                    staffQuery = staffQuery.OrderByDescending(s => s.LastName);
+                    break;
+                case "LastName_asc":
+                    staffQuery = staffQuery.OrderBy(s => s.LastName);
+                    break;
+                case "Role_desc":
+                    staffQuery = staffQuery.OrderByDescending(s => s.Role);
+                    break;
+                case "Role_asc":
+                    staffQuery = staffQuery.OrderBy(s => s.Role);
+                    break;
+                default:
+                    staffQuery = staffQuery.OrderBy(s => s.LastName);
+                    break;
+            }
+
+            DisplayProperties.ResultsCount = staffQuery.Count();
+
+            List<Staff> queryResults = staffQuery
                 .Include(staff => staff.Patients)
+                .Skip(DisplayProperties.ResultsPerPage*(DisplayProperties.CurrentPage-1))
+                .Take(DisplayProperties.ResultsPerPage)
                 .ToList();
 
             StaffManagerView ViewModel = new StaffManagerView
             {
-                SearchBar = EmptySearch,
-                SearchResults = AllResults
-            };
-
-            return View("StaffManager", ViewModel);
-        }
-
-        [HttpPost("")]
-        public IActionResult StaffManagerQuery(StaffSearch StaffQuery)
-        {
-            List<Staff> QueryResults = _context.Staff
-                .Where(staff => StaffQuery.SearchStaffId == null || staff.StaffId == StaffQuery.SearchStaffId)
-                .Where(staff => string.IsNullOrEmpty(StaffQuery.SearchFirstName) || staff.FirstName.StartsWith(StaffQuery.SearchFirstName))
-                .Where(staff => string.IsNullOrEmpty(StaffQuery.SearchLastName) || staff.LastName.StartsWith(StaffQuery.SearchLastName) )
-                .Where(staff => string.IsNullOrEmpty(StaffQuery.SearchRole) || staff.Role == StaffQuery.SearchRole)
-                .Include(staff => staff.Patients)
-                .ToList();
-
-            StaffManagerView ViewModel = new StaffManagerView
-            {
-                SearchBar = StaffQuery,
-                SearchResults = QueryResults
+                SearchBar = SearchBar,
+                SearchResults = queryResults,
+                DisplayProperties = DisplayProperties
             };
 
             return View("StaffManager", ViewModel);
