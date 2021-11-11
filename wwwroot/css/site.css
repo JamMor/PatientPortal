@@ -99,3 +99,15 @@ main {
 .td-member {
   max-width: 150px !important;
 }
+
+.extend > span {
+  max-width: 0px;
+  display: inline-flex;
+  white-space: nowrap;
+  transition: max-width 0.5s, padding-right 0.45s; /* Transition width and padding to avoid "popping" */
+  overflow: hidden;
+}
+
+.extend:hover > span, .extend:focus > span {
+  max-width: 100px; /* how far the text can expand, adjust based on content */
+}
