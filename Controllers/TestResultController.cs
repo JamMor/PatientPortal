@@ -36,36 +36,86 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult TestResultAdd(int patientId)
         {
-            ViewBag.patientId = patientId;
-            ViewBag.HealthIssues = _context.HealthIssues.Where(issue => issue.PatientId == patientId).ToList();
-            return View("TestResultForm");
+            
+            TestResultFormView viewModel = _context.Patients
+                .Where(p => p.PatientId == patientId)
+                .Include(p => p.HealthIssues)
+                .Select(p => new TestResultFormView()
+                {
+                    Patient = new PatientHeaderInfoView()
+                    {
+                        CurrentPatientId = p.PatientId,
+                        CurrentPatientFirstName = p.FirstName,
+                        CurrentPatientLastName = p.LastName,
+                        CurrentPatientSSN = p.Last4SSN,
+                        CurrentPatientDOB = p.DOB,
+                        CurrentPatientAge = p.Age,
+                        CurrentPatientCreatedOn = p.CreatedAt
+                    },
+                    HealthIssues = p.HealthIssues
+                        .Select(h => new HealthIssueCheckbox()
+                        {
+                            HealthIssueId = h.HealthIssueId,
+                            ShortDescription = h.ShortDescription,
+                            CreatedAt = h.CreatedAt
+                        })
+                        .ToList()
+                })
+                .FirstOrDefault();
+                
+            return View("TestResultForm", viewModel);
         }
 
         [HttpPost("")]
-        public IActionResult TestResultCreate(int patientId, TestResult newTest, List<int> issues)
+        public IActionResult TestResultCreate(int patientId, TestResultFormView formData, List<int> issues)
         {
             if(ModelState.IsValid)
             {
-                newTest.PatientId = patientId;
-                newTest.StaffId = (int)uuid;
-                _context.TestResults.Add(newTest);
-                _context.SaveChanges();
-
-                foreach (int issueId in issues)
+                TestResult testData = new TestResult()
                 {
-                    TestHealthIssueAssociation newAssociation = new TestHealthIssueAssociation()
+                    Type = formData.TestResult.Type,
+                    Comment = formData.TestResult.Comment,
+                    PatientId = patientId,
+                    StaffId = (int)uuid,
+                    AssociatedHealthIssues = formData.HealthIssues
+                    .Where(h => h.Selected == true)
+                    .Select(h => new TestHealthIssueAssociation()
                     {
-                        TestResultId = newTest.TestResultId,
-                        HealthIssueId = issueId
-                    };
-                    _context.TestHealthIssueAssociations.Add(newAssociation);
-                    _context.SaveChanges();
-                }
+                        HealthIssueId = h.HealthIssueId
+                    })
+                    .ToList()
+                };
+
+                _context.TestResults.Add(testData);
+                _context.SaveChanges();
+                // foreach (int issueId in issues)
+                // {
+                //     TestHealthIssueAssociation newAssociation = new TestHealthIssueAssociation()
+                //     {
+                //         TestResultId = testData.TestResultId,
+                //         HealthIssueId = issueId
+                //     };
+                //     _context.TestHealthIssueAssociations.Add(newAssociation);
+                //     _context.SaveChanges();
+                // }
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
-            ViewBag.patientId = patientId;
-            ViewBag.HealthIssues = _context.HealthIssues.Where(issue => issue.PatientId == patientId).ToList();
-            return View("TestResultForm");
+
+            formData.Patient = _context.Patients
+                    .Where(p => p.PatientId == patientId)
+                    .Select(p => new PatientHeaderInfoView()
+                    {
+                        CurrentPatientId = p.PatientId,
+                        CurrentPatientFirstName = p.FirstName,
+                        CurrentPatientLastName = p.LastName,
+                        CurrentPatientSSN = p.Last4SSN,
+                        CurrentPatientDOB = p.DOB,
+                        CurrentPatientAge = p.Age,
+                        CurrentPatientCreatedOn = p.CreatedAt
+                    })
+                    .FirstOrDefault();
+            
+            return View("TestResultForm", formData);
         }
     
         [HttpPost("{testId}/delete")]
