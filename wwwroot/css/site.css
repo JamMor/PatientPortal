@@ -86,6 +86,7 @@ body {
 }
 
 main {
+  height:100%;
   max-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -100,6 +101,7 @@ main {
   max-width: 150px !important;
 }
 
+/* Extendable Buttons */
 .extend > span {
   max-width: 0px;
   display: inline-flex;
@@ -111,3 +113,34 @@ main {
 .extend:hover > span, .extend:focus > span {
   max-width: 100px; /* how far the text can expand, adjust based on content */
 }
+
+
+/* Scrolling for dropdown */
+.vert-scroll{
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* ===== Test Login Scrollbar CSS ===== */
+  /* Firefox */
+  .test-login {
+    overflow-x: auto;
+    scrollbar-width: auto;
+    scrollbar-color: #4ebaca #ffffff;
+  }
+
+  /* Chrome, Edge, and Safari */
+  .test-login::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  .test-login::-webkit-scrollbar-track {
+    background: #ffffff;
+  }
+
+  .test-login::-webkit-scrollbar-thumb {
+    background-color: #4ebaca;
+    border-radius: 10px;
+    border: 2px outset #75cbd7;
+  }

@@ -12,11 +12,11 @@
     else
     {
     <div class="container m-3">
-        <form class="d-flex" asp-controller="Test" asp-action="TestLoginOptions">
+        <form class="d-flex p-1 test-login" asp-controller="Test" asp-action="TestLoginOptions">
             @{
                 foreach(Staff staff in Model)
                 {
-                    <button name="staffId" class="mx-1 btn btn-sm btn-warning" value=@staff.StaffId>Login @staff.FirstName[0] @staff.LastName</button>
+                    <button name="staffId" class="mx-1 btn btn-sm btn-warning" value=@staff.StaffId>Login <span class="text-nowrap">@staff.FirstName[0] @staff.LastName</span></button>
                 }
             }
         </form>

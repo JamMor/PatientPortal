@@ -4,14 +4,10 @@
 <form asp-controller="Messaging" asp-action="NewConversation" method="post">
     <div class="dropdown">
         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Send To</button>
-        <div class="dropdown-menu">
+        <div class="dropdown-menu vert-scroll">
             @for(int i = 0; i < @Model.Recipients.Count; i++)
             {
             <div class="dropdown-item form-check">
-                @* <input class="form-check-input" type="checkbox" asp-for="@recipient.Selected" value="@(recipient.LinkId)" id="LinkId-@(recipient.LinkId)" name="staff[]"> *@
-                @* <label class="form-check-label" for="LinkId-@(recipient.LinkId)">
-                    @recipient.Name, @recipient.Role
-                </label> *@
                 <input class="form-check-input" type="checkbox" asp-for="@Model.Recipients[i].Selected">
                 <label class="form-check-label" asp-for="@Model.Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
                 <input class="form-check-input" type="hidden" asp-for="@Model.Recipients[i].LinkId">
@@ -27,7 +23,7 @@
     <div class="form-group">
         <label class="form-label" asp-for="MessageText"></label>
         <span class="text-danger" asp-validation-for="MessageText"></span>
-        <input class="form-control" asp-for="MessageText">
+        <textarea class="form-control" asp-for="MessageText"></textarea>
     </div>
     <button class="btn btn-info">Send Message</button>
 </form>
