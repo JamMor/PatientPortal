@@ -170,7 +170,9 @@ namespace PatientPortal.Controllers
         [HttpPost("{patientId}/delete")]
         public IActionResult PatientDelete(int patientId)
         {
-            Patient deletedPatient = _context.Patients.SingleOrDefault(patient => patient.PatientId == patientId);
+            Patient deletedPatient = _context.Patients
+                .Include(p => p.MessagingLink)
+                .SingleOrDefault(patient => patient.PatientId == patientId);
             if (deletedPatient != null)
             {
                 _context.Patients.Remove(deletedPatient);

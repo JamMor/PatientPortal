@@ -105,14 +105,6 @@ namespace PatientPortal.Controllers
                     _context.Staff.Add(newStaff);
                     _context.SaveChanges();
 
-                    // MessagingLink newLink = new MessagingLink()
-                    // {
-                    //     StaffId = newStaff.StaffId
-                    // };
-
-                    // _context.MessagingLinks.Add(newLink);
-                    // _context.SaveChanges();
-
                     return RedirectToAction("StaffManager", "Staff");
                 }
             }
@@ -136,7 +128,9 @@ namespace PatientPortal.Controllers
         [HttpPost("{staffId}/delete")]
         public IActionResult StaffDelete(int staffId)
         {
-            Staff deletedStaff = _context.Staff.SingleOrDefault(staff => staff.StaffId == staffId);
+            Staff deletedStaff = _context.Staff
+                .Include(s => s.MessagingLink)
+                .SingleOrDefault(staff => staff.StaffId == staffId);
             if(deletedStaff != null)
             {
                 _context.Staff.Remove(deletedStaff);
