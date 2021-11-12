@@ -153,13 +153,16 @@ namespace PatientPortal.Controllers
         public IActionResult PatientInfo(int patientId)
         {
             Patient patient = _context.Patients
-                .Include(patient => patient.HealthIssues)
+                .Include(patient => patient.HealthIssues
+                    .OrderByDescending(h => h.UpdatedAt))
                 .ThenInclude(issue => issue.AssociatedTestResults)
                 .Include(patient => patient.HealthIssues)
                 .ThenInclude(issue => issue.AssociatedVisits)
-                .Include(patient => patient.Visits)
+                .Include(patient => patient.Visits
+                    .OrderByDescending(v => v.CreatedAt))
                 .ThenInclude(team => team.Staff)
-                .Include(patient => patient.Tests)
+                .Include(patient => patient.Tests
+                    .OrderByDescending(t => t.CreatedAt))
                 .ThenInclude(team => team.Staff)
                 .Include(patient => patient.MedicalTeam)
                 .ThenInclude(team => team.Staff)

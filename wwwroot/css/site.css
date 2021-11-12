@@ -101,6 +101,14 @@ main {
   max-width: 150px !important;
 }
 
+/* Collapse Indicator */
+.card-header .fas {
+  transition: .3s transform ease-in-out;
+}
+.card-header .collapsed .fas {
+  transform: rotate(-90deg);
+}
+
 /* Extendable Buttons */
 .extend > span {
   max-width: 0px;
