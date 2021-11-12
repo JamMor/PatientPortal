@@ -156,6 +156,8 @@ namespace PatientPortal.Controllers
         {
             List<Recipient> otherStaff = _context.Staff
                 .Where(staff => staff.MessagingLink.MessagingLinkId != linkId)
+                .OrderBy(staff => staff.Role)
+                .ThenBy(staff => staff.LastName)
                 .Select(staff => new Recipient()
                 {
                     LinkId = staff.MessagingLink.MessagingLinkId,
