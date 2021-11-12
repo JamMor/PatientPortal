@@ -17,12 +17,18 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <a class="navbar-brand text-nowrap" asp-area="" asp-controller="Home" asp-action="Index">PatientPortal</a>
+                @if(@Context.Session.GetInt32("UserId") != null)
+                {
+                    <div class="order-0 order-sm-last">
+                        <a asp-controller="Messaging" asp-action="Inbox"><i class="fas fa-envelope fa-2x"></i></a>
+                    </div>
+                }
                 <div class="navbar-collapse collapse d-sm-inline-flex">
-                    <ul class="navbar-nav flex-grow-1">
-                         @if(@Context.Session.GetInt32("UserId") != null)
-                        {
-                            <h6 class="p-2 text-dark">Welcome, @Context.Session.GetString("Name")!</h6>
-                        }
+                    @if(@Context.Session.GetInt32("UserId") != null)
+                    {
+                        <h6 class="p-2 text-dark">Welcome, @Context.Session.GetString("Name")!</h6>
+                    }
+                    <ul class="navbar-nav flex-grow-1 order-sm-first">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
@@ -49,18 +55,6 @@
                         </form>
                     }
                 </div>
-                @if(@Context.Session.GetInt32("UserId") != null)
-                    {
-                        <a asp-controller="Messaging" asp-action="Inbox"><i class="fas fa-envelope fa-2x"></i></a>
-                    }
-                @* @if(@Context.Session.GetInt32("UserId") != null)
-                {
-                    <h6 class="p-2 text-dark">Welcome, @Context.Session.GetString("Name")!</h6>
-                    <a asp-controller="Messaging" asp-action="Inbox"><i class="fas fa-envelope"></i></a>
-                    <form class="p-2" asp-controller="Login" asp-action="Logout">
-                        <button class="btn btn-secondary btn-sm">Logout</button>
-                    </form>
-                } *@
             </div>
         </nav>
     </header>
