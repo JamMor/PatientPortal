@@ -1,0 +1,8 @@
+@model NewPatientInput
+
+<h3>New Patient: </h3>
+<form class="row" asp-action="PatientCreate" asp-controller="Patients" method="post">
+    <partial name="_PatientFormInfo.cshtml" for="Patient" />
+    <partial name="_AddressFormInfo.cshtml" for="Address" />
+    <button class="btn btn-info">Create Patient</button>
+</form>
