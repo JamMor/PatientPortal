@@ -92,20 +92,30 @@ namespace PatientPortal.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult StaffCreate(Staff newStaff)
+        public IActionResult StaffCreate(StaffFormView staffFormView)
         {
-            if(!_context.Staff.Any(staff => staff.StaffUsername == newStaff.StaffUsername))
+            if(!_context.Staff.Any(staff => staff.StaffUsername == staffFormView.StaffUsername))
             {
                 if(ModelState.IsValid)
                 {
+                    Staff newStaff = new Staff()
+                    {
+                        FirstName = staffFormView.FirstName,
+                        LastName = staffFormView.LastName,
+                        Role = staffFormView.Role,
+                        StaffUsername = staffFormView.StaffUsername,
+                        Password = staffFormView.Password,
+                        IsAdmin = false,
+                        MessagingLink = new MessagingLink()
+                    };
+
                     PasswordHasher<Staff> hasher = new PasswordHasher<Staff>();
                     newStaff.Password = hasher.HashPassword(newStaff, newStaff.Password);
-                    newStaff.IsAdmin = false;
-
+                    
                     _context.Staff.Add(newStaff);
                     _context.SaveChanges();
 
-                    return RedirectToAction("StaffManager", "Staff");
+                    return RedirectToAction("StaffInfo", "Staff", new { staffId = newStaff.StaffId });
                 }
             }
             else
@@ -120,6 +130,7 @@ namespace PatientPortal.Controllers
         {
             Staff staffmember = _context.Staff
                 .Include(staff => staff.Patients)
+                .Include(staff => staff.MessagingLink)
                 .FirstOrDefault(staff => staff.StaffId == staffId);
             return View("StaffInfo", staffmember);
         }
