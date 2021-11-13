@@ -1,31 +1,31 @@
 @model PatientManagerView
 
-<form asp-controller="Patients" asp-action="PatientManager" method="get" >
+<form class="mt-3" asp-controller="Patients" asp-action="PatientManager" method="get" >
     <div class="form-row justify-content-around align-items-center flex-wrap">
         <div class="form-group col-auto">
+            <label class="form-label" asp-for="SearchBar.SearchPatientId"></label>
             <input class="form-control" asp-for="SearchBar.SearchPatientId">
             <span class="text-danger" asp-validation-for="SearchBar.SearchPatientId"></span>
-            <label class="form-label" asp-for="SearchBar.SearchPatientId"></label>
         </div>
         <div class="form-group col-auto">
+            <label class="form-label" asp-for="SearchBar.SearchFirstName"></label>
             <input class="form-control" asp-for="SearchBar.SearchFirstName">
             <span class="text-danger" asp-validation-for="SearchBar.SearchFirstName"></span>
-            <label class="form-label" asp-for="SearchBar.SearchFirstName"></label>
         </div>
         <div class="form-group col-auto">
+            <label class="form-label" asp-for="SearchBar.SearchLastName"></label>
             <input class="form-control" asp-for="SearchBar.SearchLastName">
             <span class="text-danger" asp-validation-for="SearchBar.SearchLastName"></span>
-            <label class="form-label" asp-for="SearchBar.SearchLastName"></label>
         </div>
         <div class="form-group col-auto">
+            <label class="form-label" asp-for="SearchBar.SearchBirthdate"></label>
             <input class="form-control" asp-for="SearchBar.SearchBirthdate">
             <span class="text-danger" asp-validation-for="SearchBar.SearchBirthdate"></span>
-            <label class="form-label" asp-for="SearchBar.SearchBirthdate"></label>
         </div>
         <div class="form-group col-auto">
+            <label class="form-label" asp-for="SearchBar.SearchSSN"></label>
             <input class="form-control" asp-for="SearchBar.SearchSSN">
             <span class="text-danger" asp-validation-for="SearchBar.SearchSSN"></span>
-            <label class="form-label" asp-for="SearchBar.SearchSSN"></label>
         </div>
     </div>
     <input type="hidden" name="SortOrder" value="@Model.DisplayProperties.SortOrder">

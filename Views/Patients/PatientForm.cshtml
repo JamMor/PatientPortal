@@ -23,9 +23,10 @@
             <span class="text-danger" asp-validation-for="Last4SSN"></span>
             <input class="form-control" asp-for="Last4SSN">
         </div>
+        <span class="text-danger" asp-validation-for="AlreadyExistsError"></span>
     </div>
     <div class="col-md-6">
-        <h4>Contact Info (optional)</h4>
+        <h5 class="text-muted">Contact Info (optional)</h5>
         <div class="form-group">
             <label class="form-label" asp-for="PhoneNumber"></label>
             <span class="text-danger" asp-validation-for="PhoneNumber"></span>
@@ -57,6 +58,7 @@
             <span class="text-danger" asp-validation-for="Address.ZipCode"></span>
             <input class="form-control" asp-for="Address.ZipCode">
         </div>
+        <span class="text-danger" asp-validation-for="Address.AddressIncompleteError"></span>
     </div>
     <button class="btn btn-info">Create Patient</button>
 </form>
