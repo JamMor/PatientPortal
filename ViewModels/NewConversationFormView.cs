@@ -9,6 +9,7 @@ namespace PatientPortal.Models
     public class NewConversationFormView
     {
         public List<Recipient> Recipients { get; set; }
+        public Recipient PatientRecipient { get; set; }
         public string Subject { get; set; }
         public string MessageText { get; set; }
 

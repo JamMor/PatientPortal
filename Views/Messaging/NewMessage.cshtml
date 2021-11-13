@@ -5,6 +5,14 @@
     <div class="dropdown">
         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Send To</button>
         <div class="dropdown-menu vert-scroll">
+            @if(@Model.PatientRecipient != null)
+            {
+                <div class="dropdown-item form-check">
+                    <input class="form-check-input disabled" type="checkbox" asp-for="@Model.PatientRecipient.Selected">
+                    <label class="form-check-label" asp-for="@Model.PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
+                    <input class="form-check-input" type="hidden" asp-for="@Model.PatientRecipient.LinkId">
+                </div>
+            }
             @for(int i = 0; i < @Model.Recipients.Count; i++)
             {
             <div class="dropdown-item form-check">
@@ -15,6 +23,7 @@
             }
         </div>
     </div>
+    <input class="form-check-input" type="hidden" asp-for="@Model.WithPatient">
     <div class="form-group">
         <label class="form-label" asp-for="Subject"></label>
         <span class="text-danger" asp-validation-for="Subject"></span>

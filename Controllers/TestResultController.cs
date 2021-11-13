@@ -45,6 +45,7 @@ namespace PatientPortal.Controllers
                     Patient = new PatientHeaderInfoView()
                     {
                         CurrentPatientId = p.PatientId,
+                        CurrentPatientLinkId = p.MessagingLink.MessagingLinkId,
                         CurrentPatientFirstName = p.FirstName,
                         CurrentPatientLastName = p.LastName,
                         CurrentPatientSSN = p.Last4SSN,

@@ -122,9 +122,9 @@ namespace PatientPortal.Controllers
                             .Select(p => new InboxRecipient()
                             {
                                 LinkId = p.MessagingLinkId,
-                                Name = p.MessagingLink.UserType() == "Patient" ? 
+                                Name = p.MessagingLink.UserType == "Patient" ? 
                                     p.MessagingLink.Patient.FullName() : p.MessagingLink.Staff.FullName(),
-                                Role = p.MessagingLink.UserType() == "Patient" ? 
+                                Role = p.MessagingLink.UserType == "Patient" ? 
                                     "Patient" : p.MessagingLink.Staff.Role
                             })
                             .ToList(),
@@ -152,8 +152,9 @@ namespace PatientPortal.Controllers
         }
 
         [HttpGet("new")]
-        public IActionResult NewConversationForm()
+        public IActionResult NewConversationForm(int? toLinkId)
         {
+            
             List<Recipient> otherStaff = _context.Staff
                 .Where(staff => staff.MessagingLink.MessagingLinkId != linkId)
                 .OrderBy(staff => staff.Role)
@@ -163,6 +164,7 @@ namespace PatientPortal.Controllers
                     LinkId = staff.MessagingLink.MessagingLinkId,
                     Name = staff.FullName(),
                     Role = staff.Role,
+                    Selected = staff.MessagingLink.MessagingLinkId == toLinkId
                 })
                 .ToList();
 
@@ -171,22 +173,60 @@ namespace PatientPortal.Controllers
                 Recipients = otherStaff
             };
 
+            //If linked from patient info, add patient to patient recipient.
+            if(toLinkId != null)
+            {
+                // // For some reason this will return a messageLink that does not have the patient included
+                // MessagingLink addressedLink = _context.MessagingLinks
+                //     .Where(m => m.MessagingLinkId == toLinkId)
+                //     .Include(m => m.Patient)
+                //     .FirstOrDefault();
+                
+                Recipient patientRecipient = _context.MessagingLinks
+                    .Include(m => m.Patient)
+                    .Where(m => m.MessagingLinkId == toLinkId && m.PatientId != null)
+                    .Select(m => new Recipient()
+                    {
+                        LinkId = m.MessagingLinkId,
+                        Name = m.Patient.FullName(),
+                        Role = "Patient",
+                        Selected = true
+                    })
+                    .FirstOrDefault();
+
+                if(patientRecipient != null)
+                {
+                    newConversationFormViewModel.PatientRecipient = patientRecipient;
+                    newConversationFormViewModel.WithPatient = true;
+                };
+            };
+
             return View("NewMessage", newConversationFormViewModel);
         }
         
         [HttpPost("new")]
         public IActionResult NewConversation(NewConversationFormView newConversationFormView)
         {
+            //Gets Id's of everyone to receive message
             List<int> recipientIds = newConversationFormView.Recipients
                 .Where(recipient => recipient.Selected == true)
                 .Select(recipient => recipient.LinkId)
                 .ToList();
 
+            //Adds PatientId if present
+            if(newConversationFormView.PatientRecipient != null)
+            {
+                recipientIds.Add(newConversationFormView.PatientRecipient.LinkId);
+            }
+
+
+            //Adds everyone to conversation including current user (sender)
             List<ConversationParticipant> conversationParticipants = recipientIds
                 .Select(id => new ConversationParticipant() {MessagingLinkId = id})
                 .ToList();
             conversationParticipants.Add(new ConversationParticipant() {MessagingLinkId = (int)linkId});
 
+            //Sets first message as unread for all other recipients
             List<Unread> unreadFor = recipientIds
                 .Select(id => new Unread() {MessagingLinkId = id, WithPatient = newConversationFormView.WithPatient})
                 .ToList();
@@ -208,8 +248,8 @@ namespace PatientPortal.Controllers
             };
             
             _context.Conversations.Add(newConversation);
-            
             _context.SaveChanges();
+
             return RedirectToAction("Inbox");
         }
 

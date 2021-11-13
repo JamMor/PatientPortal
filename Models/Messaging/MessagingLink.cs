@@ -15,8 +15,8 @@ namespace PatientPortal.Models
         [ForeignKey("Staff")]
         public int? StaffId { get; set; }
 
-        [ForeignKey("Patient")]
         [OneUser]
+        [ForeignKey("Patient")]
         public int? PatientId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
@@ -26,9 +26,10 @@ namespace PatientPortal.Models
         public List<Unread> UnreadMessages { get; set; }
         public List<ConversationParticipant> ParticipatingConversations { get; set; }
 
-        public string UserType()
+        [NotMapped]
+        public string UserType
         {
-            return StaffId == null ? "Patient" : "Staff";
+            get => StaffId == null ? "Patient" : "Staff";
         }
     }
     public class OneUser : ValidationAttribute
