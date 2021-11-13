@@ -153,6 +153,7 @@ namespace PatientPortal.Controllers
         {
             if (ModelState.IsValid)
             {
+                //Checks to ensure no patient with ALL same data already exists
                 if (!_context.Patients.Any(patient =>
                     patient.Last4SSN == patientFormView.Last4SSN
                     && patient.DOB == patientFormView.DOB
@@ -168,6 +169,7 @@ namespace PatientPortal.Controllers
                         Last4SSN = patientFormView.Last4SSN,
                         PhoneNumber = patientFormView.PhoneNumber,
                         Email = patientFormView.Email,
+                        MessagingLink = new MessagingLink()
                     };
                     
                     if(patientFormView.Address != null)
@@ -181,13 +183,7 @@ namespace PatientPortal.Controllers
                         };
                     }
 
-                    MessagingLink newLink = new MessagingLink()
-                    {
-                        Patient = newPatient
-                    };
-
                     _context.Patients.Add(newPatient);
-                    _context.MessagingLinks.Add(newLink);
                     _context.SaveChanges();
 
                     return RedirectToAction("PatientInfo", "Patients", new { patientId = newPatient.PatientId });
@@ -195,7 +191,7 @@ namespace PatientPortal.Controllers
 
                 else
                 {
-                    ModelState.AddModelError("Last4SSN", "A patient already exists with this information.");
+                    ModelState.AddModelError("AlreadyExistsError", "A patient already exists with this information.");
                 }
             }
             return View("PatientForm");
@@ -218,6 +214,7 @@ namespace PatientPortal.Controllers
                 .ThenInclude(team => team.Staff)
                 .Include(patient => patient.MedicalTeam)
                 .ThenInclude(team => team.Staff)
+                .Include(p => p.MessagingLink)
                 .FirstOrDefault(patient => patient.PatientId == patientId);
             return View("PatientInfo", patient);
         }
