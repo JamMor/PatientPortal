@@ -47,8 +47,11 @@ namespace PatientPortal.Models
 
         [Display(Name = "ZIP Code")]
         [DataType(DataType.PostalCode)]
-        [ProperAddress]
         public string ZipCode { get; set; }
+
+        //Just to attach validation error to on form
+        [ProperAddress]
+        public string AddressIncompleteError { get; set; }
 
     }
 

@@ -23,7 +23,10 @@
             <span class="text-danger" asp-validation-for="Last4SSN"></span>
             <input class="form-control" asp-for="Last4SSN">
         </div>
-        <span class="text-danger" asp-validation-for="AlreadyExistsError"></span>
+        @if(ViewBag.AlreadyExistsError != null)
+        {
+            <span class="text-danger">@ViewBag.AlreadyExistsError</span>
+        }
     </div>
     <div class="col-md-6">
         <h5 class="text-muted">Contact Info (optional)</h5>

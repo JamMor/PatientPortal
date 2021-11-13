@@ -92,67 +92,12 @@ namespace PatientPortal.Controllers
             return View("PatientForm");
         }
 
-        // [HttpPost("add")]
-        // public IActionResult PatientCreate(NewPatientInput newPatientInput)
-        // {
-
-        //     bool IsNewPatientNull = newPatientInput.Patient is null;
-        //     bool IsNewAddressNull = newPatientInput.Address is null;
-
-        //     if (newPatientInput.Address.StreetAddress == null
-        //         && newPatientInput.Address.City == null
-        //         && newPatientInput.Address.State == null
-        //         && newPatientInput.Address.ZipCode == null)
-        //     {
-        //         newPatientInput.Address = null;
-        //     }
-        //     else if(!(newPatientInput.Address.StreetAddress != null
-        //         && newPatientInput.Address.City != null
-        //         && newPatientInput.Address.State != null
-        //         && newPatientInput.Address.ZipCode != null))
-        //     {
-        //         TempData["AddressError"] = "Complete all fields if entering address.";
-        //     }
-
-        //     if (ModelState.IsValid && TempData["AddressError"] == null)
-        //     {
-        //         Patient newPatient = newPatientInput.Patient;
-        //         Address newAddress = newPatientInput.Address;
-
-        //         if (!_context.Patients.Any(patient =>
-        //             patient.Last4SSN == newPatient.Last4SSN
-        //             && patient.DOB == newPatient.DOB
-        //             && patient.FirstName == newPatient.FirstName
-        //             && patient.LastName == newPatient.LastName))
-        //         {
-
-        //             // MessagingLink newLink = new MessagingLink();
-        //             // newPatient.MessagingLink = newLink;
-                    
-        //             _context.Patients.Add(newPatient);
-                    
-        //             if(newAddress != null)
-        //             {
-        //                 newPatient.Address = newAddress;
-        //             }
-                    
-        //             _context.SaveChanges();
-
-        //             return RedirectToAction("PatientManager", "Patients");
-        //         }
-
-        //         else
-        //         {
-        //             ModelState.AddModelError("Last4SSN", "A patient already exists with these criteria.");
-        //         }
-        //     }
-        //     return View("PatientForm");
-        // }
         [HttpPost("add")]
         public IActionResult PatientCreate(PatientFormView patientFormView)
         {
             if (ModelState.IsValid)
             {
+
                 //Checks to ensure no patient with ALL same data already exists
                 if (!_context.Patients.Any(patient =>
                     patient.Last4SSN == patientFormView.Last4SSN
@@ -191,7 +136,7 @@ namespace PatientPortal.Controllers
 
                 else
                 {
-                    ModelState.AddModelError("AlreadyExistsError", "A patient already exists with this information.");
+                    ViewBag.AlreadyExistsError = "A patient already exists with this information.";
                 }
             }
             return View("PatientForm");
