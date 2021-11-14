@@ -1,28 +1,32 @@
 @model NewConversationFormView
 
-<h3>New Message: </h3>
+<h3 class="my-3">New Message: </h3>
 <form asp-controller="Messaging" asp-action="NewConversation" method="post">
-    <div class="dropdown">
-        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Send To</button>
-        <div class="dropdown-menu vert-scroll">
-            @if(@Model.PatientRecipient != null)
-            {
+    <label class="form-label">To:</label>
+    <div class="d-flex mb-3">
+        <div class="dropdown ">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Send To</button>
+            <div class="dropdown-menu vert-scroll">
+                @if(@Model.PatientRecipient != null)
+                {
+                    <div class="dropdown-item form-check">
+                        <input class="form-check-input" type="checkbox" asp-for="@Model.PatientRecipient.Selected" disabled>
+                        <label class="form-check-label" asp-for="@Model.PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
+                        <input class="form-check-input" type="hidden" asp-for="@Model.PatientRecipient.LinkId">
+                    </div>
+                    <hr>
+                }
+                @for(int i = 0; i < @Model.Recipients.Count; i++)
+                {
                 <div class="dropdown-item form-check">
-                    <input class="form-check-input" type="checkbox" asp-for="@Model.PatientRecipient.Selected" disabled>
-                    <label class="form-check-label" asp-for="@Model.PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
-                    <input class="form-check-input" type="hidden" asp-for="@Model.PatientRecipient.LinkId">
+                    <input class="form-check-input" type="checkbox" asp-for="@Model.Recipients[i].Selected">
+                    <label class="form-check-label" asp-for="@Model.Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
+                    <input class="form-check-input" type="hidden" asp-for="@Model.Recipients[i].LinkId">
                 </div>
-                <hr>
-            }
-            @for(int i = 0; i < @Model.Recipients.Count; i++)
-            {
-            <div class="dropdown-item form-check">
-                <input class="form-check-input" type="checkbox" asp-for="@Model.Recipients[i].Selected">
-                <label class="form-check-label" asp-for="@Model.Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
-                <input class="form-check-input" type="hidden" asp-for="@Model.Recipients[i].LinkId">
+                }
             </div>
-            }
         </div>
+        <div class="w-100" id="selected-recipients"></div>
     </div>
     <input class="form-check-input" type="hidden" asp-for="@Model.WithPatient">
     <div class="form-group">
@@ -37,3 +41,38 @@
     </div>
     <button class="btn btn-info">Send Message</button>
 </form>
+
+<script>
+    $(document).ready(function() {
+        //+1 is empty space for possible patient.
+        let totalUsers = $('input[type=checkbox]:checked').length + 1;
+        let selectedUsers = new Array(totalUsers).fill(null);
+
+        function displayNames(chosen) {
+            let currentUsers = chosen.filter( x => x != null).join(";  ");
+            console.log(currentUsers);
+            $("#selected-recipients").text(currentUsers);
+            return;
+        };
+
+        //Initialize checked users into array
+        $('input[type="checkbox"]:checked').each(function() {
+            let indx = parseInt($(this).attr('id').split("_")[1]);
+            //If indx wasn't set to #, it is patient. Set patient to be 1st index
+            if(isNaN(indx)){indx = -1};
+            selectedUsers[indx + 1] = $(this).next('label').text();
+            displayNames(selectedUsers);
+        });
+
+        $('input[type=checkbox]').on('change', function(){
+            let indx = parseInt($(this).attr('id').split("_")[1]) + 1;
+            if($(this).is(':checked')){
+                selectedUsers[indx] = $(this).next('label').text();
+            }
+            else{
+                selectedUsers[indx] = null;
+            }
+            displayNames(selectedUsers);
+        });
+    });
+</script>
