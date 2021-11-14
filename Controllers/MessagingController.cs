@@ -291,9 +291,21 @@ namespace PatientPortal.Controllers
             return View("Inbox");
         }
 
-        // public IActionResult MarkRead()
-        // {
+        [HttpPost("message/read")]
+        public IActionResult MarkRead(int messageId)
+        {
+            Unread unreadFlag = _context.UnreadMessages
+                .FirstOrDefault(u => u.MessagingLinkId == linkId && u.MessageId == messageId);
+            
+            if(unreadFlag != null)
+            {
+                _context.Remove(unreadFlag);
+                _context.SaveChanges();
 
-        // }
+                return Ok(new {MessageId = messageId, MarkedUnread = true});
+            }
+
+            return NoContent();
+        }
     }
 }
