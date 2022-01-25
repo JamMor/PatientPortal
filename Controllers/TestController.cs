@@ -106,6 +106,7 @@ namespace PatientPortal.Controllers
                         s.Password = "Password0$";
                         PasswordHasher<Staff> hasher = new PasswordHasher<Staff>();
                         s.Password = hasher.HashPassword(s, s.Password);
+                        s.MessagingLink = new MessagingLink();
                     });
                 
                 var addressFaker = new Faker<Address>()
@@ -132,6 +133,7 @@ namespace PatientPortal.Controllers
                         {
                             p.Address = addressFaker.Generate();
                         }
+                        p.MessagingLink = new MessagingLink();
                     });
                 
 
