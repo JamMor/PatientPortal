@@ -14,44 +14,6 @@ namespace PatientPortal.Services
             _context = context;
         }
 
-        // Comparable Service Structure ==== REMOVE LATER
-        // private readonly IBasketQueryService _basketQueryService;
-        // private readonly IRepository<CatalogItem> _itemRepository;
-
-        // public BasketViewModelService(
-        //     IRepository<CatalogItem> itemRepository,
-        //     IBasketQueryService basketQueryService)
-        // {
-        //     _basketQueryService = basketQueryService;
-        //     _itemRepository = itemRepository;
-        // }
-        // {
-        //     public async Task<BasketViewModel> CreatePatient(string userName)
-        //     {
-        //         var basketSpec = new BasketWithItemsSpecification(userName);
-        //         var basket = (await _basketRepository.GetBySpecAsync(basketSpec));
-
-        //         if (basket == null)
-        //         {
-        //             return await CreateBasketForUser(userName);
-        //         }
-        //         var viewModel = await Map(basket);
-        //         return viewModel;
-        //     }
-
-        //     private async Task<BasketViewModel> CreateBasketForUser(string userId)
-        //     {
-        //         var basket = new Basket(userId);
-        //         await _basketRepository.AddAsync(basket);
-
-        //         return new BasketViewModel()
-        //         {
-        //             BuyerId = basket.BuyerId,
-        //             Id = basket.Id,
-        //         };
-        //     }
-        // }
-
         //COMMANDS
         public bool DoesPatientExist(PatientFormView patientInfo)
         {
@@ -179,12 +141,6 @@ namespace PatientPortal.Services
 
             return ViewModel;
         }
-
-        //Patient Staff Connection
-        public void AddStaffToPatientTeam(int patientId, int staffId)
-        {}
-        public void RemoveStaffFromPatientTeam(int patientId, int staffId)
-        {}
 
         private bool disposedValue;
 

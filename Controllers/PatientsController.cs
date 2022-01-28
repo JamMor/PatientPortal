@@ -29,10 +29,12 @@ namespace PatientPortal.Controllers
 
         private PatientPortalContext _context;
         private IPatientService _patientService;
-        public PatientsController(PatientPortalContext context, IPatientService patientService)
+        private IPatientStaffConnectionService _patientStaffConnectionService;
+        public PatientsController(PatientPortalContext context, IPatientService patientService, IPatientStaffConnectionService patientStaffConnectionService)
         {
             _context = context;
             _patientService = patientService;
+            _patientStaffConnectionService = patientStaffConnectionService;
         }
 
         //===========================Patient Manager==============================
@@ -92,30 +94,15 @@ namespace PatientPortal.Controllers
         [HttpPost("{patientId}/join")]
         public IActionResult MedicalTeamJoin(int patientId)
         {
-            PatientStaffConnection oldLink = _context.PatientStaffConnections.FirstOrDefault(link => link.PatientId == patientId && link.StaffId == (int)uuid);
-
-            if (oldLink == null)
-            {
-                PatientStaffConnection newLink = new PatientStaffConnection()
-                {
-                    PatientId = patientId,
-                    StaffId = (int)uuid
-                };
-                _context.PatientStaffConnections.Add(newLink);
-                _context.SaveChanges();
-            }
+            _patientStaffConnectionService.AddStaffToPatientTeam(patientId, (int)uuid);
+            
             return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });
         }
         [HttpPost("{patientId}/leave")]
         public IActionResult MedicalTeamLeave(int patientId)
         {
-            PatientStaffConnection oldLink = _context.PatientStaffConnections.FirstOrDefault(link => link.PatientId == patientId && link.StaffId == (int)uuid);
+            _patientStaffConnectionService.RemoveStaffFromPatientTeam(patientId, (int)uuid);
 
-            if (oldLink != null)
-            {
-                _context.PatientStaffConnections.Remove(oldLink);
-                _context.SaveChanges();
-            }
             return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });
         }
     }
