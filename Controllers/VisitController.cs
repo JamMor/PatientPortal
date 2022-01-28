@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
@@ -27,9 +28,11 @@ namespace PatientPortal.Controllers
         }
 
         private PatientPortalContext _context;
-        public VisitController(PatientPortalContext context)
+        private IVisitService _visitService;
+        public VisitController(PatientPortalContext context, IVisitService visitService)
         {
             _context = context;
+            _visitService = visitService;
         }
 
 //=========================Create Visit=============================
@@ -46,21 +49,8 @@ namespace PatientPortal.Controllers
         {
             if(ModelState.IsValid)
             {
-                newVisit.PatientId = patientId;
-                newVisit.StaffId = (int)uuid;
-                _context.Visits.Add(newVisit);
-                _context.SaveChanges();
-
-                foreach (int issueId in issues)
-                {
-                    VisitHealthIssueAssociation newAssociation = new VisitHealthIssueAssociation()
-                    {
-                        VisitId = newVisit.VisitId,
-                        HealthIssueId = issueId
-                    };
-                    _context.VisitHealthIssueAssociations.Add(newAssociation);
-                    _context.SaveChanges();
-                }
+                _visitService.CreateVisit(patientId, (int)uuid, newVisit, issues);
+                
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
             ViewBag.patientId = patientId;
@@ -71,12 +61,8 @@ namespace PatientPortal.Controllers
         [HttpPost("{visitId}/delete")]
         public IActionResult VisitDelete(int patientId, int visitId)
         {
-            Visit deletedVisit = _context.Visits.SingleOrDefault(visit => visit.VisitId == visitId);
-            if(deletedVisit != null)
-            {
-                _context.Visits.Remove(deletedVisit);
-                _context.SaveChanges();
-            }
+            _visitService.DeleteVisit(visitId);
+            
             return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
         }
     }
