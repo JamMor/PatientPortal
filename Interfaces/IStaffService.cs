@@ -6,13 +6,14 @@ namespace PatientPortal.Interfaces
 {
     public interface IStaffService : IDisposable
     {
-
-        Staff GetStaffbyId(int staffId);
-        List<Staff> GetStaffbyQuery(StaffSearch searchQuery);
-        void CreateStaff(StaffFormView staffInfo);
-        void UpdateStaff(StaffFormView staffInfo);
+        //Commands
+        bool DoesStaffExist(string staffUsername);
+        int CreateStaff(StaffFormView staffInfo);
+        // void UpdateStaff(StaffFormView staffInfo);
         void DeleteStaff(int staffId);
 
-        void Save();
+        //Queries
+        Staff GetStaffbyId(int staffId);
+        StaffManagerView GetStaffbyQuery(StaffSearch SearchBar, ListResultAttributes DisplayProperties);
     }
 }

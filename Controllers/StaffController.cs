@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
@@ -27,60 +28,18 @@ namespace PatientPortal.Controllers
         }
 
         private PatientPortalContext _context;
-        public StaffController(PatientPortalContext context)
+        private IStaffService _staffService;
+        public StaffController(PatientPortalContext context, IStaffService staffService)
         {
             _context = context;
+            _staffService = staffService;
         }
 
 //==============Staff Manager==============================
         [HttpGet("")]
         public IActionResult StaffManager(StaffSearch SearchBar, ListResultAttributes DisplayProperties)
         {
-            var staffQuery = _context.Staff
-                .Where(staff => SearchBar.SearchStaffId == null || staff.StaffId == SearchBar.SearchStaffId)
-                .Where(staff => string.IsNullOrEmpty(SearchBar.SearchFirstName) || staff.FirstName.StartsWith(SearchBar.SearchFirstName))
-                .Where(staff => string.IsNullOrEmpty(SearchBar.SearchLastName) || staff.LastName.StartsWith(SearchBar.SearchLastName) )
-                .Where(staff => string.IsNullOrEmpty(SearchBar.SearchRole) || staff.Role == SearchBar.SearchRole);
-
-            switch (DisplayProperties.SortOrder)
-            {
-                case "StaffId_desc":
-                    staffQuery = staffQuery.OrderByDescending(s => s.StaffId);
-                    break;
-                case "StaffId_asc":
-                    staffQuery = staffQuery.OrderBy(s => s.StaffId);
-                    break;
-                case "LastName_desc":
-                    staffQuery = staffQuery.OrderByDescending(s => s.LastName);
-                    break;
-                case "LastName_asc":
-                    staffQuery = staffQuery.OrderBy(s => s.LastName);
-                    break;
-                case "Role_desc":
-                    staffQuery = staffQuery.OrderByDescending(s => s.Role);
-                    break;
-                case "Role_asc":
-                    staffQuery = staffQuery.OrderBy(s => s.Role);
-                    break;
-                default:
-                    staffQuery = staffQuery.OrderBy(s => s.LastName);
-                    break;
-            }
-
-            DisplayProperties.ResultsCount = staffQuery.Count();
-
-            List<Staff> queryResults = staffQuery
-                .Include(staff => staff.Patients)
-                .Skip(DisplayProperties.ResultsPerPage*(DisplayProperties.CurrentPage-1))
-                .Take(DisplayProperties.ResultsPerPage)
-                .ToList();
-
-            StaffManagerView ViewModel = new StaffManagerView
-            {
-                SearchBar = SearchBar,
-                SearchResults = queryResults,
-                DisplayProperties = DisplayProperties
-            };
+            StaffManagerView ViewModel = _staffService.GetStaffbyQuery(SearchBar, DisplayProperties);
 
             return View("StaffManager", ViewModel);
         }
@@ -94,28 +53,13 @@ namespace PatientPortal.Controllers
         [HttpPost("add")]
         public IActionResult StaffCreate(StaffFormView staffFormView)
         {
-            if(!_context.Staff.Any(staff => staff.StaffUsername == staffFormView.StaffUsername))
+            if(!_staffService.DoesStaffExist(staffFormView.StaffUsername))
             {
                 if(ModelState.IsValid)
                 {
-                    Staff newStaff = new Staff()
-                    {
-                        FirstName = staffFormView.FirstName,
-                        LastName = staffFormView.LastName,
-                        Role = staffFormView.Role,
-                        StaffUsername = staffFormView.StaffUsername,
-                        Password = staffFormView.Password,
-                        IsAdmin = false,
-                        MessagingLink = new MessagingLink()
-                    };
+                    int staffId = _staffService.CreateStaff(staffFormView);
 
-                    PasswordHasher<Staff> hasher = new PasswordHasher<Staff>();
-                    newStaff.Password = hasher.HashPassword(newStaff, newStaff.Password);
-                    
-                    _context.Staff.Add(newStaff);
-                    _context.SaveChanges();
-
-                    return RedirectToAction("StaffInfo", "Staff", new { staffId = newStaff.StaffId });
+                    return RedirectToAction("StaffInfo", "Staff", new { staffId = staffId });
                 }
             }
             else
@@ -128,10 +72,8 @@ namespace PatientPortal.Controllers
         [HttpGet("{staffId}")]
         public IActionResult StaffInfo(int staffId)
         {
-            Staff staffmember = _context.Staff
-                .Include(staff => staff.Patients)
-                .Include(staff => staff.MessagingLink)
-                .FirstOrDefault(staff => staff.StaffId == staffId);
+            Staff staffmember = _staffService.GetStaffbyId(staffId);
+
             return View("StaffInfo", staffmember);
         }
     
@@ -139,14 +81,8 @@ namespace PatientPortal.Controllers
         [HttpPost("{staffId}/delete")]
         public IActionResult StaffDelete(int staffId)
         {
-            Staff deletedStaff = _context.Staff
-                .Include(s => s.MessagingLink)
-                .SingleOrDefault(staff => staff.StaffId == staffId);
-            if(deletedStaff != null)
-            {
-                _context.Staff.Remove(deletedStaff);
-                _context.SaveChanges();
-            }
+            _staffService.DeleteStaff(staffId);
+            
             return RedirectToAction("StaffManager", "Staff");
         }
 
