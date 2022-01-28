@@ -18,14 +18,13 @@ namespace PatientPortal.Interfaces
         // void Save();
 
         Patient GetPatientbyId(int patientId);
-        List<Patient> GetPatientbyQuery(PatientSearch searchQuery);
-        void CreatePatient(PatientFormView patientInfo);
+        PatientManagerView GetPatientbyQuery(PatientSearch SearchBar, ListResultAttributes DisplayProperties);
+        bool DoesPatientExist(PatientFormView patientInfo);
+        int CreatePatient(PatientFormView patientInfo);
         void UpdatePatient(PatientFormView patientInfo);
         void DeletePatient(int patientId);
 
         void AddStaffToPatientTeam(int patientId, int staffId);
         void RemoveStaffFromPatientTeam(int patientId, int staffId);
-
-        void Save();
     }
 }
