@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
@@ -27,9 +28,11 @@ namespace PatientPortal.Controllers
         }
 
         private PatientPortalContext _context;
-        public HealthIssueController(PatientPortalContext context)
+        private IHealthIssueService _healthIssueService;
+        public HealthIssueController(PatientPortalContext context, IHealthIssueService healthIssueService)
         {
             _context = context;
+            _healthIssueService = healthIssueService;
         }
 
         //=====================Create HealthIssue===========================
@@ -45,9 +48,8 @@ namespace PatientPortal.Controllers
         {
             if(ModelState.IsValid)
             {
-                newIssue.PatientId = patientId;
-                _context.HealthIssues.Add(newIssue);
-                _context.SaveChanges();
+                _healthIssueService.CreateHealthIssue(patientId, newIssue);
+
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
             ViewBag.patientId = patientId;
@@ -58,12 +60,8 @@ namespace PatientPortal.Controllers
         [HttpPost("{issueId}/delete")]
         public IActionResult IssueDelete(int patientId, int issueId)
         {
-            HealthIssue deletedHealthIssue = _context.HealthIssues.SingleOrDefault(issue => issue.HealthIssueId == issueId);
-            if(deletedHealthIssue != null)
-            {
-                _context.HealthIssues.Remove(deletedHealthIssue);
-                _context.SaveChanges();
-            }
+            _healthIssueService.DeleteHealthIssue(patientId, issueId);
+
             return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
         }
     }

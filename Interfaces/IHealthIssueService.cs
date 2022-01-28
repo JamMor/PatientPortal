@@ -7,11 +7,9 @@ namespace PatientPortal.Interfaces
     public interface IHealthIssueService : IDisposable
     {
 
-        HealthIssue GetHealthIssuebyId(int healthIssueId);
-        void CreateHealthIssue(HealthIssue healthIssueInfo);
-        void UpdateHealthIssue(HealthIssue healthIssueInfo);
+        // HealthIssue GetHealthIssuebyId(int healthIssueId);
+        void CreateHealthIssue(int patientId, HealthIssue healthIssueInfo);
+        // void UpdateHealthIssue(HealthIssue healthIssueInfo);
         void DeleteHealthIssue(int patientId, int healthIssueId);
-
-        void Save();
     }
 }

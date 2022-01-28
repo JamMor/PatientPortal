@@ -37,6 +37,7 @@ namespace PatientPortal
             services.AddSession();
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<IPatientStaffConnectionService, PatientStaffConnectionService>();
+            services.AddTransient<IHealthIssueService, HealthIssueService>();
             services.AddControllersWithViews();
         }
 
