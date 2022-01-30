@@ -11,8 +11,8 @@ namespace PatientPortal.Models
         public List<Recipient> Recipients { get; set; }
         public Recipient PatientRecipient { get; set; }
         public string Subject { get; set; }
+        [Required]
         public string MessageText { get; set; }
-
         public bool WithPatient { get; set; } = false;
 
     }

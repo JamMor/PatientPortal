@@ -94,15 +94,20 @@ namespace PatientPortal.Controllers
             
             NewConversationFormView newConversationFormViewModel = _messagingService.NewConversationForm((int)linkId, toLinkId);
 
-            return View("NewMessage", newConversationFormViewModel);
+            return View("NewMessageForm", newConversationFormViewModel);
         }
         
         [HttpPost("new")]
         public IActionResult NewConversation(NewConversationFormView newConversationFormView)
         {
-            _messagingService.CreateConversation((int)linkId, newConversationFormView);
+            if(ModelState.IsValid)
+            {
+                _messagingService.CreateConversation((int)linkId, newConversationFormView);
+                return RedirectToAction("Inbox");
+            }
 
-            return RedirectToAction("Inbox");
+            return View("NewMessageForm", newConversationFormView);
+
         }
 
         [HttpPost("reply/{conversationId}/new")]
