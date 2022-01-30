@@ -163,11 +163,8 @@ namespace PatientPortal.Services
         // QUERIES
         public MessagingLink GetMessagingLink(int linkId)
         {
-            MessagingLink userLink = _context.MessagingLinks
-                .TagWith("ServiceMessageLinkQuery")
+            return _context.MessagingLinks
                 .FirstOrDefault(link => link.MessagingLinkId == linkId);
-            
-            return userLink;
         }
         
         public int GetUnreadTotalCount(MessagingLink messagingLink)
@@ -189,6 +186,7 @@ namespace PatientPortal.Services
                            .Count();
         }
 
+        //"GetAllConversationsForInbox(int linkId, isPatientInbox)"
         public List<InboxConversation> ConversationQuery(int linkId, bool isPatientInbox)
         {
             var conversationQuery = _context.Conversations

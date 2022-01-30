@@ -36,54 +36,40 @@ namespace PatientPortal.Controllers
 
         private PatientPortalContext _context;
         private IMessagingService _messagingService;
-        public MessagingController(PatientPortalContext context, IMessagingService messagingService)
+        private IMessagingViewService _messagingViewService;
+        public MessagingController(PatientPortalContext context, IMessagingService messagingService, IMessagingViewService messagingViewService)
         {
             _context = context;
             _messagingService = messagingService;
+            _messagingViewService = messagingViewService;
         }
 
         //===========================Inbox Manager==============================
         [HttpGet("{inbox?}")]
         public IActionResult Inbox(string inbox)
         {
-            //
-            MessageInboxView inboxView = new MessageInboxView();
-            //
+            bool isPatient = HttpContext.Session.GetString("Role") == "Patient";
             
-            MessagingLink userLink = _messagingService.GetMessagingLink((int)linkId);
-
-            //Unread Messages Count
-            inboxView.UnreadTotal = _messagingService.GetUnreadTotalCount(userLink);
-
-            //Redirect to appropriate URL's for patient or staff member and 
-            //separate inbox counts for staff
-            if(userLink.UserType == "Patient")
+            //Redirect to appropriate URL's for patient or staff member
+            if(isPatient)
             {
                 if(inbox != "")
                 {
                     RedirectToAction("Inbox", new {inbox = ""});
                 }
-                inboxView.UnreadPatient = inboxView.UnreadTotal;
             }
-            else if(userLink.UserType == "Staff")
+            else if(!isPatient)
             {
                 if(inbox != "staff" || inbox != "patient")
                 {
                     RedirectToAction("Inbox", new {inbox = "patient"});
                 }
-
-                //Staff and Patient Specific Unread Counts
-                    
-                inboxView.UnreadPatient = _messagingService.GetUnreadPatientCount(userLink);
-                inboxView.UnreadStaff = inboxView.UnreadTotal - inboxView.UnreadPatient;
             }
 
             
             bool isPatientInbox = inbox != "staff";
-            
-            inboxView.Conversations = _messagingService.ConversationQuery((int)linkId, isPatientInbox);
-            
-            inboxView.InboxType = isPatientInbox ? "patient" : "staff";
+
+            MessageInboxView inboxView = _messagingViewService.ReturnInboxView((int)linkId, isPatientInbox);
 
             return View("Inbox", inboxView);
         }
