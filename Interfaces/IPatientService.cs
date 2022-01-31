@@ -7,11 +7,11 @@ namespace PatientPortal.Interfaces
 {
     public interface IPatientService : IDisposable
     {
-        Patient GetPatientbyId(int patientId);
         bool DoesPatientExist(PatientFormView patientInfo);
         int CreatePatient(PatientFormView patientInfo);
         void DeletePatient(int patientId);
 
+        IQueryable<Patient> GetPatientbyId(int patientId);
         IQueryable<Patient> SearchPatients(PatientSearch searchParams);
         IQueryable<Patient> SortPatients(IQueryable<Patient> query, string sortOrder);
     }

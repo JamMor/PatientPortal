@@ -79,9 +79,9 @@ namespace PatientPortal.Controllers
         [HttpGet("{patientId}")]
         public IActionResult PatientInfo(int patientId)
         {
-            Patient patient = _patientService.GetPatientbyId(patientId);
+            PatientInfoViewModel patientInfo = _patientViewService.GetPatientInfo(patientId);
 
-            return View("PatientInfo", patient);
+            return View("PatientInfo", patientInfo);
         }
 
         [HttpPost("{patientId}/delete")]

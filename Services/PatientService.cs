@@ -67,29 +67,27 @@ namespace PatientPortal.Services
         }
 
         // QUERIES
-        public Patient GetPatientbyId(int patientId)
+        public IQueryable<Patient> GetPatientbyId(int patientId)
         {
-            Patient patient = _context.Patients
+            IQueryable<Patient> patient = _context.Patients
                 .Include(patient => patient.HealthIssues
                     .OrderByDescending(h => h.UpdatedAt))
-                .ThenInclude(issue => issue.AssociatedTestResults)
+                    .ThenInclude(issue => issue.AssociatedTestResults)
                 .Include(patient => patient.HealthIssues)
-                .ThenInclude(issue => issue.AssociatedVisits)
+                    .ThenInclude(issue => issue.AssociatedVisits)
                 .Include(patient => patient.Visits
                     .OrderByDescending(v => v.CreatedAt))
-                .ThenInclude(team => team.Staff)
+                    .ThenInclude(team => team.Staff)
                 .Include(patient => patient.Tests
                     .OrderByDescending(t => t.CreatedAt))
-                .ThenInclude(team => team.Staff)
+                    .ThenInclude(team => team.Staff)
                 .Include(patient => patient.MedicalTeam)
-                .ThenInclude(team => team.Staff)
-                .Include(p => p.MessagingLink)
-                .FirstOrDefault(patient => patient.PatientId == patientId);
+                    .ThenInclude(team => team.Staff)
+                .Include(p => p.MessagingLink);
 
             return patient;
         }
-        
-        
+           
         public IQueryable<Patient> SearchPatients(PatientSearch searchParams)
         {
             return _context.Patients
