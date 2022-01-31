@@ -29,11 +29,13 @@ namespace PatientPortal.Controllers
 
         private PatientPortalContext _context;
         private IPatientService _patientService;
+        private IPatientViewService _patientViewService;
         private IPatientStaffConnectionService _patientStaffConnectionService;
-        public PatientsController(PatientPortalContext context, IPatientService patientService, IPatientStaffConnectionService patientStaffConnectionService)
+        public PatientsController(PatientPortalContext context, IPatientService patientService, IPatientViewService patientViewService, IPatientStaffConnectionService patientStaffConnectionService)
         {
             _context = context;
             _patientService = patientService;
+            _patientViewService = patientViewService;
             _patientStaffConnectionService = patientStaffConnectionService;
         }
 
@@ -41,10 +43,10 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult PatientManager(PatientSearch SearchBar, ListResultAttributes DisplayProperties)
         {
+            
+            PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(SearchBar, DisplayProperties);
 
-            PatientManagerView ViewModel = _patientService.GetPatientbyQuery(SearchBar, DisplayProperties);
-
-            return View("PatientManager", ViewModel);
+            return View("PatientManager", viewModel);
         }
 
         [HttpGet("add")]

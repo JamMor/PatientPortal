@@ -14,8 +14,6 @@ namespace PatientPortal.Services
         {
             _messagingService = messagingService;
         }
-
-        //COMMANDS
         
         public NewConversationFormView NewConversationForm(int linkId, int? toLinkId)
         {

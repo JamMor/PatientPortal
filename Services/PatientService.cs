@@ -54,8 +54,6 @@ namespace PatientPortal.Services
             return newPatient.PatientId;
         }
 
-        public void UpdatePatient(PatientFormView patientInfo)
-        {}
         public void DeletePatient(int patientId)
         {
             Patient deletedPatient = _context.Patients
@@ -90,58 +88,48 @@ namespace PatientPortal.Services
 
             return patient;
         }
-        public PatientManagerView GetPatientbyQuery(PatientSearch SearchBar, ListResultAttributes DisplayProperties)
         
-        {            
-            var patientQuery = _context.Patients
-            .Where(patient => SearchBar.SearchPatientId == null || patient.PatientId == SearchBar.SearchPatientId)
-            .Where(patient => string.IsNullOrEmpty(SearchBar.SearchFirstName) || patient.FirstName.StartsWith(SearchBar.SearchFirstName))
-            .Where(patient => string.IsNullOrEmpty(SearchBar.SearchLastName) || patient.LastName.StartsWith(SearchBar.SearchLastName))
-            .Where(patient => string.IsNullOrEmpty(SearchBar.SearchSSN) || patient.Last4SSN == SearchBar.SearchSSN)
-            .Where(patient => SearchBar.SearchBirthdate == null || patient.DOB == SearchBar.SearchBirthdate);
+        
+        public IQueryable<Patient> SearchPatients(PatientSearch searchParams)
+        {
+            return _context.Patients
+                .Where(patient => searchParams.SearchPatientId == null || patient.PatientId == searchParams.SearchPatientId)
+                .Where(patient => string.IsNullOrEmpty(searchParams.SearchFirstName) || patient.FirstName.StartsWith(searchParams.SearchFirstName))
+                .Where(patient => string.IsNullOrEmpty(searchParams.SearchLastName) || patient.LastName.StartsWith(searchParams.SearchLastName))
+                .Where(patient => string.IsNullOrEmpty(searchParams.SearchSSN) || patient.Last4SSN == searchParams.SearchSSN)
+                .Where(patient => searchParams.SearchBirthdate == null || patient.DOB == searchParams.SearchBirthdate);
+        }
 
-            switch (DisplayProperties.SortOrder)
+        public IQueryable<Patient> SortPatients(IQueryable<Patient> query, string sortOrder)
+        {
+            switch (sortOrder)
             {
                 case "PatientId_desc":
-                    patientQuery = patientQuery.OrderByDescending(p => p.PatientId);
+                    query = query.OrderByDescending(p => p.PatientId);
                     break;
                 case "PatientId_asc":
-                    patientQuery = patientQuery.OrderBy(p => p.PatientId);
+                    query = query.OrderBy(p => p.PatientId);
                     break;
                 case "LastName_desc":
-                    patientQuery = patientQuery.OrderByDescending(p => p.LastName);
+                    query = query.OrderByDescending(p => p.LastName);
                     break;
                 case "LastName_asc":
-                    patientQuery = patientQuery.OrderBy(p => p.LastName);
+                    query = query.OrderBy(p => p.LastName);
                     break;
                 case "DOB_desc":
-                    patientQuery = patientQuery.OrderByDescending(p => p.DOB);
+                    query = query.OrderByDescending(p => p.DOB);
                     break;
                 case "DOB_asc":
-                    patientQuery = patientQuery.OrderBy(p => p.DOB);
+                    query = query.OrderBy(p => p.DOB);
                     break;
                 default:
-                    patientQuery = patientQuery.OrderBy(s => s.LastName);
+                    query = query.OrderBy(s => s.LastName);
                     break;
             }
 
-            DisplayProperties.ResultsCount = patientQuery.Count();
-            
-            List<Patient> queryResults = patientQuery
-                .Skip(DisplayProperties.ResultsPerPage*(DisplayProperties.CurrentPage-1))
-                .Take(DisplayProperties.ResultsPerPage)
-                .ToList();
-
-            PatientManagerView ViewModel = new PatientManagerView
-            {
-                SearchBar = SearchBar,
-                SearchResults = queryResults,
-                DisplayProperties = DisplayProperties
-            };
-
-            return ViewModel;
+            return query;
         }
-
+        
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)

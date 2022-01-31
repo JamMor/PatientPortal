@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
@@ -7,10 +8,11 @@ namespace PatientPortal.Interfaces
     public interface IPatientService : IDisposable
     {
         Patient GetPatientbyId(int patientId);
-        PatientManagerView GetPatientbyQuery(PatientSearch SearchBar, ListResultAttributes DisplayProperties);
         bool DoesPatientExist(PatientFormView patientInfo);
         int CreatePatient(PatientFormView patientInfo);
-        void UpdatePatient(PatientFormView patientInfo);
         void DeletePatient(int patientId);
+
+        IQueryable<Patient> SearchPatients(PatientSearch searchParams);
+        IQueryable<Patient> SortPatients(IQueryable<Patient> query, string sortOrder);
     }
 }
