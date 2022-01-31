@@ -9,68 +9,29 @@ namespace PatientPortal.Services
 {
     public class MessagingViewService : IMessagingViewService
     {
-        private PatientPortalContext _context;
         private IMessagingService _messagingService;
-        public MessagingViewService(PatientPortalContext context, IMessagingService messagingService)
+        public MessagingViewService(IMessagingService messagingService)
         {
-            _context = context;
             _messagingService = messagingService;
         }
 
         //COMMANDS
+        
+        public NewConversationFormView NewConversationForm(int linkId, int? toLinkId)
+        {
+            NewConversationFormView newConversationFormViewModel = new NewConversationFormView()
+            {
+                Recipients = _messagingService.GetAllOtherStaffAsRecipients(linkId, toLinkId),
+            };
 
-        // public NewConversationFormView NewConversationForm(int linkId, int? toLinkId)
-        // {
-        //     List<Recipient> otherStaff = _context.Staff
-        //         .Include(staff => staff.MessagingLink)
-        //         .Where(staff => staff.MessagingLink.MessagingLinkId != linkId)
-        //         .OrderBy(staff => staff.Role)
-        //         .ThenBy(staff => staff.LastName)
-        //         .Select(staff => new Recipient()
-        //         {
-        //             LinkId = staff.MessagingLink.MessagingLinkId,
-        //             Name = staff.FullName(),
-        //             Role = staff.Role,
-        //             Selected = staff.MessagingLink.MessagingLinkId == toLinkId
-        //         })
-        //         .ToList();
+            //Adds patient recipient if toLinkId(addressee) is a patient
+            if(toLinkId != null)
+            {
+                newConversationFormViewModel.PatientRecipient = _messagingService.GetPatientRecipient(toLinkId);
+            }
 
-        //     NewConversationFormView newConversationFormViewModel = new NewConversationFormView()
-        //     {
-        //         Recipients = otherStaff
-        //     };
-
-        //     //If linked from patient info, add patient to patient recipient.
-        //     if(toLinkId != null)
-        //     {
-        //         // // For some reason this will return a messageLink that does not have the patient included
-        //         // MessagingLink addressedLink = _context.MessagingLinks
-        //         //     .TagWith("Unused Link Query that wouldn't return patient")
-        //         //     .Include(m => m.Patient)
-        //         //     .Where(m => m.MessagingLinkId == toLinkId)
-        //         //     .FirstOrDefault();
-                
-        //         Recipient patientRecipient = _context.MessagingLinks
-        //             .TagWith("Current Link Query")
-        //             .Include(m => m.Patient)
-        //             .Where(m => m.MessagingLinkId == toLinkId && m.PatientId != null)
-        //             .Select(m => new Recipient()
-        //             {
-        //                 LinkId = m.MessagingLinkId,
-        //                 Name = m.Patient.FullName(),
-        //                 Role = "Patient",
-        //                 Selected = true
-        //             })
-        //             .FirstOrDefault();
-
-        //         if(patientRecipient != null)
-        //         {
-        //             newConversationFormViewModel.PatientRecipient = patientRecipient;
-        //             newConversationFormViewModel.WithPatient = true;
-        //         };
-        //     };
-        //     return newConversationFormViewModel;
-        // }
+            return newConversationFormViewModel;
+        }
 
         public MessageInboxView ReturnInboxView(int linkId, bool isPatientInbox)
         {
@@ -84,7 +45,7 @@ namespace PatientPortal.Services
                 UnreadPatient = unreadPatient,
                 UnreadStaff = unreadTotal -unreadPatient,
                 IsPatientInbox = isPatientInbox,
-                Conversations = _messagingService.ConversationQuery(linkId, isPatientInbox)
+                Conversations = _messagingService.GetAllConversationsForInbox(linkId, isPatientInbox)
             };
 
             return inboxView;
@@ -99,7 +60,7 @@ namespace PatientPortal.Services
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    _context.Dispose();
+                    _messagingService.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

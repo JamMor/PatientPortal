@@ -48,17 +48,17 @@ namespace PatientPortal.Controllers
         [HttpGet("{inbox?}")]
         public IActionResult Inbox(string inbox)
         {
-            bool isPatient = HttpContext.Session.GetString("Role") == "Patient";
+            bool isUserPatient = HttpContext.Session.GetString("Role") == "Patient";
             
             //Redirect to appropriate URL's for patient or staff member
-            if(isPatient)
+            if(isUserPatient)
             {
                 if(inbox != "")
                 {
                     RedirectToAction("Inbox", new {inbox = ""});
                 }
             }
-            else if(!isPatient)
+            else if(!isUserPatient)
             {
                 if(inbox != "staff" || inbox != "patient")
                 {
@@ -66,9 +66,7 @@ namespace PatientPortal.Controllers
                 }
             }
 
-            
             bool isPatientInbox = inbox != "staff";
-
             MessageInboxView inboxView = _messagingViewService.ReturnInboxView((int)linkId, isPatientInbox);
 
             return View("Inbox", inboxView);
@@ -78,7 +76,7 @@ namespace PatientPortal.Controllers
         public IActionResult NewConversationForm(int? toLinkId)
         {
             
-            NewConversationFormView newConversationFormViewModel = _messagingService.NewConversationForm((int)linkId, toLinkId);
+            NewConversationFormView newConversationFormViewModel = _messagingViewService.NewConversationForm((int)linkId, toLinkId);
 
             return View("NewMessageForm", newConversationFormViewModel);
         }

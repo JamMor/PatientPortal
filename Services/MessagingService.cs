@@ -17,59 +17,6 @@ namespace PatientPortal.Services
 
         //COMMANDS
 
-        public NewConversationFormView NewConversationForm(int linkId, int? toLinkId)
-        {
-            List<Recipient> otherStaff = _context.Staff
-                .Include(staff => staff.MessagingLink)
-                .Where(staff => staff.MessagingLink.MessagingLinkId != linkId)
-                .OrderBy(staff => staff.Role)
-                .ThenBy(staff => staff.LastName)
-                .Select(staff => new Recipient()
-                {
-                    LinkId = staff.MessagingLink.MessagingLinkId,
-                    Name = staff.FullName(),
-                    Role = staff.Role,
-                    Selected = staff.MessagingLink.MessagingLinkId == toLinkId
-                })
-                .ToList();
-
-            NewConversationFormView newConversationFormViewModel = new NewConversationFormView()
-            {
-                Recipients = otherStaff
-            };
-
-            //If linked from patient info, add patient to patient recipient.
-            if(toLinkId != null)
-            {
-                // // For some reason this will return a messageLink that does not have the patient included
-                // MessagingLink addressedLink = _context.MessagingLinks
-                //     .TagWith("Unused Link Query that wouldn't return patient")
-                //     .Include(m => m.Patient)
-                //     .Where(m => m.MessagingLinkId == toLinkId)
-                //     .FirstOrDefault();
-                
-                Recipient patientRecipient = _context.MessagingLinks
-                    .TagWith("Current Link Query")
-                    .Include(m => m.Patient)
-                    .Where(m => m.MessagingLinkId == toLinkId && m.PatientId != null)
-                    .Select(m => new Recipient()
-                    {
-                        LinkId = m.MessagingLinkId,
-                        Name = m.Patient.FullName(),
-                        Role = "Patient",
-                        Selected = true
-                    })
-                    .FirstOrDefault();
-
-                if(patientRecipient != null)
-                {
-                    newConversationFormViewModel.PatientRecipient = patientRecipient;
-                    newConversationFormViewModel.WithPatient = true;
-                };
-            };
-            return newConversationFormViewModel;
-        }
-
         public void CreateConversation(int linkId, NewConversationFormView newConversationFormView)
         {
             //Gets Id's of everyone to receive message
@@ -186,10 +133,41 @@ namespace PatientPortal.Services
                            .Count();
         }
 
-        //"GetAllConversationsForInbox(int linkId, isPatientInbox)"
-        public List<InboxConversation> ConversationQuery(int linkId, bool isPatientInbox)
+        public Recipient GetPatientRecipient(int? toLinkId)
         {
-            var conversationQuery = _context.Conversations
+            return _context.MessagingLinks
+                    .Include(m => m.Patient)
+                    .Where(m => m.PatientId != null && m.MessagingLinkId == toLinkId)
+                    .Select(m => new Recipient()
+                        {
+                            LinkId = m.MessagingLinkId,
+                            Name = m.Patient.FullName(),
+                            Role = "Patient",
+                            Selected = true
+                        })
+                    .FirstOrDefault();
+        }
+
+        public List<Recipient> GetAllOtherStaffAsRecipients(int linkId, int? toLinkId)
+        {
+            return _context.Staff
+                .Include(staff => staff.MessagingLink)
+                .Where(staff => staff.MessagingLink.MessagingLinkId != linkId)
+                .OrderBy(staff => staff.Role)
+                .ThenBy(staff => staff.LastName)
+                .Select(staff => new Recipient()
+                {
+                    LinkId = staff.MessagingLink.MessagingLinkId,
+                    Name = staff.FullName(),
+                    Role = staff.Role,
+                    Selected = staff.MessagingLink.MessagingLinkId == toLinkId
+                })
+                .ToList();
+        }
+        
+        public List<InboxConversation> GetAllConversationsForInbox(int linkId, bool isPatientInbox)
+        {
+            return _context.Conversations
                     .Include(convo => convo.ConversationParticipants)
                         .ThenInclude(partic => partic.MessagingLink)
                         .ThenInclude(link => link.Patient)
@@ -200,9 +178,7 @@ namespace PatientPortal.Services
                         .ThenInclude(msg => msg.UnreadBy)
                     .Where(convo => convo.ConversationParticipants
                         .Any(joined => joined.MessagingLinkId == linkId))
-                    .Where(convo => convo.WithPatient == isPatientInbox);
-
-            List<InboxConversation> conversations = conversationQuery
+                    .Where(convo => convo.WithPatient == isPatientInbox)
                     .Select( c => new InboxConversation()
                     {
                         ConversationId = c.ConversationId,
@@ -234,8 +210,6 @@ namespace PatientPortal.Services
                     })
                     .OrderByDescending(c => c.DateLastMessage)
                     .ToList();
-
-            return conversations;
         }
 
         private bool disposedValue;
