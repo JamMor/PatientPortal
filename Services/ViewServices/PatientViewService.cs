@@ -16,8 +16,6 @@ namespace PatientPortal.Services
             _patientService = patientService;
         }
 
-        //COMMANDS
-        
         public PatientInfoViewModel GetPatientInfo(int patientId)
         {
             IQueryable<Patient> patientQuery = _patientService.GetPatientbyId(patientId);
