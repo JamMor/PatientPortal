@@ -3,9 +3,9 @@ using PatientPortal.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-//Only needed for displaying staff logins for testing
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Interfaces;
 
 namespace PatientPortal.Controllers
 {
@@ -28,9 +28,11 @@ namespace PatientPortal.Controllers
         }
 
         private PatientPortalContext _context;
-        public LoginController(PatientPortalContext context)
+        private ILoginService _loginService;
+        public LoginController(PatientPortalContext context, ILoginService loginService)
         {
             _context = context;
+            _loginService = loginService;
         }
 
         [HttpGet("")]
@@ -60,29 +62,15 @@ namespace PatientPortal.Controllers
         {
             if(ModelState.IsValid)
             {
-                Staff savedStaff = _context.Staff
-                    .Include(staff => staff.MessagingLink)
-                    .FirstOrDefault(staff => staff.StaffUsername == loginInfo.StaffUsername);
-                if(savedStaff != null)
+                LoginStaffDTO staffUser = _loginService.AttemptStaffLogin(loginInfo);
+                if(staffUser != null)
                 {
-                    PasswordHasher<LoginStaff> hasher = new PasswordHasher<LoginStaff>();
-                    PasswordVerificationResult passwordVerification = hasher.VerifyHashedPassword(loginInfo, savedStaff.Password, loginInfo.LoginPassword);
-                    if(passwordVerification != 0)
-                    {
-                        HttpContext.Session.SetInt32("UserId", savedStaff.StaffId);
-                        HttpContext.Session.SetString("Name", savedStaff.FullName());
-                        HttpContext.Session.SetString("Role", savedStaff.Role);
-                        HttpContext.Session.SetInt32("MessageLinkId", savedStaff.MessagingLink.MessagingLinkId);
+                    HttpContext.Session.SetInt32("UserId", staffUser.StaffId);
+                    HttpContext.Session.SetString("Name", staffUser.FullName);
+                    HttpContext.Session.SetString("Role", staffUser.Role);
+                    HttpContext.Session.SetInt32("MessageLinkId", staffUser.MessagingLinkId);
 
-                        if(savedStaff.IsAdmin)
-                        {
-                            return RedirectToAction("StaffManager", "Staff");
-                        }
-                        else
-                        {
-                            return RedirectToAction("PatientManager", "Patients");
-                        }
-                    }
+                    return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("LoginPassword", "Incorrect login info.");
             }
