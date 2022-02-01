@@ -57,67 +57,53 @@ namespace PatientPortal.Services
         }
 
         // QUERIES
-        public Staff GetStaffbyId(int staffId)
+        public IQueryable<Staff> GetStaffbyId(int staffId)
         {
-            Staff staffmember = _context.Staff
+            IQueryable<Staff> staffmember = _context.Staff
                 .Include(staff => staff.Patients)
-                .Include(staff => staff.MessagingLink)
-                .FirstOrDefault(staff => staff.StaffId == staffId);
+                .Include(staff => staff.MessagingLink);
 
             return staffmember;
         }
-        public StaffManagerView GetStaffbyQuery(StaffSearch SearchBar, ListResultAttributes DisplayProperties)
         
-        {            
-            var staffQuery = _context.Staff
-                .Where(staff => SearchBar.SearchStaffId == null || staff.StaffId == SearchBar.SearchStaffId)
-                .Where(staff => string.IsNullOrEmpty(SearchBar.SearchFirstName) || staff.FirstName.StartsWith(SearchBar.SearchFirstName))
-                .Where(staff => string.IsNullOrEmpty(SearchBar.SearchLastName) || staff.LastName.StartsWith(SearchBar.SearchLastName) )
-                .Where(staff => string.IsNullOrEmpty(SearchBar.SearchRole) || staff.Role == SearchBar.SearchRole);
-
-            switch (DisplayProperties.SortOrder)
-            {
-                case "StaffId_desc":
-                    staffQuery = staffQuery.OrderByDescending(s => s.StaffId);
-                    break;
-                case "StaffId_asc":
-                    staffQuery = staffQuery.OrderBy(s => s.StaffId);
-                    break;
-                case "LastName_desc":
-                    staffQuery = staffQuery.OrderByDescending(s => s.LastName);
-                    break;
-                case "LastName_asc":
-                    staffQuery = staffQuery.OrderBy(s => s.LastName);
-                    break;
-                case "Role_desc":
-                    staffQuery = staffQuery.OrderByDescending(s => s.Role);
-                    break;
-                case "Role_asc":
-                    staffQuery = staffQuery.OrderBy(s => s.Role);
-                    break;
-                default:
-                    staffQuery = staffQuery.OrderBy(s => s.LastName);
-                    break;
-            }
-
-            DisplayProperties.ResultsCount = staffQuery.Count();
-
-            List<Staff> queryResults = staffQuery
-                .Include(staff => staff.Patients)
-                .Skip(DisplayProperties.ResultsPerPage*(DisplayProperties.CurrentPage-1))
-                .Take(DisplayProperties.ResultsPerPage)
-                .ToList();
-
-            StaffManagerView ViewModel = new StaffManagerView
-            {
-                SearchBar = SearchBar,
-                SearchResults = queryResults,
-                DisplayProperties = DisplayProperties
-            };
-
-            return ViewModel;
+        public IQueryable<Staff> SearchStaff(StaffSearch searchParams)
+        {
+            return _context.Staff
+                .Where(staff => searchParams.SearchStaffId == null || staff.StaffId == searchParams.SearchStaffId)
+                .Where(staff => string.IsNullOrEmpty(searchParams.SearchFirstName) || staff.FirstName.StartsWith(searchParams.SearchFirstName))
+                .Where(staff => string.IsNullOrEmpty(searchParams.SearchLastName) || staff.LastName.StartsWith(searchParams.SearchLastName) )
+                .Where(staff => string.IsNullOrEmpty(searchParams.SearchRole) || staff.Role == searchParams.SearchRole);
         }
 
+        public IQueryable<Staff> SortStaff(IQueryable<Staff> query, string sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case "StaffId_desc":
+                    query = query.OrderByDescending(s => s.StaffId);
+                    break;
+                case "StaffId_asc":
+                    query = query.OrderBy(s => s.StaffId);
+                    break;
+                case "LastName_desc":
+                    query = query.OrderByDescending(s => s.LastName);
+                    break;
+                case "LastName_asc":
+                    query = query.OrderBy(s => s.LastName);
+                    break;
+                case "Role_desc":
+                    query = query.OrderByDescending(s => s.Role);
+                    break;
+                case "Role_asc":
+                    query = query.OrderBy(s => s.Role);
+                    break;
+                default:
+                    query = query.OrderBy(s => s.LastName);
+                    break;
+            }
+            return query;
+        }
+       
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)

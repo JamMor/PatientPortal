@@ -60,14 +60,14 @@ var search = new Dictionary<string, string>
     <tbody>
         @{
             int i = 1;
-            foreach (Staff staffmember in @Model.SearchResults)
+            foreach (StaffResult staffmember in @Model.SearchResults)
             {
                 <tr>
                     <td class="text-muted">@(Model.DisplayProperties.ResultsPerPage*(Model.DisplayProperties.CurrentPage - 1) + i)</td>
-                    <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.FullName()</a></td>
+                    <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.FullName</a></td>
                     <td>@staffmember.Role</td>
                     <td>@staffmember.StaffId</td>
-                    <td>@staffmember.Patients.Count</td>
+                    <td>@staffmember.PatientCount</td>
                     <td>@staffmember.CreatedAt</td>
                 </tr>
                 i++;

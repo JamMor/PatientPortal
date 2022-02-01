@@ -29,19 +29,21 @@ namespace PatientPortal.Controllers
 
         private PatientPortalContext _context;
         private IStaffService _staffService;
-        public StaffController(PatientPortalContext context, IStaffService staffService)
+        private IStaffViewService _staffViewService;
+        public StaffController(PatientPortalContext context, IStaffService staffService, IStaffViewService staffViewService)
         {
             _context = context;
             _staffService = staffService;
+            _staffViewService = staffViewService;
         }
 
 //==============Staff Manager==============================
         [HttpGet("")]
         public IActionResult StaffManager(StaffSearch SearchBar, ListResultAttributes DisplayProperties)
         {
-            StaffManagerView ViewModel = _staffService.GetStaffbyQuery(SearchBar, DisplayProperties);
+            StaffManagerView viewModel = _staffViewService.ReturnStaffManagerView(SearchBar, DisplayProperties);
 
-            return View("StaffManager", ViewModel);
+            return View("StaffManager", viewModel);
         }
 
         [HttpGet("add")]
@@ -72,9 +74,9 @@ namespace PatientPortal.Controllers
         [HttpGet("{staffId}")]
         public IActionResult StaffInfo(int staffId)
         {
-            Staff staffmember = _staffService.GetStaffbyId(staffId);
+            StaffInfoViewModel staffInfo = _staffViewService.GetStaffInfo(staffId);
 
-            return View("StaffInfo", staffmember);
+            return View("StaffInfo", staffInfo);
         }
     
 

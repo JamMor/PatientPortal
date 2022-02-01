@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
@@ -9,11 +10,11 @@ namespace PatientPortal.Interfaces
         //Commands
         bool DoesStaffExist(string staffUsername);
         int CreateStaff(StaffFormView staffInfo);
-        // void UpdateStaff(StaffFormView staffInfo);
         void DeleteStaff(int staffId);
 
         //Queries
-        Staff GetStaffbyId(int staffId);
-        StaffManagerView GetStaffbyQuery(StaffSearch SearchBar, ListResultAttributes DisplayProperties);
+        IQueryable<Staff> GetStaffbyId(int staffId);
+        IQueryable<Staff> SearchStaff(StaffSearch searchParams);
+        IQueryable<Staff> SortStaff(IQueryable<Staff> query, string sortOrder);
     }
 }
