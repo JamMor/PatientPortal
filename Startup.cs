@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PatientPortal.Configuration;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 using PatientPortal.Services;
@@ -35,16 +36,8 @@ namespace PatientPortal
             ));
             services.AddHttpContextAccessor();
             services.AddSession();
-            services.AddTransient<IStaffService, StaffService>();
-            services.AddTransient<IStaffViewService, StaffViewService>();
-            services.AddTransient<IPatientService, PatientService>();
-            services.AddTransient<IPatientViewService, PatientViewService>();
-            services.AddTransient<IPatientStaffConnectionService, PatientStaffConnectionService>();
-            services.AddTransient<IHealthIssueService, HealthIssueService>();
-            services.AddTransient<IVisitService, VisitService>();
-            services.AddTransient<ITestResultService, TestResultService>();
-            services.AddTransient<IMessagingService, MessagingService>();
-            services.AddTransient<IMessagingViewService, MessagingViewService>();
+            services.AddCoreServices();
+            services.AddViewServices();
             services.AddControllersWithViews();
         }
 
