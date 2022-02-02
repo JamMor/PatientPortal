@@ -8,6 +8,7 @@ namespace PatientPortal.Configuration
     {
         public static IServiceCollection AddViewServices(this IServiceCollection services)
         {
+            services.AddTransient<ISeedViewService, SeedViewService>();
             services.AddTransient<IStaffViewService, StaffViewService>();
             services.AddTransient<IPatientViewService, PatientViewService>();
             services.AddTransient<IMessagingViewService, MessagingViewService>();

@@ -8,6 +8,8 @@ namespace PatientPortal.Configuration
     {
         public static IServiceCollection AddCoreServices(this IServiceCollection services)
         {
+            services.AddTransient<ILoginService, LoginService>();
+            services.AddTransient<ISeedService, SeedService>();
             services.AddTransient<IStaffService, StaffService>();
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<IPatientStaffConnectionService, PatientStaffConnectionService>();
