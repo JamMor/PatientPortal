@@ -308,7 +308,7 @@ namespace PatientPortal.Services
                 {
                     m.MessagingLinkId = linkId;
                     m.MessageText = f.Lorem.Paragraph(1);
-                    DateTime messageDate = f.Date.Between(earliestDate, DateTime.Today);
+                    DateTime messageDate = f.Date.Between(earliestDate, maxDate);
                     m.CreatedAt = messageDate;
                     m.UpdatedAt = messageDate;
                 });
