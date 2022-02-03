@@ -62,7 +62,7 @@
                                 <div class="card-footer d-flex">
                                     <span>First Reported: @issue.CreatedAt</span>
                                     <form class="ml-auto" asp-controller="HealthIssue" asp-action="IssueDelete" asp-route-patientId="@Model.PatientId" asp-route-issueId="@issue.HealthIssueId">
-                                        <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
                                     </form>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                                 <div class="card-footer d-flex">
                                     <p>@visit.CreatedBy</p>
                                     <form class="ml-auto" asp-controller="Visit" asp-action="VisitDelete" asp-route-patientId="@Model.PatientId" asp-route-visitId="@visit.VisitId">
-                                        <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
                                     </form>
                                 </div>
                             </div>
@@ -121,8 +121,8 @@
                                 </div>
                                 <div class="card-footer d-flex">
                                     <p>@test.CreatedBy</p>
-                                    <form class-"ml-auto" asp-controller="TestResult" asp-action="TestResultDelete" asp-route-patientId="@Model.PatientId" asp-route-testId="@test.TestResultId">
-                                        <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
+                                    <form class="ml-auto" asp-controller="TestResult" asp-action="TestResultDelete" asp-route-patientId="@Model.PatientId" asp-route-testId="@test.TestResultId">
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
                                     </form>
                                 </div>
                             </div>
