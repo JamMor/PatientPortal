@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
@@ -27,9 +28,11 @@ namespace PatientPortal.Controllers
         }
 
         private PatientPortalContext _context;
-        public TestResultController(PatientPortalContext context)
+        private ITestResultService _testResultService;
+        public TestResultController(PatientPortalContext context, ITestResultService testResultService)
         {
             _context = context;
+            _testResultService = testResultService;
         }
 
 //======================Create TestResult===========================
@@ -72,33 +75,7 @@ namespace PatientPortal.Controllers
         {
             if(ModelState.IsValid)
             {
-                TestResult testData = new TestResult()
-                {
-                    Type = formData.TestResult.Type,
-                    Comment = formData.TestResult.Comment,
-                    PatientId = patientId,
-                    StaffId = (int)uuid,
-                    AssociatedHealthIssues = formData.HealthIssues
-                    .Where(h => h.Selected == true)
-                    .Select(h => new TestHealthIssueAssociation()
-                    {
-                        HealthIssueId = h.HealthIssueId
-                    })
-                    .ToList()
-                };
-
-                _context.TestResults.Add(testData);
-                _context.SaveChanges();
-                // foreach (int issueId in issues)
-                // {
-                //     TestHealthIssueAssociation newAssociation = new TestHealthIssueAssociation()
-                //     {
-                //         TestResultId = testData.TestResultId,
-                //         HealthIssueId = issueId
-                //     };
-                //     _context.TestHealthIssueAssociations.Add(newAssociation);
-                //     _context.SaveChanges();
-                // }
+                _testResultService.CreateTestResult(patientId, (int)uuid, formData);
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
 
@@ -122,12 +99,8 @@ namespace PatientPortal.Controllers
         [HttpPost("{testId}/delete")]
         public IActionResult TestResultDelete(int patientId, int testId)
         {
-            TestResult deletedTestResult = _context.TestResults.SingleOrDefault(issue => issue.TestResultId == testId);
-            if(deletedTestResult != null)
-            {
-                _context.TestResults.Remove(deletedTestResult);
-                _context.SaveChanges();
-            }
+            _testResultService.DeleteTestResult(testId);
+            
             return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
         }
     }

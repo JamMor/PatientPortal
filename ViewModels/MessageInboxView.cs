@@ -12,7 +12,7 @@ namespace PatientPortal.Models
         public int UnreadTotal { get; set; }
         public int UnreadStaff { get; set; }
         public int UnreadPatient { get; set; }
-        public string InboxType { get; set; }
+        public bool IsPatientInbox { get; set; }
         public List<InboxConversation> Conversations { get; set; }
     }
 

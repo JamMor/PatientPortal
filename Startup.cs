@@ -8,7 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PatientPortal.Configuration;
+using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.Services;
 
 namespace PatientPortal
 {
@@ -27,11 +30,14 @@ namespace PatientPortal
             //Docker and local connection strings. Comment out appropriate one for build.
             // var connectionString = Configuration["DBInfo:DockerConnectionString"];
             var connectionString = Configuration["DBInfo:ConnectionString"];
+            
             services.AddDbContext<PatientPortalContext>(options => options.UseMySql(
                 connectionString, new MySqlServerVersion(new Version(8,0,23))
             ));
             services.AddHttpContextAccessor();
             services.AddSession();
+            services.AddCoreServices();
+            services.AddViewServices();
             services.AddControllersWithViews();
         }
 

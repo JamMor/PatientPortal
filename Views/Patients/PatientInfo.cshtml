@@ -1,7 +1,7 @@
-@model Patient
+@model PatientInfoViewModel
 
 <div class="d-flex mt-3">
-    <a asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.MessagingLink.MessagingLinkId" class="btn btn-outline-primary btn-sm extend ml-auto mr-2"><i class="far fa-file-alt"></i><span>&nbsp; Message Patient</span></a>
+    <a asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.MessagingLinkId" class="btn btn-outline-primary btn-sm extend ml-auto mr-2"><i class="far fa-file-alt"></i><span>&nbsp; Message Patient</span></a>
 </div>
 <table class="table">
     <tbody>
@@ -17,11 +17,11 @@
             <th class="col-3">Medical Team</th>
             <td>
                 <ul class="list-group list-group-flush">
-                    @foreach (PatientStaffConnection person in @Model.MedicalTeam)
+                    @foreach (StaffInfo person in @Model.MedicalTeam)
                     {
                         <li class="list-group-item pl-0 d-flex">
-                            <p class="my-0 mr-auto">@person.Staff.FullName(), @person.Staff.Role</p> 
-                            @if(@person.Staff.StaffId == @Context.Session.GetInt32("UserId"))
+                            <p class="my-0 mr-auto">@person.FullName, @person.Role</p> 
+                            @if(@person.StaffId == @Context.Session.GetInt32("UserId"))
                             {
                             <form asp-controller="Patients" asp-action="MedicalTeamLeave" asp-route-patientId="@Model.PatientId">
                                 <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
@@ -44,7 +44,7 @@
             <th class="col-3">Health Issues</th>
             <td>
                 <ul class="list-group list-group-flush">
-                    @foreach (HealthIssue issue in @Model.HealthIssues)
+                    @foreach (HealthIssueInfo issue in @Model.HealthIssues)
                     {
                         <li class="card list-group-item">
                             <h6 class="card-header">
@@ -56,13 +56,13 @@
                             <div id="issue-detail-@issue.HealthIssueId" class="collapse">
                                 <div class="card-body">
                                     <p class="card-text">@issue.LongDescription</p>
-                                    <p class="card-text">@issue.AssociatedTestResults.Count Related Tests</p>
-                                    <p class="card-text">@issue.AssociatedVisits.Count Related Visits</p>
+                                    <p class="card-text">@issue.AssociatedTestResultsCount Related Tests</p>
+                                    <p class="card-text">@issue.AssociatedVisitsCount Related Visits</p>
                                 </div>
                                 <div class="card-footer d-flex">
                                     <span>First Reported: @issue.CreatedAt</span>
                                     <form class="ml-auto" asp-controller="HealthIssue" asp-action="IssueDelete" asp-route-patientId="@Model.PatientId" asp-route-issueId="@issue.HealthIssueId">
-                                        <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
                                     </form>
                                 </div>
                             </div>
@@ -76,7 +76,7 @@
             <th class="col-3">Visits</th>
             <td>
                 <ul class="list-group list-group-flush">
-                    @foreach (Visit visit in @Model.Visits)
+                    @foreach (VisitInfo visit in @Model.Visits)
                     {
                         <li class="card list-group-item">
                             <h6 class="card-header">
@@ -90,9 +90,9 @@
                                     <p class="card-text">@visit.Comment</p>
                                 </div>
                                 <div class="card-footer d-flex">
-                                    <p>@visit.Staff.FullName(), @visit.Staff.Role</p>
+                                    <p>@visit.CreatedBy</p>
                                     <form class="ml-auto" asp-controller="Visit" asp-action="VisitDelete" asp-route-patientId="@Model.PatientId" asp-route-visitId="@visit.VisitId">
-                                        <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
                                     </form>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@
             <th class="col-3">Tests</th>
             <td>
                 <ul class="list-group list-group-flush">
-                    @foreach (TestResult test in @Model.Tests)
+                    @foreach (TestResultInfo test in @Model.TestResults)
                     {
                         <li class="card list-group-item">
                             <h6 class="card-header">
@@ -120,9 +120,9 @@
                                     <p class="card-text">@test.Comment</p>
                                 </div>
                                 <div class="card-footer d-flex">
-                                    <p>@test.Staff.FullName(), @test.Staff.Role</p>
-                                    <form class-"ml-auto" asp-controller="TestResult" asp-action="TestResultDelete" asp-route-patientId="@Model.PatientId" asp-route-testId="@test.TestResultId">
-                                        <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
+                                    <p>@test.CreatedBy</p>
+                                    <form class="ml-auto" asp-controller="TestResult" asp-action="TestResultDelete" asp-route-patientId="@Model.PatientId" asp-route-testId="@test.TestResultId">
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
                                     </form>
                                 </div>
                             </div>

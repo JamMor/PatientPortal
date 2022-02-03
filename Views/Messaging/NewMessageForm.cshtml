@@ -10,9 +10,11 @@
                 @if(@Model.PatientRecipient != null)
                 {
                     <div class="dropdown-item form-check">
-                        <input class="form-check-input" type="checkbox" asp-for="@Model.PatientRecipient.Selected" disabled>
+                        <input class="form-check-input" type="checkbox" checked="checked" id="PatientRecipient_Id" disabled>
                         <label class="form-check-label" asp-for="@Model.PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
                         <input class="form-check-input" type="hidden" asp-for="@Model.PatientRecipient.LinkId">
+                        <input class="form-check-input" type="hidden" asp-for="@Model.PatientRecipient.Name">
+                        <input class="form-check-input" type="hidden" asp-for="@Model.PatientRecipient.Role">
                     </div>
                     <hr>
                 }
@@ -22,6 +24,8 @@
                     <input class="form-check-input" type="checkbox" asp-for="@Model.Recipients[i].Selected">
                     <label class="form-check-label" asp-for="@Model.Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
                     <input class="form-check-input" type="hidden" asp-for="@Model.Recipients[i].LinkId">
+                    <input class="form-check-input" type="hidden" asp-for="@Model.Recipients[i].Name">
+                    <input class="form-check-input" type="hidden" asp-for="@Model.Recipients[i].Role">
                 </div>
                 }
             </div>
@@ -44,18 +48,18 @@
 
 <script>
     $(document).ready(function() {
-        //+1 is empty space for possible patient.
-        let totalUsers = $('input[type=checkbox]:checked').length + 1;
+        //+1 is empty array space for possible patient.
+        let totalUsers = $('input[type=checkbox]').length + 1;
         let selectedUsers = new Array(totalUsers).fill(null);
 
+        //Replace names of all currently selected on call
         function displayNames(chosen) {
             let currentUsers = chosen.filter( x => x != null).join(";  ");
-            console.log(currentUsers);
             $("#selected-recipients").text(currentUsers);
             return;
         };
 
-        //Initialize checked users into array
+        //Initialize selected users into array
         $('input[type="checkbox"]:checked').each(function() {
             let indx = parseInt($(this).attr('id').split("_")[1]);
             //If indx wasn't set to #, it is patient. Set patient to be 1st index

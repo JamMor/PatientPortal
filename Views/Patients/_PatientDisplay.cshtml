@@ -60,7 +60,7 @@ var search = new Dictionary<string, string>
     <tbody>
         @{
             int i = 1;
-            foreach (Patient patient in @Model.SearchResults)
+            foreach (PatientResult patient in @Model.SearchResults)
             {
                 <tr>
                     <td class="text-muted">@(Model.DisplayProperties.ResultsPerPage*(Model.DisplayProperties.CurrentPage - 1) + i)</td>

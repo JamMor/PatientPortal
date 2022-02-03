@@ -37,4 +37,5 @@
         <input class="custom-file-input" type="file" name="Upload" id="Upload">
     </div>
     <button class="btn btn-info">Submit Test Result</button>
+    <a class="btn btn-outline-danger" asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@Model.Patient.CurrentPatientId">Cancel</a>
 </form>
