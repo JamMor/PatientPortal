@@ -70,16 +70,13 @@ namespace PatientPortal.Services
         public IQueryable<Patient> GetPatientbyId(int patientId)
         {
             IQueryable<Patient> patient = _context.Patients
-                .Include(patient => patient.HealthIssues
-                    .OrderByDescending(h => h.UpdatedAt))
+                .Include(patient => patient.HealthIssues)
                     .ThenInclude(issue => issue.AssociatedTestResults)
                 .Include(patient => patient.HealthIssues)
                     .ThenInclude(issue => issue.AssociatedVisits)
-                .Include(patient => patient.Visits
-                    .OrderByDescending(v => v.CreatedAt))
+                .Include(patient => patient.Visits)
                     .ThenInclude(team => team.Staff)
-                .Include(patient => patient.Tests
-                    .OrderByDescending(t => t.CreatedAt))
+                .Include(patient => patient.Tests)
                     .ThenInclude(team => team.Staff)
                 .Include(patient => patient.MedicalTeam)
                     .ThenInclude(team => team.Staff)

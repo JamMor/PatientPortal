@@ -21,62 +21,73 @@ namespace PatientPortal.Services
             IQueryable<Patient> patientQuery = _patientService.GetPatientbyId(patientId);
 
             PatientInfoViewModel patientInfo = patientQuery
-            .Select(p => new PatientInfoViewModel()
-            {
-                PatientId = p.PatientId,
-                MessagingLinkId = p.MessagingLink.MessagingLinkId,
-                FirstName = p.FirstName,
-                LastName = p.LastName,
-                DOB = p.DOB,
-                Last4SSN = p.Last4SSN,
-                PhoneNumber = p.PhoneNumber,
-                Email = p.Email,
-                CreatedAt = p.CreatedAt,
-                UpdatedAt = p.UpdatedAt,
-                Age = p.Age,
-                Address = new AddressInfo()
+                .Select(p => new PatientInfoViewModel()
                 {
-                    StreetAddress = p.Address.StreetAddress,
-                    City = p.Address.City,
-                    State = p.Address.State,
-                    ZipCode = p.Address.ZipCode,
-                },
-                MedicalTeam = p.MedicalTeam.Select(h => new StaffInfo()
-                {
-                    StaffId = h.StaffId,
-                    FullName = h.Staff.FullName(),
-                    Role = h.Staff.Role
-                }).ToList(),
-                HealthIssues = p.HealthIssues.Select(h => new HealthIssueInfo()
-                {
-                    HealthIssueId = h.HealthIssueId,
-                    ShortDescription = h.ShortDescription,
-                    LongDescription = h.LongDescription,
-                    CreatedAt = h.CreatedAt,
-                    UpdatedAt = h.UpdatedAt,
-                    AssociatedVisitsCount = h.AssociatedVisits.Count,
-                    AssociatedTestResultsCount = h.AssociatedTestResults.Count
-                }).ToList(),
-                Visits = p.Visits.Select(v => new VisitInfo()
-                {
-                    VisitId = v.VisitId,
-                    Comment = v.Comment,
-                    DateOfVisit = v.DateOfVisit,
-                    CreatedBy = $"{v.Staff.FullName()}, {v.Staff.Role}",
-                    CreatedAt = v.CreatedAt,
-                    UpdatedAt = v.UpdatedAt
-                }).ToList(),
-                TestResults = p.Tests.Select(t => new TestResultInfo()
-                {
-                    TestResultId = t.TestResultId,
-                    Type = t.Type,
-                    Comment = t.Comment,
-                    CreatedBy = $"{t.Staff.FullName()}, {t.Staff.Role}",
-                    CreatedAt = t.CreatedAt,
-                    UpdatedAt = t.UpdatedAt
-                }).ToList()
-            })
-            .FirstOrDefault(patient => patient.PatientId == patientId);
+                    PatientId = p.PatientId,
+                    MessagingLinkId = p.MessagingLink.MessagingLinkId,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    DOB = p.DOB,
+                    Last4SSN = p.Last4SSN,
+                    PhoneNumber = p.PhoneNumber,
+                    Email = p.Email,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt,
+                    Age = p.Age,
+                    Address = new AddressInfo()
+                    {
+                        StreetAddress = p.Address.StreetAddress,
+                        City = p.Address.City,
+                        State = p.Address.State,
+                        ZipCode = p.Address.ZipCode,
+                    },
+                    MedicalTeam = p.MedicalTeam
+                        .Select(h => new StaffInfo()
+                        {
+                            StaffId = h.StaffId,
+                            FullName = h.Staff.FullName(),
+                            Role = h.Staff.Role
+                        })
+                        .ToList(),
+                    HealthIssues = p.HealthIssues
+                        .Select(h => new HealthIssueInfo()
+                        {
+                            HealthIssueId = h.HealthIssueId,
+                            ShortDescription = h.ShortDescription,
+                            LongDescription = h.LongDescription,
+                            CreatedAt = h.CreatedAt,
+                            UpdatedAt = h.UpdatedAt,
+                            AssociatedVisitsCount = h.AssociatedVisits.Count,
+                            AssociatedTestResultsCount = h.AssociatedTestResults.Count
+                        })
+                        .OrderByDescending(h => h.CreatedAt)
+                        .ToList(),
+                    Visits = p.Visits
+                        .Select(v => new VisitInfo()
+                        {
+                            VisitId = v.VisitId,
+                            Comment = v.Comment,
+                            DateOfVisit = v.DateOfVisit,
+                            CreatedBy = $"{v.Staff.FullName()}, {v.Staff.Role}",
+                            CreatedAt = v.CreatedAt,
+                            UpdatedAt = v.UpdatedAt
+                        })
+                        .OrderByDescending(v => v.CreatedAt)
+                        .ToList(),
+                    TestResults = p.Tests
+                        .Select(t => new TestResultInfo()
+                        {
+                            TestResultId = t.TestResultId,
+                            Type = t.Type,
+                            Comment = t.Comment,
+                            CreatedBy = $"{t.Staff.FullName()}, {t.Staff.Role}",
+                            CreatedAt = t.CreatedAt,
+                            UpdatedAt = t.UpdatedAt
+                        })
+                        .OrderByDescending(t => t.CreatedAt)
+                        .ToList()
+                })
+                .FirstOrDefault(patient => patient.PatientId == patientId);
 
             return patientInfo;
         }
