@@ -38,6 +38,7 @@ namespace PatientPortal
             services.AddSession();
             services.AddCoreServices();
             services.AddViewServices();
+            services.AddTestServices();
             services.AddControllersWithViews();
         }
 
