@@ -16,9 +16,29 @@ namespace PatientPortal.Services
             _patientService = patientService;
         }
 
+        public PatientHeaderInfoView GetPatientInfoHeader(int patientId)
+        {
+            PatientHeaderInfoView header = _patientService
+                .GetPatientBasicInfo()
+                .Select(p => new PatientHeaderInfoView()
+                    {
+                        CurrentPatientId = p.PatientId,
+                        CurrentPatientLinkId = p.MessagingLink.MessagingLinkId,
+                        CurrentPatientFirstName = p.FirstName,
+                        CurrentPatientLastName = p.LastName,
+                        CurrentPatientSSN = p.Last4SSN,
+                        CurrentPatientDOB = p.DOB,
+                        CurrentPatientAge = p.Age,
+                        CurrentPatientCreatedOn = p.CreatedAt
+                    })
+                .FirstOrDefault(p => p.CurrentPatientId == patientId);
+
+                return header;
+        }
+
         public PatientInfoViewModel GetPatientInfo(int patientId)
         {
-            IQueryable<Patient> patientQuery = _patientService.GetPatientbyId(patientId);
+            IQueryable<Patient> patientQuery = _patientService.GetPatientFullInfo();
 
             PatientInfoViewModel patientInfo = patientQuery
                 .Select(p => new PatientInfoViewModel()
