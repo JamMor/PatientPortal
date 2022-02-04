@@ -11,6 +11,8 @@ namespace PatientPortal.Configuration
             services.AddTransient<ISeedViewService, SeedViewService>();
             services.AddTransient<IStaffViewService, StaffViewService>();
             services.AddTransient<IPatientViewService, PatientViewService>();
+            services.AddTransient<ITestResultViewService, TestResultViewService>();
+            services.AddTransient<IVisitViewService, VisitViewService>();
             services.AddTransient<IMessagingViewService, MessagingViewService>();
 
             return services;
