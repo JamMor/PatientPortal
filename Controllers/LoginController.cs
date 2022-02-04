@@ -27,11 +27,9 @@ namespace PatientPortal.Controllers
             }
         }
 
-        private PatientPortalContext _context;
         private ILoginService _loginService;
-        public LoginController(PatientPortalContext context, ILoginService loginService)
+        public LoginController(ILoginService loginService)
         {
-            _context = context;
             _loginService = loginService;
         }
 
@@ -50,11 +48,7 @@ namespace PatientPortal.Controllers
                 }
                 
             }
-            //========================================================
-            //=================For Test Logins========================
-            List<Staff> allStaff = _context.Staff.ToList();
-            //========================================================
-            return View("StaffLogin", allStaff);
+            return View("StaffLogin");
         }
         
         [HttpPost("login")]
