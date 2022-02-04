@@ -27,35 +27,38 @@ namespace PatientPortal.Controllers
             }
         }
 
-        private PatientPortalContext _context;
+        private IPatientViewService _patientViewService;
         private IVisitService _visitService;
-        public VisitController(PatientPortalContext context, IVisitService visitService)
+        private IVisitViewService _visitViewService;
+        public VisitController(IPatientViewService patientViewService, IVisitService visitService, IVisitViewService visitViewService)
         {
-            _context = context;
+            _patientViewService = patientViewService;
             _visitService = visitService;
+            _visitViewService = visitViewService;
         }
 
 //=========================Create Visit=============================
         [HttpGet("")]
         public IActionResult VisitAdd(int patientId)
         {
-            ViewBag.patientId = patientId;
-            ViewBag.HealthIssues = _context.HealthIssues.Where(issue => issue.PatientId == patientId).ToList();
-            return View("VisitForm");
+            VisitFormView viewModel = _visitViewService.ReturnVisitFormView(patientId);
+            
+            return View("VisitForm", viewModel);
         }
 
         [HttpPost("")]
-        public IActionResult VisitCreate(int patientId, Visit newVisit, List<int> issues)
+        public IActionResult VisitCreate(int patientId, VisitFormView formData)
         {
             if(ModelState.IsValid)
             {
-                _visitService.CreateVisit(patientId, (int)uuid, newVisit, issues);
+                _visitService.CreateVisit(patientId, (int)uuid, formData);
                 
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
-            ViewBag.patientId = patientId;
-            ViewBag.HealthIssues = _context.HealthIssues.Where(issue => issue.PatientId == patientId).ToList();
-            return View("VisitForm");
+            
+            formData.Patient = _patientViewService.GetPatientInfoHeader(patientId);
+            
+            return View("VisitForm", formData);
         }
         
         [HttpPost("{visitId}/delete")]
