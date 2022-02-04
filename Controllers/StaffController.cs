@@ -27,12 +27,10 @@ namespace PatientPortal.Controllers
             }
         }
 
-        private PatientPortalContext _context;
         private IStaffService _staffService;
         private IStaffViewService _staffViewService;
-        public StaffController(PatientPortalContext context, IStaffService staffService, IStaffViewService staffViewService)
+        public StaffController(IStaffService staffService, IStaffViewService staffViewService)
         {
-            _context = context;
             _staffService = staffService;
             _staffViewService = staffViewService;
         }

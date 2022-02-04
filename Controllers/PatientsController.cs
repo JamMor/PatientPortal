@@ -27,13 +27,11 @@ namespace PatientPortal.Controllers
             }
         }
 
-        private PatientPortalContext _context;
         private IPatientService _patientService;
         private IPatientViewService _patientViewService;
         private IPatientStaffConnectionService _patientStaffConnectionService;
-        public PatientsController(PatientPortalContext context, IPatientService patientService, IPatientViewService patientViewService, IPatientStaffConnectionService patientStaffConnectionService)
+        public PatientsController(IPatientService patientService, IPatientViewService patientViewService, IPatientStaffConnectionService patientStaffConnectionService)
         {
-            _context = context;
             _patientService = patientService;
             _patientViewService = patientViewService;
             _patientStaffConnectionService = patientStaffConnectionService;

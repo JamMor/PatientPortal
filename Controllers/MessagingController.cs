@@ -34,12 +34,10 @@ namespace PatientPortal.Controllers
             }
         }
 
-        private PatientPortalContext _context;
         private IMessagingService _messagingService;
         private IMessagingViewService _messagingViewService;
-        public MessagingController(PatientPortalContext context, IMessagingService messagingService, IMessagingViewService messagingViewService)
+        public MessagingController(IMessagingService messagingService, IMessagingViewService messagingViewService)
         {
-            _context = context;
             _messagingService = messagingService;
             _messagingViewService = messagingViewService;
         }
