@@ -15,23 +15,25 @@ namespace PatientPortal.Services
         }
 
         //COMMANDS
-        public void CreateVisit(int patientId, int staffId, Visit newVisit, List<int> issues)
+        public void CreateVisit(int patientId, int staffId, VisitFormView formData)
         {
-            newVisit.PatientId = patientId;
-            newVisit.StaffId = staffId;
+            Visit newVisit = new Visit()
+            {
+                Comment = formData.Visit.Comment,
+                DateOfVisit = formData.Visit.DateOfVisit,
+                PatientId = patientId,
+                StaffId = staffId,
+                AssociatedHealthIssues = formData.HealthIssues
+                    .Where(h => h.Selected == true)
+                    .Select(h => new VisitHealthIssueAssociation()
+                    {
+                        HealthIssueId = h.HealthIssueId
+                    })
+                    .ToList()
+            };
+            
             _context.Visits.Add(newVisit);
             _context.SaveChanges();
-
-            foreach (int issueId in issues)
-            {
-                VisitHealthIssueAssociation newAssociation = new VisitHealthIssueAssociation()
-                {
-                    VisitId = newVisit.VisitId,
-                    HealthIssueId = issueId
-                };
-                _context.VisitHealthIssueAssociations.Add(newAssociation);
-                _context.SaveChanges();
-            }
         }
         public void DeleteVisit(int visitId)
         {

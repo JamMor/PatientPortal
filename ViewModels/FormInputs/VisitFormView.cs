@@ -5,12 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PatientPortal.Models
 {
-    [NotMapped]
     public class VisitFormView
     {
         public Visit Visit { get; set; }
         public PatientHeaderInfoView Patient{ get; set; }
-        public List<HealthIssue> HealthIssues { get; set; }
+        public List<HealthIssueCheckbox> HealthIssues { get; set; }
 
     }
 }
