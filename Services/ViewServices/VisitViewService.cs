@@ -58,6 +58,7 @@ namespace PatientPortal.Services
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
+                    _patientService.Dispose();
                     _visitService.Dispose();
                 }
 
