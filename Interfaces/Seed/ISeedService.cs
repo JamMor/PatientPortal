@@ -7,6 +7,10 @@ namespace PatientPortal.Interfaces
 {
     public interface ISeedService : IDisposable
     {
+        //Form Methods (Counts)
+        int GetStaffCount();
+        int GetPatientCount();
+        
         //Staff
         Faker<Staff> SeedStaff();
 

@@ -29,41 +29,24 @@ namespace PatientPortal.Controllers
             }
         }
 
-        private PatientPortalContext _context;
+        private ITestLoginService _testLoginService;
         private ISeedViewService _seedViewService;
 
-        public TestController(
-            PatientPortalContext context, 
-            ISeedViewService seedViewService
-            )
+        public TestController(ITestLoginService testLoginService, ISeedViewService seedViewService)
         {
-            _context = context;
+            _testLoginService = testLoginService;
             _seedViewService = seedViewService;
         }
 
         [HttpPost("/test/create")]
         public IActionResult TestCreate()
         {
-            Staff newAdmin = new Staff()
-            {
-                IsAdmin = true,
-                FirstName = "Jean-Luc",
-                LastName = "Picard",
-                Role = "Admin",
-                StaffUsername = "JPicardNumber1",
-                Password = "password0$",
-                MessagingLink = new MessagingLink()
-            };
-            PasswordHasher<Staff> hasher = new PasswordHasher<Staff>();
-            newAdmin.Password = hasher.HashPassword(newAdmin, newAdmin.Password);
-
-            _context.Staff.Add(newAdmin);
-            _context.SaveChanges();
+            LoginStaffDTO newAdmin = _testLoginService.CreateAdmin();
 
             HttpContext.Session.SetInt32("UserId", newAdmin.StaffId);
-            HttpContext.Session.SetString("Name", newAdmin.FullName());
+            HttpContext.Session.SetString("Name", newAdmin.FullName);
             HttpContext.Session.SetString("Role", newAdmin.Role);
-            HttpContext.Session.SetInt32("MessageLinkId", newAdmin.MessagingLink.MessagingLinkId);
+            HttpContext.Session.SetInt32("MessageLinkId", newAdmin.MessagingLinkId);
             
             return RedirectToAction("StaffManager", "Staff");
         }
@@ -71,14 +54,12 @@ namespace PatientPortal.Controllers
         [HttpPost("/test/options")]
         public IActionResult TestLoginOptions(int staffId)
         {
-            Staff staffmember = _context.Staff
-                .Include(staff => staff.MessagingLink)
-                .FirstOrDefault(s => s.StaffId == staffId);
+            LoginStaffDTO staffmember = _testLoginService.LoginStaffById(staffId);
                 
             HttpContext.Session.SetInt32("UserId", staffmember.StaffId);
-            HttpContext.Session.SetString("Name", staffmember.FullName());
+            HttpContext.Session.SetString("Name", staffmember.FullName);
             HttpContext.Session.SetString("Role", staffmember.Role);
-            HttpContext.Session.SetInt32("MessageLinkId", staffmember.MessagingLink.MessagingLinkId);
+            HttpContext.Session.SetInt32("MessageLinkId", staffmember.MessagingLinkId);
 
             return RedirectToAction("Index", "Login");
         }
@@ -86,21 +67,16 @@ namespace PatientPortal.Controllers
         [HttpGet("/test/seed")]
         public IActionResult Seed()
         {
-            ViewBag.currentStaff = _context.Staff.Count();
-            ViewBag.currentPatients = _context.Patients.Count();
+            SeedFormView viewModel = _seedViewService.ReturnSeedFormView();
             
-            return View("SeedPrompt");
+            return View("SeedPrompt", viewModel);
         }
         
         [HttpPost("/test/seed")]
-        public IActionResult Seed(string option, SeedTestView seedAmount)
-        {
-            if(option == "seed")
-            {                
-                _seedViewService.SeedNStaff(seedAmount.Staff);
-
-                _seedViewService.SeedNPatients(seedAmount.Patients);
-            }
+        public IActionResult Seed(SeedFormView seedAmount)
+        {             
+            _seedViewService.SeedNStaff(seedAmount.Staff);
+            _seedViewService.SeedNPatients(seedAmount.Patients);
 
             return RedirectToAction("Index", "Login");
         }

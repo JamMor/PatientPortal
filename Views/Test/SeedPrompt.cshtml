@@ -1,14 +1,14 @@
-@model SeedTestView
+@model SeedFormView
 
 <table class="table">
     <tbody>
         <tr>
             <th>Staff</th>
-            <td>@ViewBag.currentStaff</td>
+            <td>@Model.CurrentStaff</td>
         </tr>
         <tr>
             <th>Patients</th>
-            <td>@ViewBag.currentPatients</td>
+            <td>@Model.CurrentPatients</td>
         </tr>
     </tbody>
 </table>
@@ -23,6 +23,6 @@
         <input class="form-control" asp-for="Staff">
         <span class="text-danger" asp-validation-for="Staff"></span>
     </div>
-    <button name="option" class="btn btn-danger" value="cancel">Cancel</button>
-    <button name="option" class="btn btn-outline-success" value="seed">Seed</button>
+    <a class="btn btn-danger" asp-controller="Login" asp-action="Index">Cancel</a>
+    <button class="btn btn-outline-success">Seed</button>
 </form>

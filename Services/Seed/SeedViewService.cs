@@ -18,6 +18,14 @@ namespace PatientPortal.Services
             _seedService = seedService;
         }
 
+        public SeedFormView ReturnSeedFormView()
+        {
+            return new SeedFormView()
+                {
+                    CurrentPatients = _seedService.GetPatientCount(),
+                    CurrentStaff = _seedService.GetStaffCount()
+                };
+        }
         public void SeedNStaff(int staffAmount)
         {
             if(staffAmount <= 0){return;}

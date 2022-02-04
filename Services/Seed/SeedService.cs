@@ -18,6 +18,16 @@ namespace PatientPortal.Services
             _context = context;
         }
 
+    //Form Methods (Counts)
+        public int GetStaffCount()
+        {
+            return _context.Staff.Count();
+        }
+        public int GetPatientCount()
+        {
+            return _context.Patients.Count();
+        }
+    //Staff
         public Faker<Staff> SeedStaff()
         {
             var staffFaker = new Faker<Staff>()
@@ -44,6 +54,7 @@ namespace PatientPortal.Services
             return staffFaker;
         }
 
+    //Utilities for Patient
         public List<int> SelectRandomStaffIds(int max = 1)
         {
             List<int> allStaffIds = _context.Staff
@@ -66,6 +77,7 @@ namespace PatientPortal.Services
                 .ToList();
         }
 
+    //Patient
         public Faker<Patient> SeedPatient()
         {
             List<int> staffIds = SelectRandomStaffIds(5);
@@ -228,7 +240,6 @@ namespace PatientPortal.Services
         }
 
     //Messaging
-
         public Faker<Conversation> SeedConversation(DateTime earliestDate, List<int> staffLinkIds, int? patientLinkId)
         {
             //No more than 3 staff assigned to a conversation

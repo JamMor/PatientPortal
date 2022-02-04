@@ -6,9 +6,10 @@ using System.Linq;
 
 namespace PatientPortal.Models
 {
-    [NotMapped]
-    public class SeedTestView
+    public class SeedFormView
     {
+        public int CurrentPatients { get; set; }
+        public int CurrentStaff { get; set; }
 
         [Display(Name = "Patients: ")]
         [Range(0,100)]
