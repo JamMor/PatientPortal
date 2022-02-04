@@ -1,21 +1,23 @@
-@model HealthIssue
+@model HealthIssueFormView
+
+<partial name="~/Views/Shared/_PatientInfoHeader.cshtml" for="Patient"/>
 
 <h3>New Health Issue: </h3>
-<form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@ViewBag.patientId" method="post">
+<form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@Model.Patient.CurrentPatientId" method="post">
     <div class="form-group">
-        <label class="form-label" asp-for="ShortDescription"></label>
-        <span class="text-danger" asp-validation-for="ShortDescription"></span>
-        <input class="form-control" asp-for="ShortDescription">
+        <label class="form-label" asp-for="HealthIssue.ShortDescription"></label>
+        <span class="text-danger" asp-validation-for="HealthIssue.ShortDescription"></span>
+        <input class="form-control" asp-for="HealthIssue.ShortDescription">
     </div>
     <div class="form-group">
-        <label class="form-label" asp-for="LongDescription"></label>
-        <span class="text-danger" asp-validation-for="LongDescription"></span>
-        <textarea class="form-control" asp-for="LongDescription"></textarea>
+        <label class="form-label" asp-for="HealthIssue.LongDescription"></label>
+        <span class="text-danger" asp-validation-for="HealthIssue.LongDescription"></span>
+        <textarea class="form-control" asp-for="HealthIssue.LongDescription"></textarea>
     </div>
     <div class="form-group">
         <label class="form-label" for="Upload"></label>
         <input class="form-control"type="file" name="Upload" id="Upload">
     </div>
     <button class="btn btn-info">Add Health Issue</button>
-    <a class="btn btn-outline-danger" asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@ViewBag.patientId">Cancel</a>
+    <a class="btn btn-outline-danger" asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@Model.Patient.CurrentPatientId">Cancel</a>
 </form>

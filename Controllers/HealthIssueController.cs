@@ -27,11 +27,11 @@ namespace PatientPortal.Controllers
             }
         }
 
-        private PatientPortalContext _context;
+        private IPatientViewService _patientViewService;
         private IHealthIssueService _healthIssueService;
-        public HealthIssueController(PatientPortalContext context, IHealthIssueService healthIssueService)
+        public HealthIssueController(IPatientViewService patientViewService, IHealthIssueService healthIssueService)
         {
-            _context = context;
+            _patientViewService = patientViewService;
             _healthIssueService = healthIssueService;
         }
 
@@ -39,21 +39,27 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult HealthIssueAdd(int patientId)
         {
-            ViewBag.patientId = patientId;
-            return View("HealthIssueForm");
+            HealthIssueFormView viewModel = new HealthIssueFormView()
+                {
+                    Patient = _patientViewService.GetPatientInfoHeader(patientId)
+                };
+
+            return View("HealthIssueForm", viewModel);
         }
         
         [HttpPost("")]
-        public IActionResult HealthIssueCreate(int patientId, HealthIssue newIssue)
+        public IActionResult HealthIssueCreate(int patientId, HealthIssueFormView formData)
         {
             if(ModelState.IsValid)
             {
-                _healthIssueService.CreateHealthIssue(patientId, newIssue);
+                _healthIssueService.CreateHealthIssue(patientId, formData.HealthIssue);
 
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
-            ViewBag.patientId = patientId;
-            return View("HealthIssueForm");
+            
+            formData.Patient = _patientViewService.GetPatientInfoHeader(patientId);
+
+            return View("HealthIssueForm", formData);
         }
         
 
