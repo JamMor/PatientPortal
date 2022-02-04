@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PatientPortal.Models
 {
-    [NotMapped]
     public class TestResultFormView
     {
         public TestResult TestResult { get; set; }
@@ -14,7 +13,6 @@ namespace PatientPortal.Models
 
     }
 
-    [NotMapped]
     public class HealthIssueCheckbox
     {
         public int HealthIssueId { get; set; }
