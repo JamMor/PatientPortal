@@ -7,6 +7,7 @@ namespace PatientPortal.Interfaces
 {
     public interface ITestLoginService : IDisposable
     {
+        List<TestLoginViewModel> GetAllStaff();
         LoginStaffDTO CreateAdmin();
         LoginStaffDTO LoginStaffById(int staffId);
     }

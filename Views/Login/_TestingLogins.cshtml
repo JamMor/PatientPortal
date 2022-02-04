@@ -1,25 +1,27 @@
-@model List<Staff>
 
-<div>
-    @if(Model.Count == 0)
-    {
+<div id="test-login-container"> 
     <div class="container m-3">
-        <form class="d-flex" asp-controller="Test" asp-action="TestCreate">
-            <button class="mx-1 btn btn-sm btn-warning">Create Picard</button>
+        <form id="test-login-options" class="d-flex p-1 test-login" asp-controller="Test" asp-action="TestLoginOptions">
+
         </form>
     </div>
-    }
-    else
-    {
-    <div class="container m-3">
-        <form class="d-flex p-1 test-login" asp-controller="Test" asp-action="TestLoginOptions">
-            @{
-                foreach(Staff staff in Model)
-                {
-                    <button name="staffId" class="mx-1 btn btn-sm btn-warning" value=@staff.StaffId>Login <span class="text-nowrap">@staff.FirstName[0] @staff.LastName</span></button>
-                }
-            }
-        </form>
-    </div>
-    }
 </div>
+
+<script type="text/javascript">
+        $(document).ready(function() {
+            jQuery.get({
+                url: "/test/staff",
+                success: function(data) {
+                    console.log(data);
+                    let count = parseInt(data["status"])
+                    if(count > 0){
+                    data["staffInfo"].forEach(s => 
+                        $("#test-login-options").append(`<button name='staffId' class='mx-1 btn btn-sm btn-warning' value='${s.testId}'>Login <span class='text-nowrap'>${s.testName}</span></button>`)
+                    )}
+                    else if(count == 0){
+                        $("#test-login-container").prepend("<div class='container m-3'><form class='d-flex' action='/test/create'><button class='mx-1 btn btn-sm btn-warning'>Create Picard</button></form></div>")
+                    }
+                }
+            });
+        });
+</script>

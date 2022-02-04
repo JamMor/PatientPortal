@@ -18,6 +18,18 @@ namespace PatientPortal.Services
             _context = context;
         }
 
+        public List<TestLoginViewModel> GetAllStaff()
+        {
+            return _context.Staff
+                .Select(s => new TestLoginViewModel()
+                {
+                    TestId = s.StaffId,
+                    TestName = $"{s.FirstName[0]} {s.LastName}",
+                    TestRole = s.Role
+                })
+                .ToList();
+        }
+
         public LoginStaffDTO CreateAdmin()
         {
             Staff newAdmin = new Staff()

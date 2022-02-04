@@ -38,6 +38,19 @@ namespace PatientPortal.Controllers
             _seedViewService = seedViewService;
         }
 
+        [HttpGet("test/staff")]
+        public IActionResult GetStaffLoginOptions()
+        {
+            List<TestLoginViewModel> allStaff = _testLoginService.GetAllStaff();
+
+            if(allStaff.Count >= 0)
+            {
+                return Ok(new {Status = allStaff.Count, StaffInfo = allStaff, Message = $"Returned {allStaff.Count} staff"});
+            }
+
+            return NoContent();
+        }
+
         [HttpPost("/test/create")]
         public IActionResult TestCreate()
         {
