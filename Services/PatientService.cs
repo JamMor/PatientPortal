@@ -67,7 +67,15 @@ namespace PatientPortal.Services
         }
 
         // QUERIES
-        public IQueryable<Patient> GetPatientbyId(int patientId)
+        public IQueryable<Patient> GetPatientBasicInfo()
+        {
+            IQueryable<Patient> patient = _context.Patients
+                .Include(p => p.MessagingLink);
+
+            return patient;
+        }
+
+        public IQueryable<Patient> GetPatientFullInfo()
         {
             IQueryable<Patient> patient = _context.Patients
                 .Include(patient => patient.HealthIssues)

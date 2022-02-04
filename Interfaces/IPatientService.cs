@@ -11,7 +11,8 @@ namespace PatientPortal.Interfaces
         int CreatePatient(PatientFormView patientInfo);
         void DeletePatient(int patientId);
 
-        IQueryable<Patient> GetPatientbyId(int patientId);
+        IQueryable<Patient> GetPatientBasicInfo();
+        IQueryable<Patient> GetPatientFullInfo();
         IQueryable<Patient> SearchPatients(PatientSearch searchParams);
         IQueryable<Patient> SortPatients(IQueryable<Patient> query, string sortOrder);
     }
