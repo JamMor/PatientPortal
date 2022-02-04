@@ -27,51 +27,27 @@ namespace PatientPortal.Controllers
             }
         }
 
-        private PatientPortalContext _context;
+        private IPatientViewService _patientViewService;
         private ITestResultService _testResultService;
-        public TestResultController(PatientPortalContext context, ITestResultService testResultService)
+        private ITestResultViewService _testResultViewService;
+        public TestResultController(IPatientViewService patientViewService, ITestResultService testResultService, ITestResultViewService testResultViewService)
         {
-            _context = context;
+            _patientViewService = patientViewService;
             _testResultService = testResultService;
+            _testResultViewService = testResultViewService;
         }
 
 //======================Create TestResult===========================
         [HttpGet("")]
         public IActionResult TestResultAdd(int patientId)
         {
-            
-            TestResultFormView viewModel = _context.Patients
-                .Where(p => p.PatientId == patientId)
-                .Include(p => p.HealthIssues)
-                .Select(p => new TestResultFormView()
-                {
-                    Patient = new PatientHeaderInfoView()
-                    {
-                        CurrentPatientId = p.PatientId,
-                        CurrentPatientLinkId = p.MessagingLink.MessagingLinkId,
-                        CurrentPatientFirstName = p.FirstName,
-                        CurrentPatientLastName = p.LastName,
-                        CurrentPatientSSN = p.Last4SSN,
-                        CurrentPatientDOB = p.DOB,
-                        CurrentPatientAge = p.Age,
-                        CurrentPatientCreatedOn = p.CreatedAt
-                    },
-                    HealthIssues = p.HealthIssues
-                        .Select(h => new HealthIssueCheckbox()
-                        {
-                            HealthIssueId = h.HealthIssueId,
-                            ShortDescription = h.ShortDescription,
-                            CreatedAt = h.CreatedAt
-                        })
-                        .ToList()
-                })
-                .FirstOrDefault();
+            TestResultFormView viewModel = _testResultViewService.ReturnTestResultFormView(patientId);
                 
             return View("TestResultForm", viewModel);
         }
 
         [HttpPost("")]
-        public IActionResult TestResultCreate(int patientId, TestResultFormView formData, List<int> issues)
+        public IActionResult TestResultCreate(int patientId, TestResultFormView formData)
         {
             if(ModelState.IsValid)
             {
@@ -79,19 +55,7 @@ namespace PatientPortal.Controllers
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
 
-            formData.Patient = _context.Patients
-                    .Where(p => p.PatientId == patientId)
-                    .Select(p => new PatientHeaderInfoView()
-                    {
-                        CurrentPatientId = p.PatientId,
-                        CurrentPatientFirstName = p.FirstName,
-                        CurrentPatientLastName = p.LastName,
-                        CurrentPatientSSN = p.Last4SSN,
-                        CurrentPatientDOB = p.DOB,
-                        CurrentPatientAge = p.Age,
-                        CurrentPatientCreatedOn = p.CreatedAt
-                    })
-                    .FirstOrDefault();
+            formData.Patient = _patientViewService.GetPatientInfoHeader(patientId);
             
             return View("TestResultForm", formData);
         }
