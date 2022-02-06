@@ -18,6 +18,14 @@ namespace PatientPortal.Services
             _context = context;
         }
 
+    //Seed Settings
+        private int MaxStaffPerPatient = 3;
+        private int MaxStandaloneVisitPerPatient = 3;
+        private int MaxStandaloneTestResultsPerPatient = 2;
+        private int MaxVisitPerIssue = 3;
+        private int MaxTestResultsPerIssue = 2;
+        private int MaxMessagesPerConversation = 9;
+
     //Form Methods (Counts)
         public int GetStaffCount()
         {
@@ -80,8 +88,6 @@ namespace PatientPortal.Services
     //Patient
         public Faker<Patient> SeedPatient()
         {
-            List<int> staffIds = SelectRandomStaffIds(5);
-
             var patientFaker = new Faker<Patient>()
                 .StrictMode(false)
                 .Rules((f, p) =>
@@ -94,7 +100,7 @@ namespace PatientPortal.Services
                     DateTime patientSince = f.Date.Between(p.DOB.AddYears(18), DateTime.Today.AddMonths(-1));
                     p.CreatedAt = patientSince;
                     p.UpdatedAt = f.Date.Between(patientSince, DateTime.Today);
-                    if (0 == f.Random.Number(3))
+                    if (0 == f.Random.Number(2))
                     {
                         p.Address = SeedAddress().Generate();
                     }
@@ -103,10 +109,11 @@ namespace PatientPortal.Services
                         CreatedAt = patientSince,
                         UpdatedAt = patientSince,
                     };
+                    List<int> staffIds = SelectRandomStaffIds(MaxStaffPerPatient);
                     p.MedicalTeam = AddStaffToMedicalTeam(patientSince, staffIds);
                     // p.HealthIssues = SeedHealthIssue(patientSince, staffIds).Generate(f.Random.Number(1, 4));
-                    p.Tests = SeedTestResult(patientSince, staffIds).Generate(f.Random.Number(1, 3));
-                    p.Visits = SeedVisit(patientSince, staffIds).Generate(f.Random.Number(1, 5));
+                    p.Tests = SeedTestResult(patientSince, staffIds).Generate(f.Random.Number(1, MaxStandaloneVisitPerPatient));
+                    p.Visits = SeedVisit(patientSince, staffIds).Generate(f.Random.Number(1, MaxStandaloneTestResultsPerPatient));
 
                 });
 
@@ -182,8 +189,8 @@ namespace PatientPortal.Services
                     DateTime issueDate = f.Date.Between(earliestDate, DateTime.Today.AddDays(-5));
                     h.CreatedAt = issueDate;
                     h.UpdatedAt = issueDate;
-                    h.AssociatedVisits = SeedIssueVisits(issueDate, staffIds, patientId).Generate(f.Random.Number(2, 4));
-                    h.AssociatedTestResults = SeedIssueTestResults(issueDate, staffIds, patientId).Generate(f.Random.Number(1, 3));
+                    h.AssociatedVisits = SeedIssueVisits(issueDate, staffIds, patientId).Generate(f.Random.Number(1, MaxVisitPerIssue));
+                    h.AssociatedTestResults = SeedIssueTestResults(issueDate, staffIds, patientId).Generate(f.Random.Number(1, MaxTestResultsPerIssue));
                 });
         }
 
@@ -242,17 +249,17 @@ namespace PatientPortal.Services
     //Messaging
         public Faker<Conversation> SeedConversation(DateTime earliestDate, List<int> staffLinkIds, int? patientLinkId)
         {
-            //No more than 3 staff assigned to a conversation
-            int maxStaff = staffLinkIds.Count;
-            if (maxStaff > 3){ maxStaff = 3;}
-            //No digital conversations beginning more than 10 years ago
-            DateTime oldestPossible = DateTime.Today.AddYears(-10);
-            oldestPossible = earliestDate > oldestPossible ? earliestDate : oldestPossible;
-
             return new Faker<Conversation>()
                 .StrictMode(false)
                 .Rules((f, m) =>
                 {
+                    //No more than 3 staff assigned to any one conversation
+                    int maxStaff = staffLinkIds.Count;
+                    if (maxStaff > 3){ maxStaff = 3;}
+                    //No digital conversations beginning more than 10 years ago
+                    DateTime oldestPossible = DateTime.Today.AddYears(-10);
+                    oldestPossible = earliestDate > oldestPossible ? earliestDate : oldestPossible;
+                    
                     m.WithPatient = patientLinkId != null;
                     m.Subject = f.Lorem.Sentence();
                     DateTime convoStart = f.Date.Between(oldestPossible, DateTime.Today.AddDays(-5));
@@ -291,7 +298,7 @@ namespace PatientPortal.Services
         public List<Message> SeedThreadOfMessages(DateTime earliestDate, List<int> staffLinkIds, int? patientLinkId)
         {
             Randomizer randomizer = new Randomizer();
-            int numStaffMessages = randomizer.Number(3,12);
+            int numStaffMessages = randomizer.Number(3,MaxMessagesPerConversation);
             int numPatientMessages = 0;
             
             if(patientLinkId != null)
@@ -309,14 +316,14 @@ namespace PatientPortal.Services
 
         public Faker<Message> SeedMessage(DateTime earliestDate, int linkId)
         {
-            // Messages take place within 10 days as long as that isn't in the future
-            DateTime maxDate = earliestDate.AddDays(10);
-            maxDate = maxDate < DateTime.Today ? maxDate : DateTime.Today;
-
             return new Faker<Message>()
                 .StrictMode(false)
                 .Rules((f, m) =>
                 {
+                    // Messages take place within 10 days as long as that isn't in the future
+                    DateTime maxDate = earliestDate.AddDays(10);
+                    maxDate = maxDate < DateTime.Today ? maxDate : DateTime.Today;
+
                     m.MessagingLinkId = linkId;
                     m.MessageText = f.Lorem.Paragraph(1);
                     DateTime messageDate = f.Date.Between(earliestDate, maxDate);

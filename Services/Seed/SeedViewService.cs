@@ -18,6 +18,9 @@ namespace PatientPortal.Services
             _seedService = seedService;
         }
 
+        private int MaxHealthIssuesPerPatient = 3;
+        private int MaxConversationsPerPatient = 4;
+
         public SeedFormView ReturnSeedFormView()
         {
             return new SeedFormView()
@@ -60,12 +63,12 @@ namespace PatientPortal.Services
                 
                 seededConversations.AddRange(_seedService
                     .SeedConversation(startDate, staffLinkIds, patientLinkId)
-                    .Generate(randomizer.Number(2,5))
+                    .Generate(randomizer.Number(2, MaxConversationsPerPatient))
                     );
                 
                 seededHealthIssues.AddRange(_seedService
                     .SeedHealthIssue(startDate, staffIds, patientId)
-                    .Generate(randomizer.Number(1,3))
+                    .Generate(randomizer.Number(1, MaxHealthIssuesPerPatient))
                     );
 
             }
