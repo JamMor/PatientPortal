@@ -45,6 +45,17 @@ namespace PatientPortal.Services
 
             PatientInfoViewModel viewModel = new PatientInfoViewModel()
                     {
+                        PatientHeader = new PatientHeaderInfoView()
+                        {
+                            CurrentPatientId = patient.PatientId,
+                            CurrentPatientLinkId = patient.MessagingLink.MessagingLinkId,
+                            CurrentPatientFirstName = patient.FirstName,
+                            CurrentPatientLastName = patient.LastName,
+                            CurrentPatientSSN = patient.Last4SSN,
+                            CurrentPatientDOB = patient.DOB,
+                            CurrentPatientAge = patient.Age,
+                            CurrentPatientCreatedOn  = patient.CreatedAt
+                        },
                         PatientId = patient.PatientId,
                         MessagingLinkId = patient.MessagingLink.MessagingLinkId,
                         FirstName = patient.FirstName,

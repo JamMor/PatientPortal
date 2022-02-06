@@ -6,6 +6,7 @@ namespace PatientPortal.Models
 {
     public class PatientInfoViewModel
     {
+        public PatientHeaderInfoView PatientHeader { get; set; }
         public int PatientId { get; set; }
         public int MessagingLinkId { get; set; }
         public string FirstName { get; set; }
