@@ -88,7 +88,8 @@ namespace PatientPortal.Services
                     .ThenInclude(team => team.Staff)
                 .Include(patient => patient.MedicalTeam)
                     .ThenInclude(team => team.Staff)
-                .Include(p => p.MessagingLink);
+                .Include(p => p.MessagingLink)
+                .AsSplitQuery();
 
             return patient;
         }
