@@ -4,7 +4,7 @@
 <form asp-controller="Messaging" asp-action="NewConversation" method="post">
     <label class="form-label">To:</label>
     <div class="d-flex mb-3">
-        <div class="dropdown ">
+        <div class="dropdown">
             <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Send To</button>
             <div class="dropdown-menu vert-scroll">
                 @if(@Model.PatientRecipient != null)
@@ -48,6 +48,10 @@
 
 <script>
     $(document).ready(function() {
+        $('.dropdown-menu').click(function(e) {
+            e.stopPropagation();
+        });
+
         //+1 is empty array space for possible patient.
         let totalUsers = $('input[type=checkbox]').length + 1;
         let selectedUsers = new Array(totalUsers).fill(null);
