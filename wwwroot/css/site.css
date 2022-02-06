@@ -137,6 +137,13 @@ main {
   overflow-y: auto;
 }
 
+/* Sticky patient header info */
+.sticky-header{
+  position: sticky;
+  top:0;
+  z-index: 2;
+}
+
 /* ===== Test Login Scrollbar CSS ===== */
   /* Firefox */
   .test-login {
