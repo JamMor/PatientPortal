@@ -8,7 +8,7 @@ a.navbar-brand {
 }
 
 /* Provide sufficient contrast against white background */
-a {
+a, .text-link {
   color: #0366d6;
 }
 
@@ -110,10 +110,10 @@ main {
 }
 
 /* Collapse Indicator */
-.card-header .fas {
+.card-header i {
   transition: .3s transform ease-in-out;
 }
-.card-header .collapsed .fas {
+.card-header.collapsed i {
   transform: rotate(-90deg);
 }
 
