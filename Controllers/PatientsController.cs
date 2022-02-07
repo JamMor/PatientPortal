@@ -41,7 +41,6 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult PatientManager(PatientSearch SearchBar, ListResultAttributes DisplayProperties)
         {
-            
             PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(SearchBar, DisplayProperties);
 
             return View("PatientManager", viewModel);
