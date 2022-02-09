@@ -19,7 +19,7 @@
                         $("#test-login-options").append(`<button name='staffId' class='mx-1 btn btn-sm btn-warning' value='${s.testId}'>Login <span class='text-nowrap'>${s.testName}</span></button>`)
                     )}
                     else if(count == 0){
-                        $("#test-login-container").prepend("<div class='container m-3'><form class='d-flex' action='/test/create'><button class='mx-1 btn btn-sm btn-warning'>Create Picard</button></form></div>")
+                        $("#test-login-container").prepend("<div class='container m-3'><form class='d-flex' method='post' action='/test/create'><button class='mx-1 btn btn-sm btn-warning'>Create Picard</button></form></div>")
                     }
                 }
             });
