@@ -4,4 +4,15 @@
 <hr>
 <partial name="_StaffDisplay.cshtml" />
 <hr>
-<partial name="_StaffPagination.cshtml" />
+@{
+    ViewData["queryRoutes"] = new Dictionary<string, string>()
+    {
+        {"SearchStaffId",@Model.SearchBar.SearchStaffId.ToString()},
+        {"SearchFirstName",@Model.SearchBar.SearchFirstName},
+        {"SearchLastName",@Model.SearchBar.SearchLastName},
+        {"SearchRole",@Model.SearchBar.SearchRole},
+        {"SortOrder",@Model.PaginationSettings.SortOrder},
+        {"ResultsPerPage",@Model.PaginationSettings.ResultsPerPage.ToString()}
+    };
+}
+<partial name="~/Views/Shared/_PaginationBar.cshtml" for="PaginationSettings" view-data="ViewData" />
