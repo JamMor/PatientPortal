@@ -8,6 +8,6 @@ namespace PatientPortal.Interfaces
     public interface IMessagingViewService : IDisposable
     {
         NewConversationFormView NewConversationForm(int linkId, int? toLinkId);
-        MessageInboxView ReturnInboxView(int linkId, bool isPatientInbox);
+        MessageInboxView ReturnInboxView(int linkId, bool isPatientInbox, Paginator paginationSettings);
     }
 }

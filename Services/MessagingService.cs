@@ -165,7 +165,7 @@ namespace PatientPortal.Services
                 .ToList();
         }
         
-        public List<InboxConversation> GetAllConversationsForInbox(int linkId, bool isPatientInbox)
+        public IQueryable<Conversation> GetAllConversationsForInbox(int linkId, bool isPatientInbox)
         {
             return _context.Conversations
                     .Include(convo => convo.ConversationParticipants)
@@ -178,38 +178,7 @@ namespace PatientPortal.Services
                         .ThenInclude(msg => msg.UnreadBy)
                     .Where(convo => convo.ConversationParticipants
                         .Any(joined => joined.MessagingLinkId == linkId))
-                    .Where(convo => convo.WithPatient == isPatientInbox)
-                    .Select( c => new InboxConversation()
-                    {
-                        ConversationId = c.ConversationId,
-                        Subject = c.Subject,
-                        Participating = c.ConversationParticipants
-                            .Select(p => new InboxRecipient()
-                            {
-                                LinkId = p.MessagingLinkId,
-                                Name = p.MessagingLink.UserType == "Patient" ? 
-                                    p.MessagingLink.Patient.FullName() : p.MessagingLink.Staff.FullName(),
-                                Role = p.MessagingLink.UserType == "Patient" ? 
-                                    "Patient" : p.MessagingLink.Staff.Role
-                            })
-                            .ToList(),
-                        Messages = c.Messages
-                            .Select(m => new InboxMessage()
-                            {
-                                MessageId = m.MessageId,
-                                SenderId = m.MessagingLinkId,
-                                MessageText = m.MessageText,
-                                Sent = m.CreatedAt,
-                                Unread = m.UnreadBy
-                                    .Any(u => u.MessagingLinkId == linkId)
-                            })
-                            .OrderBy(m => m.Sent)
-                            .ToList(),
-                        DateCreated = c.CreatedAt,
-                        DateLastMessage = c.UpdatedAt
-                    })
-                    .OrderByDescending(c => c.DateLastMessage)
-                    .ToList();
+                    .Where(convo => convo.WithPatient == isPatientInbox);                    
         }
 
         private bool disposedValue;

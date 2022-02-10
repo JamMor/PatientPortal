@@ -6,17 +6,18 @@ using System.Linq;
 
 namespace PatientPortal.Models
 {
-    [NotMapped]
     public class MessageInboxView
     {
         public int UnreadTotal { get; set; }
         public int UnreadStaff { get; set; }
         public int UnreadPatient { get; set; }
         public bool IsPatientInbox { get; set; }
+
+        public Paginator PaginationSettings { get; set; }
+
         public List<InboxConversation> Conversations { get; set; }
     }
 
-    [NotMapped]
     public class InboxConversation
     {
         public int ConversationId { get; set; }

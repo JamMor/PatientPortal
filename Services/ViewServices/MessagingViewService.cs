@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Extensions;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
@@ -31,7 +32,7 @@ namespace PatientPortal.Services
             return newConversationFormViewModel;
         }
 
-        public MessageInboxView ReturnInboxView(int linkId, bool isPatientInbox)
+        public MessageInboxView ReturnInboxView(int linkId, bool isPatientInbox, Paginator paginationSettings)
         {
             MessagingLink messageLink = _messagingService.GetMessagingLink(linkId);
             int unreadTotal = _messagingService.GetUnreadTotalCount(messageLink);
@@ -41,10 +42,46 @@ namespace PatientPortal.Services
             {
                 UnreadTotal = unreadTotal,
                 UnreadPatient = unreadPatient,
-                UnreadStaff = unreadTotal -unreadPatient,
+                UnreadStaff = unreadTotal - unreadPatient,
                 IsPatientInbox = isPatientInbox,
-                Conversations = _messagingService.GetAllConversationsForInbox(linkId, isPatientInbox)
+                PaginationSettings = paginationSettings
             };
+
+            var conversations =  _messagingService.GetAllConversationsForInbox(linkId, isPatientInbox);
+            inboxView.PaginationSettings.ResultsCount = conversations.Count();
+
+            inboxView.Conversations = conversations
+                .Select( c => new InboxConversation()
+                {
+                    ConversationId = c.ConversationId,
+                    Subject = c.Subject,
+                    Participating = c.ConversationParticipants
+                        .Select(p => new InboxRecipient()
+                        {
+                            LinkId = p.MessagingLinkId,
+                            Name = p.MessagingLink.UserType == "Patient" ? 
+                                p.MessagingLink.Patient.FullName() : p.MessagingLink.Staff.FullName(),
+                            Role = p.MessagingLink.UserType == "Patient" ? 
+                                "Patient" : p.MessagingLink.Staff.Role
+                        })
+                        .ToList(),
+                    Messages = c.Messages
+                        .Select(m => new InboxMessage()
+                        {
+                            MessageId = m.MessageId,
+                            SenderId = m.MessagingLinkId,
+                            MessageText = m.MessageText,
+                            Sent = m.CreatedAt,
+                            Unread = m.UnreadBy
+                                .Any(u => u.MessagingLinkId == linkId)
+                        })
+                        .OrderBy(m => m.Sent)
+                        .ToList(),
+                    DateCreated = c.CreatedAt,
+                    DateLastMessage = c.UpdatedAt
+                })
+                .OrderByDescending(c => c.DateLastMessage)
+                .ToPagedList(paginationSettings.ResultsPerPage, paginationSettings.CurrentPage);
 
             return inboxView;
         }
