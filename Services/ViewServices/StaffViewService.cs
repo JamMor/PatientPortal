@@ -37,16 +37,16 @@ namespace PatientPortal.Services
             return staffInfo;
         }
 
-        public StaffManagerView ReturnStaffManagerView(StaffSearch searchQuery, ListResultAttributes displayProperties)
+        public StaffManagerView ReturnStaffManagerView(StaffSearch searchQuery, Paginator displayProperties)
         {
             StaffManagerView managerView = new StaffManagerView()
             {
                 SearchBar = searchQuery,
-                DisplayProperties = displayProperties
+                PaginationSettings = displayProperties
             };
 
             var results = _staffService.SearchStaff(searchQuery);
-            managerView.DisplayProperties.ResultsCount = results.Count();
+            managerView.PaginationSettings.ResultsCount = results.Count();
             results = _staffService.SortStaff(results, displayProperties.SortOrder);
 
             //convert to DTOs and Paginate list

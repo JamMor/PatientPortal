@@ -128,17 +128,17 @@ namespace PatientPortal.Services
             return viewModel;
         }
 
-        public PatientManagerView ReturnPatientManagerView(PatientSearch searchQuery, ListResultAttributes displayProperties)
+        public PatientManagerView ReturnPatientManagerView(PatientSearch searchQuery, Paginator paginationSettings)
         {
             PatientManagerView managerView = new PatientManagerView()
             {
                 SearchBar = searchQuery,
-                DisplayProperties = displayProperties
+                PaginationSettings = paginationSettings
             };
 
             var results = _patientService.SearchPatients(searchQuery);
-            managerView.DisplayProperties.ResultsCount = results.Count();
-            results = _patientService.SortPatients(results, displayProperties.SortOrder);
+            managerView.PaginationSettings.ResultsCount = results.Count();
+            results = _patientService.SortPatients(results, paginationSettings.SortOrder);
 
             //convert to DTOs and Paginate list
             managerView.SearchResults = results.Select(r => new PatientResult()
@@ -150,7 +150,7 @@ namespace PatientPortal.Services
                 Age = r.Age,
                 Last4SSN = r.Last4SSN
             })
-            .ToPagedList(displayProperties.ResultsPerPage, displayProperties.CurrentPage);
+            .ToPagedList(paginationSettings.ResultsPerPage, paginationSettings.CurrentPage);
             
             return managerView;
         }

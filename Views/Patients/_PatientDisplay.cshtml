@@ -12,7 +12,7 @@ var search = new Dictionary<string, string>
 }
 
 <div class="d-flex">
-    <h4 class="my-0 mr-auto">Patients <span class="badge badge-secondary">@Model.DisplayProperties.ResultsCount</span>:</h4>
+    <h4 class="my-0 mr-auto">Patients <span class="badge badge-secondary">@Model.PaginationSettings.ResultsCount</span>:</h4>
     <div class="dropdown">
         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
             Results per page...
@@ -24,7 +24,7 @@ var search = new Dictionary<string, string>
                     <a  class="dropdown-item" 
                     asp-controller="Patients" asp-action="PatientManager" 
                     asp-all-route-data="search"
-                    asp-route-SortOrder="@Model.DisplayProperties.SortOrder" 
+                    asp-route-SortOrder="@Model.PaginationSettings.SortOrder" 
                     asp-route-ResultsPerPage="@option"
                     >@option</a>
                 }
@@ -39,14 +39,14 @@ var search = new Dictionary<string, string>
             <th class="align-middle text-muted">#</th>
             @* Already selected sort column link is changed to reverse direction *@
             @{
-                var sorted = @Model.DisplayProperties;
+                var sorted = @Model.PaginationSettings;
                 string[] sortFields = {"LastName", "DOB", "PatientId"};
                 foreach(string sortField in sortFields)
                 {
                 <th>
                     <a asp-controller="Patients" asp-action="PatientManager" 
                     asp-all-route-data="search"
-                    asp-route-ResultsPerPage="@Model.DisplayProperties.ResultsPerPage"
+                    asp-route-ResultsPerPage="@Model.PaginationSettings.ResultsPerPage"
                     asp-route-SortOrder='@(sortField)_@(@sorted.SortColumn() == @sortField ? sorted.Reverse() : "desc")'>
                         @sortField
                     </a>
@@ -63,7 +63,7 @@ var search = new Dictionary<string, string>
             foreach (PatientResult patient in @Model.SearchResults)
             {
                 <tr>
-                    <td class="text-muted">@(Model.DisplayProperties.ResultsPerPage*(Model.DisplayProperties.CurrentPage - 1) + i)</td>
+                    <td class="text-muted">@(Model.PaginationSettings.ResultsPerPage*(Model.PaginationSettings.CurrentPage - 1) + i)</td>
                     <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
                     <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
                     <td>@patient.PatientId</td>

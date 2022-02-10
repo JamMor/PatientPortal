@@ -28,8 +28,8 @@
             <span class="text-danger" asp-validation-for="SearchBar.SearchSSN"></span>
         </div>
     </div>
-    <input type="hidden" name="SortOrder" value="@Model.DisplayProperties.SortOrder">
-    <input type="hidden" name="ResultsPerPage" value="@Model.DisplayProperties.ResultsPerPage">
+    <input type="hidden" name="SortOrder" value="@Model.PaginationSettings.SortOrder">
+    <input type="hidden" name="ResultsPerPage" value="@Model.PaginationSettings.ResultsPerPage">
     <div class="text-center">
         <button class="btn btn-secondary m-1">Search</button>
         <a class="btn btn-outline-secondary m-1" asp-controller="Patients" asp-action="PatientManager">Clear</a>

@@ -10,7 +10,7 @@ namespace PatientPortal.Models
     {
         public StaffSearch SearchBar { get; set; }
 
-        public ListResultAttributes DisplayProperties { get; set; }
+        public Paginator PaginationSettings { get; set; }
 
         public List<StaffResult> SearchResults { get; set; }
     }

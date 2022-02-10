@@ -7,7 +7,7 @@ namespace PatientPortal.Interfaces
 {
     public interface IStaffViewService : IDisposable
     {
-        StaffManagerView ReturnStaffManagerView(StaffSearch searchQuery, ListResultAttributes displayProperties);
+        StaffManagerView ReturnStaffManagerView(StaffSearch searchQuery, Paginator paginationSettings);
         StaffInfoViewModel GetStaffInfo(int staffId);
     }
 }

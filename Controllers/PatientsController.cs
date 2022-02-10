@@ -39,9 +39,9 @@ namespace PatientPortal.Controllers
 
         //===========================Patient Manager==============================
         [HttpGet("")]
-        public IActionResult PatientManager(PatientSearch SearchBar, ListResultAttributes DisplayProperties)
+        public IActionResult PatientManager(PatientSearch searchBar, Paginator paginationSettings)
         {
-            PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(SearchBar, DisplayProperties);
+            PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(searchBar, paginationSettings);
 
             return View("PatientManager", viewModel);
         }

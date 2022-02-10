@@ -4,8 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PatientPortal.Models
 {
-    [NotMapped]
-    public class ListResultAttributes
+    public class Paginator
     {
         public int ResultsCount { get; set; }
         public int CurrentPage { get; set; } = 1;
@@ -15,7 +14,7 @@ namespace PatientPortal.Models
         {
             return (int)Math.Ceiling(ResultsCount / (double)ResultsPerPage);
         }
-        // PageLinksDisplayedInNavBarAtATime
+        // # of page links displayed in navbar at a time
         public int MaxPageLinksPerPage { get; } = 5;
 
         public int StartPage()
