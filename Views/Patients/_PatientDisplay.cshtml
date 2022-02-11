@@ -75,7 +75,7 @@ var search = new Dictionary<string, string>
                     <td class="text-muted">@(Model.PaginationSettings.ResultsPerPage*(Model.PaginationSettings.CurrentPage - 1) + i)</td>
                     <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
                     <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
-                    <td>@patient.PatientId</td>
+                    <td>#@patient.PatientId.ToString("D6")</td>
                     <td>@patient.Last4SSN</td>
                 </tr>
                 i++;
