@@ -1,5 +1,7 @@
 
+<h5>Demo Logins:</h5>
 <div id="test-login-container"> 
+    <p id="loading-text"class="text-muted">Loading...</p>
     <div class="container m-3">
         <form id="test-login-options" class="d-flex p-1 test-login" asp-controller="Test" asp-action="TestLoginOptions">
 
@@ -12,8 +14,9 @@
             jQuery.get({
                 url: "/test/staff",
                 success: function(data) {
+                    $("#loading-text").remove();
                     console.log(data);
-                    let count = parseInt(data["status"])
+                    let count = parseInt(data["status"]);
                     if(count > 0){
                     data["staffInfo"].forEach(s => 
                         $("#test-login-options").append(`<button name='staffId' class='mx-1 btn btn-sm btn-warning' value='${s.testId}'>Login <span class='text-nowrap'>${s.testName}</span></button>`)
