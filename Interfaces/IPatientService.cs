@@ -13,7 +13,7 @@ namespace PatientPortal.Interfaces
 
         IQueryable<Patient> GetPatientBasicInfo();
         IQueryable<Patient> GetPatientFullInfo();
-        IQueryable<Patient> SearchPatients(PatientSearch searchParams);
+        IQueryable<Patient> SearchPatients(PatientSearch searchParams, int staffId);
         IQueryable<Patient> SortPatients(IQueryable<Patient> query, string sortOrder);
     }
 }

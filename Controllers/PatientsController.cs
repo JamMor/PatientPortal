@@ -41,7 +41,7 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult PatientManager(PatientSearch searchBar, Paginator paginationSettings)
         {
-            PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(searchBar, paginationSettings);
+            PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(searchBar, paginationSettings, (int)uuid);
 
             return View("PatientManager", viewModel);
         }

@@ -26,5 +26,8 @@ namespace PatientPortal.Models
         [DataType(DataType.Date)]
         [PastDate]
         public DateTime? SearchBirthdate { get; set; }
+        
+        [Display(Name ="Only Show Patients Under My Care")]
+        public bool SearchPatientsUnderCare { get; set; }
     }
 }

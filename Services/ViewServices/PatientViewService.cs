@@ -128,7 +128,7 @@ namespace PatientPortal.Services
             return viewModel;
         }
 
-        public PatientManagerView ReturnPatientManagerView(PatientSearch searchQuery, Paginator paginationSettings)
+        public PatientManagerView ReturnPatientManagerView(PatientSearch searchQuery, Paginator paginationSettings, int staffId)
         {
             PatientManagerView managerView = new PatientManagerView()
             {
@@ -136,7 +136,7 @@ namespace PatientPortal.Services
                 PaginationSettings = paginationSettings
             };
 
-            var results = _patientService.SearchPatients(searchQuery);
+            var results = _patientService.SearchPatients(searchQuery, staffId);
             managerView.PaginationSettings.ResultsCount = results.Count();
             results = _patientService.SortPatients(results, paginationSettings.SortOrder);
 

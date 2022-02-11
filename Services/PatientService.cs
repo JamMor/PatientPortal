@@ -94,14 +94,23 @@ namespace PatientPortal.Services
             return patient;
         }
            
-        public IQueryable<Patient> SearchPatients(PatientSearch searchParams)
+        public IQueryable<Patient> SearchPatients(PatientSearch searchParams, int staffId)
         {
-            return _context.Patients
+            var results = _context.Patients
                 .Where(patient => searchParams.SearchPatientId == null || patient.PatientId == searchParams.SearchPatientId)
                 .Where(patient => string.IsNullOrEmpty(searchParams.SearchFirstName) || patient.FirstName.StartsWith(searchParams.SearchFirstName))
                 .Where(patient => string.IsNullOrEmpty(searchParams.SearchLastName) || patient.LastName.StartsWith(searchParams.SearchLastName))
                 .Where(patient => string.IsNullOrEmpty(searchParams.SearchSSN) || patient.Last4SSN == searchParams.SearchSSN)
                 .Where(patient => searchParams.SearchBirthdate == null || patient.DOB == searchParams.SearchBirthdate);
+
+            if(searchParams.SearchPatientsUnderCare == true)
+            {
+                results = results
+                    .Include(patient => patient.MedicalTeam)
+                    .Where(patient => patient.MedicalTeam.Any(m => m.StaffId == staffId));
+            }
+
+            return results;
         }
 
         public IQueryable<Patient> SortPatients(IQueryable<Patient> query, string sortOrder)
