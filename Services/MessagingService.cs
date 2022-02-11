@@ -165,9 +165,9 @@ namespace PatientPortal.Services
                 .ToList();
         }
         
-        public IQueryable<Conversation> GetAllConversationsForInbox(int linkId, bool isPatientInbox)
+        public IQueryable<Conversation> GetAllConversationsForInbox(int linkId, ConversationSearch inboxFilters)
         {
-            return _context.Conversations
+            var conversations = _context.Conversations
                     .Include(convo => convo.ConversationParticipants)
                         .ThenInclude(partic => partic.MessagingLink)
                         .ThenInclude(link => link.Patient)
@@ -178,7 +178,15 @@ namespace PatientPortal.Services
                         .ThenInclude(msg => msg.UnreadBy)
                     .Where(convo => convo.ConversationParticipants
                         .Any(joined => joined.MessagingLinkId == linkId))
-                    .Where(convo => convo.WithPatient == isPatientInbox);                    
+                    .Where(convo => convo.WithPatient == inboxFilters.IsPatientInbox);
+
+            if(inboxFilters.OnlyUnread == true)
+            {
+                conversations = conversations
+                    .Where(c => c.Messages.Any(m => m.UnreadBy.Any(u => u.MessagingLinkId == linkId)));
+            }
+
+            return conversations;
         }
 
         private bool disposedValue;

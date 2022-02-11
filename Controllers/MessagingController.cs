@@ -44,7 +44,7 @@ namespace PatientPortal.Controllers
 
         //===========================Inbox Manager==============================
         [HttpGet("{inbox?}")]
-        public IActionResult Inbox(string inbox,  Paginator paginationSettings)
+        public IActionResult Inbox(string inbox, ConversationSearch inboxFilters, Paginator paginationSettings)
         {
             paginationSettings.ResultsPerPage = 5;
             
@@ -66,8 +66,8 @@ namespace PatientPortal.Controllers
                 }
             }
 
-            bool isPatientInbox = inbox != "staff";
-            MessageInboxView inboxView = _messagingViewService.ReturnInboxView((int)linkId, isPatientInbox, paginationSettings);
+            inboxFilters.IsPatientInbox = inbox != "staff";
+            MessageInboxView inboxView = _messagingViewService.ReturnInboxView((int)linkId, inboxFilters, paginationSettings);
 
             return View("Inbox", inboxView);
         }

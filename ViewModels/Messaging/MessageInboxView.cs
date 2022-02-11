@@ -11,7 +11,8 @@ namespace PatientPortal.Models
         public int UnreadTotal { get; set; }
         public int UnreadStaff { get; set; }
         public int UnreadPatient { get; set; }
-        public bool IsPatientInbox { get; set; }
+
+        public ConversationSearch InboxFilters { get; set; }
 
         public Paginator PaginationSettings { get; set; }
 
@@ -34,7 +35,6 @@ namespace PatientPortal.Models
         }
     }
     
-    [NotMapped]
     public class InboxMessage
     {
         public int MessageId { get; set; }
@@ -44,7 +44,6 @@ namespace PatientPortal.Models
         public bool Unread { get; set; }
     }
 
-    [NotMapped]
     public class InboxRecipient
     {
         public int LinkId { get; set; }

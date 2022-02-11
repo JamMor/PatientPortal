@@ -32,7 +32,7 @@ namespace PatientPortal.Services
             return newConversationFormViewModel;
         }
 
-        public MessageInboxView ReturnInboxView(int linkId, bool isPatientInbox, Paginator paginationSettings)
+        public MessageInboxView ReturnInboxView(int linkId, ConversationSearch inboxFilters, Paginator paginationSettings)
         {
             MessagingLink messageLink = _messagingService.GetMessagingLink(linkId);
             int unreadTotal = _messagingService.GetUnreadTotalCount(messageLink);
@@ -43,11 +43,11 @@ namespace PatientPortal.Services
                 UnreadTotal = unreadTotal,
                 UnreadPatient = unreadPatient,
                 UnreadStaff = unreadTotal - unreadPatient,
-                IsPatientInbox = isPatientInbox,
+                InboxFilters = inboxFilters,
                 PaginationSettings = paginationSettings
             };
 
-            var conversations =  _messagingService.GetAllConversationsForInbox(linkId, isPatientInbox);
+            var conversations =  _messagingService.GetAllConversationsForInbox(linkId, inboxFilters);
             inboxView.PaginationSettings.ResultsCount = conversations.Count();
 
             inboxView.Conversations = conversations

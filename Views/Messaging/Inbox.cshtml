@@ -1,6 +1,6 @@
 @model MessageInboxView
 
-<div class="d-flex">
+<div class="d-flex mt-3">
     <h4 class="my-0 mr-auto">Messages <span class="badge badge-pill badge-secondary">@Model.UnreadTotal</span>:</h4>
 
     <div class="dropdown">
@@ -12,12 +12,20 @@
     </div>
 </div>
 
-<ul class="nav nav-tabs justify-content-end">
-    <li class="nav-item">
-        <a class='nav-link @(@Model.IsPatientInbox ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="patient">Patient <span class="badge badge-pill badge-secondary">@Model.UnreadPatient</span></a>
+<ul class="nav nav-tabs align-items-center justify-content-end">
+    <li class="nav-item mr-auto">
+        <form id="unread-select" method="get" asp-controller="Messaging" asp-action="Inbox" asp-route-inbox='@(@Model.InboxFilters.IsPatientInbox ? "patient" : "staff")'>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" asp-for="@Model.InboxFilters.OnlyUnread">
+                <label class="form-check-label" asp-for="@Model.InboxFilters.OnlyUnread"></label>
+            </div>
+        </form>
     </li>
     <li class="nav-item">
-        <a class='nav-link @(!@Model.IsPatientInbox ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="staff">Staff <span class="badge badge-pill badge-secondary">@Model.UnreadStaff</span></a>
+        <a class='nav-link @(@Model.InboxFilters.IsPatientInbox ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="patient">Patient <span class="badge badge-pill badge-secondary">@Model.UnreadPatient</span></a>
+    </li>
+    <li class="nav-item">
+        <a class='nav-link @(!@Model.InboxFilters.IsPatientInbox ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="staff">Staff <span class="badge badge-pill badge-secondary">@Model.UnreadStaff</span></a>
     </li>
 </ul>
 <partial name="_Conversations.cshtml" />
@@ -25,14 +33,16 @@
 @{
     ViewData["queryRoutes"] = new Dictionary<string, string>()
     {
-        {"inbox", @Model.IsPatientInbox ? "patient" : "staff"},
-        @* {"SearchPatientId",@Model.SearchBar.SearchPatientId.ToString()},
-        {"SearchFirstName",@Model.SearchBar.SearchFirstName},
-        {"SearchLastName",@Model.SearchBar.SearchLastName},
-        {"SearchBirthdate",@Model.SearchBar.SearchBirthdate.ToString()},
-        {"SearchSSN", @Model.SearchBar.SearchSSN},
-        {"SortOrder",@Model.PaginationSettings.SortOrder},
-        {"ResultsPerPage",@Model.PaginationSettings.ResultsPerPage.ToString()} *@
+        {"inbox", @Model.InboxFilters.IsPatientInbox ? "patient" : "staff"},
+        {"OnlyUnread", @Model.InboxFilters.OnlyUnread.ToString()}
     };
 }
 <partial name="~/Views/Shared/_PaginationBar.cshtml" for="PaginationSettings" view-data="ViewData" />
+
+<script>
+    $(document).ready(function() {
+        $('#InboxFilters_OnlyUnread').on('change', function(){
+            $('#unread-select').submit();
+        });
+    });
+</script>
