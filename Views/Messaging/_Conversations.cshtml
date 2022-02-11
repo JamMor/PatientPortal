@@ -10,6 +10,14 @@
         </tr>
     </thead>
     <tbody class="accordion" id="conversation-container">
+        @{
+            if(@Model.Conversations.Count == 0)
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-muted">No conversations to display.</td>
+                </tr>
+            }
+        }
         @foreach (InboxConversation conversation in @Model.Conversations)
         {
             <tr data-toggle="collapse" data-target="#conversation-@conversation.ConversationId" class='collapsed @(@conversation.UnreadCount() > 0 ? "bg-light font-weight-bold" : "")'>

@@ -59,6 +59,14 @@ var search = new Dictionary<string, string>
     </thead>
     <tbody>
         @{
+            if(@Model.SearchResults.Count == 0)
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No staff to display.</td>
+                </tr>
+            }
+        }
+        @{
             int i = 1;
             foreach (StaffResult staffmember in @Model.SearchResults)
             {

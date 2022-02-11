@@ -60,6 +60,14 @@ var search = new Dictionary<string, string>
     </thead>
     <tbody>
         @{
+            if(@Model.SearchResults.Count == 0)
+            {
+                <tr>
+                    <td colspan="5" class="text-center text-muted">No patients to display.</td>
+                </tr>
+            }
+        }
+        @{
             int i = 1;
             foreach (PatientResult patient in @Model.SearchResults)
             {
