@@ -20,9 +20,10 @@
         }
         @foreach (InboxConversation conversation in @Model.Conversations)
         {
+            string members = @String.Join(", ", conversation.Participating.Select(p => p.Name));
             <tr data-toggle="collapse" data-target="#conversation-@conversation.ConversationId" class='collapsed @(@conversation.UnreadCount() > 0 ? "bg-light font-weight-bold" : "")'>
-                <td class="text-truncate td-member">
-                    @String.Join(", ", conversation.Participating.Select(p => p.Name))
+                <td class="text-truncate td-member" data-toggle="tooltip" title="@members">
+                    @members
                 </td>
                 <td class="text-truncate">@conversation.Subject</td>
                 <td>@conversation.DateCreated</td>
