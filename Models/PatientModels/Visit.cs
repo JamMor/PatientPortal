@@ -13,6 +13,7 @@ namespace PatientPortal.Models
         public string Comment { get; set; }
         [Required]
         [DataType(DataType.Date)]
+        [Display(Name = "Date of Visit")]
         public DateTime DateOfVisit { get;set; }
         [Required]
         public int PatientId { get; set; }

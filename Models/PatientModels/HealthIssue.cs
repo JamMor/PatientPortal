@@ -11,7 +11,9 @@ namespace PatientPortal.Models
         
         [Required]
         [MaxLength(30)]
+        [Display(Name = "Short Description")]
         public string ShortDescription { get; set; }
+        [Display(Name = "Long Description")]
         public string LongDescription { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
