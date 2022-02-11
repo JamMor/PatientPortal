@@ -38,16 +38,16 @@ var search = new Dictionary<string, string>
             <th class="align-middle text-muted">#</th>
             @* Already selected sort column link is changed to reverse direction *@
             @{
-                var sorted = @Model.PaginationSettings;
-                string[] sortFields = {"LastName", "Role", "StaffId"};
-                foreach(string sortField in sortFields)
+                string[] sortOptions = {"Last Name", "Role", "Staff Id"};
+                foreach(string sortOption in sortOptions)
                 {
+                string sortField = sortOption.Replace(" ", "");
                 <th>
                     <a asp-controller="Staff" asp-action="StaffManager" 
                     asp-all-route-data="search"
                     asp-route-ResultsPerPage="@Model.PaginationSettings.ResultsPerPage"
-                    asp-route-SortOrder='@(sortField)_@(@sorted.SortColumn() == @sortField ? sorted.Reverse() : "desc")'>
-                        @sortField
+                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == @sortField ? Model.PaginationSettings.Reverse() : "desc")'>
+                        @sortOption
                     </a>
                 </th>
 
