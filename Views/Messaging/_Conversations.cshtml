@@ -4,7 +4,7 @@
     <thead>
         <tr>
             <th class="col-2">Members</th>
-            <th>Subject</th>
+            <th class="col-auto">Subject</th>
             <th class="col-1">Start Date</th>
             <th class="col-1">Latest Message Date</th>
         </tr>
@@ -25,7 +25,14 @@
                 <td class="text-truncate td-member" data-toggle="tooltip" title="@members">
                     @members
                 </td>
-                <td class="text-truncate">@conversation.Subject</td>
+                @if(@conversation.Subject != null)
+                {
+                    <td>@conversation.Subject</td>
+                }
+                else
+                {
+                    <td><span class='text-muted'><em>(no subject)</em></span></td>
+                }
                 <td>@conversation.DateCreated</td>
                 <td>@conversation.DateLastMessage</td>
             </tr>
