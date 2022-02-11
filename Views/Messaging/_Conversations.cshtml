@@ -23,12 +23,6 @@
             <tr>
                 <td colspan="4" class="p-0">
                     <div class="m-2 pl-5 collapse shadow-sm" id="conversation-@conversation.ConversationId" data-parent="#conversation-container">
-                        @if(conversation.Messages.Count > 10)
-                        {
-                            <div>
-                                <p class="text-muted">Load more messages...</p>
-                            </div>
-                        }
                         @foreach (InboxMessage message in conversation.Messages)
                         {   
                             <div id="message-@message.MessageId" class='d-flex p-1 @(@message.Unread ? "bg-light font-weight-bold unread" : "")'>
