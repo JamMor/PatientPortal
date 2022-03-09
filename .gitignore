@@ -36,3 +36,4 @@ msbuild.wrn
 # Visual Studio 2015
 .vs/
 appsettings.json
+EC2_Deployment_Instructions.txt
