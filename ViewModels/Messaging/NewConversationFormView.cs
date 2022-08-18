@@ -13,8 +13,20 @@ namespace PatientPortal.Models
         public string Subject { get; set; }
         [Required]
         public string MessageText { get; set; }
-        public bool WithPatient { get; set; } = false;
-
+        public bool WithPatient 
+        {
+            get
+            {
+                if(PatientRecipient == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
     }
 
     [NotMapped]
