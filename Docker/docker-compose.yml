@@ -3,10 +3,31 @@
 version: '3.4'
 
 services:
+
+  mysql_db:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - "/d/User Data/Documents/Code Projects/Portfolio/Docker/patientportal/docker_init_migr.sql:/docker-entrypoint-initdb.d/1.sql"
+    environment: 
+      MYSQL_ROOT_PASSWORD: test_root_pw
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: test_pw
+      MYSQL_DATABASE: test_db
+
   patientportal:
+    depends_on:
+      - mysql_db
     image: patientportal
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ..
+      dockerfile: ./Docker/Dockerfile
     ports:
       - 5000:5000
+
+volumes:
+  mysql_data:
+
+networks:
+  default:
+    name: patientportal_network
