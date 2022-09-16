@@ -8,7 +8,6 @@ services:
     image: mysql:8.0
     volumes:
       - mysql_data:/var/lib/mysql
-      - "/d/User Data/Documents/Code Projects/Portfolio/Docker/patientportal/docker_init_migr.sql:/docker-entrypoint-initdb.d/1.sql"
     environment: 
       MYSQL_ROOT_PASSWORD: test_root_pw
       MYSQL_USER: test_user
