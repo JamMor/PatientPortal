@@ -1,0 +1,38 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+
+  mysql_db:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment: 
+      MYSQL_ROOT_PASSWORD: test_root_pw
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: test_pw
+      MYSQL_DATABASE: test_db
+    healthcheck:
+      test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
+      interval: 3s
+      timeout: 30s
+      retries: 5
+
+  patientportal:
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+    image: patientportal
+    build:
+      context: ..
+      dockerfile: ./Docker/Dockerfile
+    ports:
+      - 5000:5000
+
+volumes:
+  mysql_data:
+
+networks:
+  default:
+    name: patientportal_network
