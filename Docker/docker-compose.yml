@@ -14,10 +14,16 @@ services:
       MYSQL_USER: test_user
       MYSQL_PASSWORD: test_pw
       MYSQL_DATABASE: test_db
+    healthcheck:
+      test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
+      interval: 3s
+      timeout: 30s
+      retries: 5
 
   patientportal:
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
     image: patientportal
     build:
       context: ..
