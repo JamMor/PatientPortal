@@ -1,0 +1,87 @@
+name: Deploy to ECR
+
+on:
+  push:
+    branches: [ deploy_to_ecr ]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-west-2                   # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: patientportal           # set this to your Amazon ECR repository name
+
+permissions:
+  contents: read
+  id-token: write
+  
+jobs:
+  build:
+    name: Deploy
+    runs-on: ubuntu-latest
+  
+    steps:
+    - name: Check out code from deploy_to_ecr branch
+      uses: actions/checkout@v3
+      with:
+        ref: deploy_to_ecr
+    
+    - name: Get commit timestamp
+      run: |
+        echo "COMMIT_TIME=$(git show -s --format=%cd --date="format:%Y-%m-%d.%H-%M-%S")" >> $GITHUB_ENV
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        role-session-name: MovieMatchDeployment
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}-${{ env.COMMIT_TIME}}
+      run: |
+        docker build -f ./Docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      
+    - name: Copy docker-compose files to S3
+      run: |
+        aws s3 cp ./Docker/docker-compose.deploy.yml s3://deploy-instructions/$ECR_REPOSITORY/docker-compose.yml
+    - name: Run SSM Command document to update EC2
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}-${{ env.COMMIT_TIME}}
+      run: |
+        aws ssm send-command \
+          --document-name "Update_Project" \
+          --document-version "\$LATEST" \
+          --targets '[{"Key":"InstanceIds","Values":["${{ secrets.AWS_PROJECTWEBSERVER_EC2_INSTANCE_ID }}"]}]' \
+          --parameters '{ "ecrRegistry":["${{ env.ECR_REGISTRY }}"], "repoName":["${{ env.ECR_REPOSITORY }}"], "imageTag":["${{ env.IMAGE_TAG }}"]}' \
+          --timeout-seconds 600 \
+          --max-concurrency "50" \
+          --max-errors "0" \
+          --region ${{ env.AWS_REGION }}
+    - name: Slack Notification
+      id: slack
+      uses: slackapi/slack-github-action@v1.18.0
+      with:
+        # For posting a rich message using Block Kit
+        payload: |
+          {
+            "text": "${{ env.ECR_REPOSITORY }} build and push to AWS SUCCESSFUL",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "${{ env.ECR_REPOSITORY }} build and push to AWS SUCCESSFUL"
+                }
+              }
+            ]
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
