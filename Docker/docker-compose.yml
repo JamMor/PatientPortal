@@ -9,11 +9,8 @@ services:
     image: mysql:8.0
     volumes:
       - mysql_data:/var/lib/mysql
-    environment: 
-      MYSQL_ROOT_PASSWORD: test_root_pw
-      MYSQL_USER: test_user
-      MYSQL_PASSWORD: test_pw
-      MYSQL_DATABASE: test_db
+    env_file:
+      - ../mysql.env
     healthcheck:
       test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
       interval: 3s
@@ -24,7 +21,8 @@ services:
     depends_on:
       mysql_db:
         condition: service_healthy
-    image: patientportal
+    env_file:
+      - ../.env
     build:
       context: ..
       dockerfile: ./Docker/Dockerfile
