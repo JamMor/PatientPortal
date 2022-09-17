@@ -2,6 +2,7 @@
 
 version: '3.4'
 
+name: patientportal
 services:
 
   mysql_db:
@@ -19,7 +20,7 @@ services:
       timeout: 30s
       retries: 5
 
-  patientportal:
+  asp.net_app:
     depends_on:
       mysql_db:
         condition: service_healthy
