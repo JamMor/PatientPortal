@@ -28,7 +28,6 @@ namespace PatientPortal
         public void ConfigureServices(IServiceCollection services)
         {
             //Docker and local connection strings. Comment out appropriate one for build.
-            // var connectionString = Configuration["DBInfo:DockerConnectionString"];
             var connectionString = Configuration["DBInfo:ConnectionString"];
             
             services.AddDbContext<PatientPortalContext>(options => options.UseMySql(
