@@ -40,4 +40,4 @@ appsettings.*.json
 EC2_Deployment_Instructions.txt
 EC2_Deployment_History_Commands.txt
 
-.env
+*.env
