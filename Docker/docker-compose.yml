@@ -13,14 +13,15 @@ services:
       - ../mysql.env
     healthcheck:
       test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
-      interval: 3s
-      timeout: 30s
-      retries: 5
+      interval: 5s
+      timeout: 60s
+      retries: 10
 
   asp.net_app:
     depends_on:
       mysql_db:
         condition: service_healthy
+    image: asp.net
     env_file:
       - ../.env
     build:
