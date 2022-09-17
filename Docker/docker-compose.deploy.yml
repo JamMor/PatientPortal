@@ -11,7 +11,7 @@ services:
       - mysql_data:/var/lib/mysql
       - "$DB_INIT_PATH:/docker-entrypoint-initdb.d/1.sql"
     env_file:
-      - ../mysql.env
+      - ./mysql.env
     healthcheck:
       test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
       interval: 5s
@@ -22,12 +22,9 @@ services:
     depends_on:
       mysql_db:
         condition: service_healthy
-    image: asp.net
+    image: ${REGISTRY}patientportal:${IMAGE_TAG}
     env_file:
-      - ../.env
-    build:
-      context: ..
-      dockerfile: ./Docker/Dockerfile
+      - ./app.env
     ports:
       - 5000:5000
 
