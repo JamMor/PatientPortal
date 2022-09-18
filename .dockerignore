@@ -26,3 +26,4 @@ README.md
 
 **/appsettings.json
 **/appsettings.*.json
+**/init_migration.sql*
