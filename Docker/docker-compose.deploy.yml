@@ -7,11 +7,12 @@ services:
 
   mysql_db:
     image: mysql:8.0
+    env_file:
+      - ./mysql.env
+    restart: always
     volumes:
       - mysql_data:/var/lib/mysql
       - "$DB_INIT_PATH:/docker-entrypoint-initdb.d/1.sql"
-    env_file:
-      - ./mysql.env
     healthcheck:
       test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
       interval: 5s
@@ -27,6 +28,7 @@ services:
       - ./app.env
     ports:
       - 5000:5000
+    restart: always
 
 volumes:
   mysql_data:

@@ -1,6 +1,6 @@
 **/.classpath
 **/.dockerignore
-**/.env
+**/.env*
 **/.git
 **/.gitignore
 **/.project
@@ -26,3 +26,4 @@ README.md
 
 **/appsettings.json
 **/appsettings.*.json
+**/init_migration.sql*
