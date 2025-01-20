@@ -15,10 +15,10 @@ COPY ["PatientPortal.csproj", "./"]
 RUN dotnet restore "PatientPortal.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "PatientPortal.csproj" -c Release -o /app/build
+RUN dotnet build "PatientPortal.csproj" -c Release -o /app/build --no-restore
 
 FROM build AS publish
-RUN dotnet publish "PatientPortal.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "PatientPortal.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
 WORKDIR /app
