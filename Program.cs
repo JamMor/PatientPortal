@@ -1,31 +1,59 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using PatientPortal.Configuration;
+using PatientPortal.Models;
 
-namespace PatientPortal
+// Load environment variables from .env file
+string rootDir = Directory.GetCurrentDirectory();
+string dotenvPath = Path.Combine(rootDir, ".env");
+DotEnv.Load(dotenvPath);
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add database context
+var connectionString = builder.Configuration["DBInfo:ConnectionString"];
+builder.Services.AddDbContext<PatientPortalContext>(options =>
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 23)))
+);
+
+// Add other services
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession();
+builder.Services.AddCoreServices();
+builder.Services.AddViewServices();
+builder.Services.AddTestServices();
+builder.Services.AddControllersWithViews();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            string rootDir = Directory.GetCurrentDirectory();
-            string dotenvPath = Path.Combine(rootDir, ".env");
-            DotEnv.Load(dotenvPath);
-
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+    app.UseDeveloperExceptionPage();
 }
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.UseSession();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.Run();
