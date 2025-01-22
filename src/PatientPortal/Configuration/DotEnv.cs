@@ -1,4 +1,4 @@
-namespace PatientPortal
+namespace PatientPortal.Configuration
 {
     using System;
     using System.IO;
