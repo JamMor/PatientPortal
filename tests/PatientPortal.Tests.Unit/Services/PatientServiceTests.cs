@@ -22,24 +22,42 @@ public class PatientServiceTests : IDisposable
         _patientService = new PatientService(_context);
     }
 
+    private static Patient CreatePatient(
+        string firstName,
+        string lastName,
+        DateTime dob,
+        string last4Ssn,
+        string? phoneNumber = null,
+        string? email = null,
+        Address? address = null)
+    {
+        return new Patient
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            DOB = dob,
+            Last4SSN = last4Ssn,
+            PhoneNumber = phoneNumber,
+            Email = email,
+            Address = address,
+            MessagingLink = new MessagingLink()
+        };
+    }
+
+    private void AddPatients(params Patient[] patients)
+    {
+        _context.Patients.AddRange(patients);
+        _context.SaveChanges();
+    }
+
     #region CRUD Tests
     
     [Fact]
     public void DoesPatientExist_WithExistingPatient_ReturnsTrue()
     {
         // Arrange
-        var patient = new Patient
-        {
-            FirstName = "John",
-            LastName = "Doe",
-            DOB = new DateTime(1990, 1, 1),
-            Last4SSN = "1234",
-            PhoneNumber = "555-1234",
-            Email = "john.doe@email.com",
-            MessagingLink = new MessagingLink()
-        };
-        _context.Patients.Add(patient);
-        _context.SaveChanges();
+        var patient = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234", "555-1234", "john.doe@email.com");
+        AddPatients(patient);
 
         var patientFormView = new PatientFormView
         {
@@ -145,16 +163,8 @@ public class PatientServiceTests : IDisposable
     public void DeletePatient_WithExistingPatient_RemovesPatient()
     {
         // Arrange
-        var patient = new Patient
-        {
-            FirstName = "Charlie",
-            LastName = "Brown",
-            DOB = new DateTime(1995, 12, 25),
-            Last4SSN = "1111",
-            MessagingLink = new MessagingLink()
-        };
-        _context.Patients.Add(patient);
-        _context.SaveChanges();
+        var patient = CreatePatient("Charlie", "Brown", new DateTime(1995, 12, 25), "1111");
+        AddPatients(patient);
         var patientId = patient.PatientId;
 
         // Act
@@ -180,16 +190,8 @@ public class PatientServiceTests : IDisposable
     public void GetPatientBasicInfo_ReturnsQueryableWithMessagingLink()
     {
         // Arrange
-        var patient = new Patient
-        {
-            FirstName = "Diana",
-            LastName = "Prince",
-            DOB = new DateTime(1985, 6, 1),
-            Last4SSN = "2222",
-            MessagingLink = new MessagingLink()
-        };
-        _context.Patients.Add(patient);
-        _context.SaveChanges();
+        var patient = CreatePatient("Diana", "Prince", new DateTime(1985, 6, 1), "2222");
+        AddPatients(patient);
 
         // Act
         var result = _patientService.GetPatientBasicInfo();
@@ -206,20 +208,12 @@ public class PatientServiceTests : IDisposable
     public void GetPatientFullInfo_ReturnsQueryableWithAllIncludes()
     {
         // Arrange
-        var patient = new Patient
-        {
-            FirstName = "Bruce",
-            LastName = "Wayne",
-            DOB = new DateTime(1980, 2, 19),
-            Last4SSN = "3333",
-            MessagingLink = new MessagingLink(),
-            HealthIssues = new List<HealthIssue>(),
-            Visits = new List<Visit>(),
-            Tests = new List<PatientPortal.Models.TestResult>(),
-            MedicalTeam = new List<PatientStaffConnection>()
-        };
-        _context.Patients.Add(patient);
-        _context.SaveChanges();
+        var patient = CreatePatient("Bruce", "Wayne", new DateTime(1980, 2, 19), "3333");
+        patient.HealthIssues = new List<HealthIssue>();
+        patient.Visits = new List<Visit>();
+        patient.Tests = new List<PatientPortal.Models.TestResult>();
+        patient.MedicalTeam = new List<PatientStaffConnection>();
+        AddPatients(patient);
 
         // Act
         var result = _patientService.GetPatientFullInfo();
@@ -244,10 +238,9 @@ public class PatientServiceTests : IDisposable
     public void SearchPatients_ByPatientId_ReturnsMatchingPatient()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "John", LastName = "Doe", DOB = new DateTime(1990, 1, 1), Last4SSN = "1234", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Jane", LastName = "Smith", DOB = new DateTime(1985, 5, 15), Last4SSN = "5678", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234");
+        var patient2 = CreatePatient("Jane", "Smith", new DateTime(1985, 5, 15), "5678");
+        AddPatients(patient1, patient2);
 
         var searchParams = new PatientSearch { SearchPatientId = patient1.PatientId };
 
@@ -263,11 +256,10 @@ public class PatientServiceTests : IDisposable
     public void SearchPatients_ByFirstName_ReturnsMatchingPatients()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "John", LastName = "Doe", DOB = new DateTime(1990, 1, 1), Last4SSN = "1234", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Johnny", LastName = "Smith", DOB = new DateTime(1985, 5, 15), Last4SSN = "5678", MessagingLink = new MessagingLink() };
-        var patient3 = new Patient { FirstName = "Jane", LastName = "Wilson", DOB = new DateTime(1988, 3, 20), Last4SSN = "9012", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2, patient3);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234");
+        var patient2 = CreatePatient("Johnny", "Smith", new DateTime(1985, 5, 15), "5678");
+        var patient3 = CreatePatient("Jane", "Wilson", new DateTime(1988, 3, 20), "9012");
+        AddPatients(patient1, patient2, patient3);
 
         var searchParams = new PatientSearch { SearchFirstName = "John" };
 
@@ -282,11 +274,10 @@ public class PatientServiceTests : IDisposable
     public void SearchPatients_ByLastName_ReturnsMatchingPatients()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "John", LastName = "Smith", DOB = new DateTime(1990, 1, 1), Last4SSN = "1234", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Jane", LastName = "Smithson", DOB = new DateTime(1985, 5, 15), Last4SSN = "5678", MessagingLink = new MessagingLink() };
-        var patient3 = new Patient { FirstName = "Bob", LastName = "Jones", DOB = new DateTime(1988, 3, 20), Last4SSN = "9012", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2, patient3);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("John", "Smith", new DateTime(1990, 1, 1), "1234");
+        var patient2 = CreatePatient("Jane", "Smithson", new DateTime(1985, 5, 15), "5678");
+        var patient3 = CreatePatient("Bob", "Jones", new DateTime(1988, 3, 20), "9012");
+        AddPatients(patient1, patient2, patient3);
 
         var searchParams = new PatientSearch { SearchLastName = "Smith" };
 
@@ -301,10 +292,9 @@ public class PatientServiceTests : IDisposable
     public void SearchPatients_BySSN_ReturnsExactMatch()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "John", LastName = "Doe", DOB = new DateTime(1990, 1, 1), Last4SSN = "1234", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Jane", LastName = "Smith", DOB = new DateTime(1985, 5, 15), Last4SSN = "5678", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234");
+        var patient2 = CreatePatient("Jane", "Smith", new DateTime(1985, 5, 15), "5678");
+        AddPatients(patient1, patient2);
 
         var searchParams = new PatientSearch { SearchSSN = "1234" };
 
@@ -320,11 +310,10 @@ public class PatientServiceTests : IDisposable
     public void SearchPatients_ByBirthdate_ReturnsMatchingPatients()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "John", LastName = "Doe", DOB = new DateTime(1990, 1, 1), Last4SSN = "1234", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Jane", LastName = "Smith", DOB = new DateTime(1990, 1, 1), Last4SSN = "5678", MessagingLink = new MessagingLink() };
-        var patient3 = new Patient { FirstName = "Bob", LastName = "Wilson", DOB = new DateTime(1985, 5, 15), Last4SSN = "9012", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2, patient3);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234");
+        var patient2 = CreatePatient("Jane", "Smith", new DateTime(1990, 1, 1), "5678");
+        var patient3 = CreatePatient("Bob", "Wilson", new DateTime(1985, 5, 15), "9012");
+        AddPatients(patient1, patient2, patient3);
 
         var searchParams = new PatientSearch { SearchBirthdate = new DateTime(1990, 1, 1) };
 
@@ -339,11 +328,10 @@ public class PatientServiceTests : IDisposable
     public void SearchPatients_WithMultipleCriteria_ReturnsIntersection()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "John", LastName = "Smith", DOB = new DateTime(1990, 1, 1), Last4SSN = "1234", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "John", LastName = "Doe", DOB = new DateTime(1990, 1, 1), Last4SSN = "5678", MessagingLink = new MessagingLink() };
-        var patient3 = new Patient { FirstName = "Jane", LastName = "Smith", DOB = new DateTime(1990, 1, 1), Last4SSN = "9012", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2, patient3);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("John", "Smith", new DateTime(1990, 1, 1), "1234");
+        var patient2 = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "5678");
+        var patient3 = CreatePatient("Jane", "Smith", new DateTime(1990, 1, 1), "9012");
+        AddPatients(patient1, patient2, patient3);
 
         var searchParams = new PatientSearch { SearchFirstName = "John", SearchLastName = "Smith" };
 
@@ -359,9 +347,8 @@ public class PatientServiceTests : IDisposable
     public void SearchPatients_WithNoMatches_ReturnsEmptyList()
     {
         // Arrange
-        var patient = new Patient { FirstName = "John", LastName = "Doe", DOB = new DateTime(1990, 1, 1), Last4SSN = "1234", MessagingLink = new MessagingLink() };
-        _context.Patients.Add(patient);
-        _context.SaveChanges();
+        var patient = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234");
+        AddPatients(patient);
 
         var searchParams = new PatientSearch { SearchFirstName = "NonExistent" };
 
@@ -376,10 +363,9 @@ public class PatientServiceTests : IDisposable
     public void SearchPatients_WithEmptySearch_ReturnsAllPatients()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "John", LastName = "Doe", DOB = new DateTime(1990, 1, 1), Last4SSN = "1234", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Jane", LastName = "Smith", DOB = new DateTime(1985, 5, 15), Last4SSN = "5678", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234");
+        var patient2 = CreatePatient("Jane", "Smith", new DateTime(1985, 5, 15), "5678");
+        AddPatients(patient1, patient2);
 
         var searchParams = new PatientSearch(); // All fields null/empty
 
@@ -398,10 +384,9 @@ public class PatientServiceTests : IDisposable
     public void SortPatients_ByPatientIdDescending_ReturnsSortedResults()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "First", LastName = "Patient", DOB = new DateTime(1990, 1, 1), Last4SSN = "1111", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Second", LastName = "Patient", DOB = new DateTime(1990, 1, 1), Last4SSN = "2222", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("First", "Patient", new DateTime(1990, 1, 1), "1111");
+        var patient2 = CreatePatient("Second", "Patient", new DateTime(1990, 1, 1), "2222");
+        AddPatients(patient1, patient2);
 
         var query = _context.Patients.AsQueryable();
 
@@ -416,10 +401,9 @@ public class PatientServiceTests : IDisposable
     public void SortPatients_ByLastNameAscending_ReturnsSortedResults()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "John", LastName = "Zebra", DOB = new DateTime(1990, 1, 1), Last4SSN = "1111", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Jane", LastName = "Apple", DOB = new DateTime(1990, 1, 1), Last4SSN = "2222", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("John", "Zebra", new DateTime(1990, 1, 1), "1111");
+        var patient2 = CreatePatient("Jane", "Apple", new DateTime(1990, 1, 1), "2222");
+        AddPatients(patient1, patient2);
 
         var query = _context.Patients.AsQueryable();
 
@@ -435,10 +419,9 @@ public class PatientServiceTests : IDisposable
     public void SortPatients_ByDOBDescending_ReturnsSortedResults()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "Young", LastName = "Patient", DOB = new DateTime(2000, 1, 1), Last4SSN = "1111", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Old", LastName = "Patient", DOB = new DateTime(1950, 1, 1), Last4SSN = "2222", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("Young", "Patient", new DateTime(2000, 1, 1), "1111");
+        var patient2 = CreatePatient("Old", "Patient", new DateTime(1950, 1, 1), "2222");
+        AddPatients(patient1, patient2);
 
         var query = _context.Patients.AsQueryable();
 
@@ -453,10 +436,9 @@ public class PatientServiceTests : IDisposable
     public void SortPatients_WithDefaultSort_SortsByLastNameAscending()
     {
         // Arrange
-        var patient1 = new Patient { FirstName = "John", LastName = "Zebra", DOB = new DateTime(1990, 1, 1), Last4SSN = "1111", MessagingLink = new MessagingLink() };
-        var patient2 = new Patient { FirstName = "Jane", LastName = "Apple", DOB = new DateTime(1990, 1, 1), Last4SSN = "2222", MessagingLink = new MessagingLink() };
-        _context.Patients.AddRange(patient1, patient2);
-        _context.SaveChanges();
+        var patient1 = CreatePatient("John", "Zebra", new DateTime(1990, 1, 1), "1111");
+        var patient2 = CreatePatient("Jane", "Apple", new DateTime(1990, 1, 1), "2222");
+        AddPatients(patient1, patient2);
 
         var query = _context.Patients.AsQueryable();
 
@@ -475,16 +457,8 @@ public class PatientServiceTests : IDisposable
     public void DoesPatientExist_WithPartialMatch_ReturnsFalse()
     {
         // Arrange
-        var patient = new Patient
-        {
-            FirstName = "John",
-            LastName = "Doe",
-            DOB = new DateTime(1990, 1, 1),
-            Last4SSN = "1234",
-            MessagingLink = new MessagingLink()
-        };
-        _context.Patients.Add(patient);
-        _context.SaveChanges();
+        var patient = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234");
+        AddPatients(patient);
 
         var patientFormView = new PatientFormView
         {
