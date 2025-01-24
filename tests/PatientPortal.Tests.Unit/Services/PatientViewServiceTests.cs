@@ -21,7 +21,11 @@ public class PatientViewServiceTests : IDisposable
     
         #region Helper Methods
 
-        private static readonly DateTime anchorDate = new DateTime(2024, 1, 1);
+        private static DateTime DaysAgo(int daysAgo)
+        {
+            var anchorDate = new DateTime(2024, 1, 1);
+            return anchorDate.AddDays(-daysAgo);
+        }
 
         private static Patient CreatePatient(
             int id,
@@ -34,7 +38,7 @@ public class PatientViewServiceTests : IDisposable
             string? email = null,
             Address? address = null)
         {            
-            var createdAt = anchorDate.AddDays(-createdDaysAgo);
+            var createdAt = DaysAgo(createdDaysAgo);
             return new Patient
             {
                 PatientId = id,
@@ -76,7 +80,7 @@ public class PatientViewServiceTests : IDisposable
             Address? address = null)
         {
             var patient = CreatePatient(id, firstName, lastName, dob, ssn, createdDaysAgo, phone, email, address);
-            patient.UpdatedAt = updatedDaysAgo.HasValue ? anchorDate.AddDays(-updatedDaysAgo.Value) : anchorDate.AddDays(-createdDaysAgo+10);
+            patient.UpdatedAt = updatedDaysAgo.HasValue ? DaysAgo(updatedDaysAgo.Value) : DaysAgo(createdDaysAgo-10);
             patient.MedicalTeam = new List<PatientStaffConnection>();
             patient.HealthIssues = new List<HealthIssue>();
             patient.Visits = new List<Visit>();
@@ -114,7 +118,7 @@ public class PatientViewServiceTests : IDisposable
         Assert.Equal("Doe", result.CurrentPatientLastName);
         Assert.Equal("1234", result.CurrentPatientSSN);
         Assert.Equal(new DateTime(1990, 1, 1), result.CurrentPatientDOB);
-        Assert.Equal(DateTime.Today.AddDays(-30), result.CurrentPatientCreatedOn);
+        Assert.Equal(DaysAgo(30), result.CurrentPatientCreatedOn);
     }
 
     [Fact]
