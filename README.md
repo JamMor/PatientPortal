@@ -1,14 +1,6 @@
 # PatientPortal
 
-PatientPortal is an Electronic Medical Records (EMR) portal built with ASP.NET Core 3.1. It is designed to provide a simple, fast, and more navigable interface for both patients and healthcare providers. Store and manage detailed patient information, including medical history, health issues, visit summaries, care team, and messaging history.
-
-## Technologies Used
-
-- ASP.NET Core 3.1
-- Entity Framework Core 5.0
-- MySQL 8.0
-- Docker and Docker Compose
-- Bootstrap for front-end styling
+PatientPortal is an Electronic Medical Records (EMR) portal built with ASP.NET Core 8.0. It provides a fast, navigable interface for both patients and healthcare providers to store and manage medical history, health issues, visits, care teams, and messaging.
 
 ## Table of Contents
 
@@ -16,12 +8,23 @@ PatientPortal is an Electronic Medical Records (EMR) portal built with ASP.NET C
 - [Running the Project](#running-the-project)
   - [Running Locally](#running-locally)
   - [Running with Docker](#running-with-docker)
+- [Testing](#testing)
 
 ---
 
+## Technologies Used
+
+- ASP.NET Core 8.0
+- Entity Framework Core 8.0
+- Pomelo.EntityFrameworkCore.MySql
+- Bogus (for test data generation)
+- MySQL 8.0
+- Docker and Docker Compose
+- Bootstrap for front-end styling
+
 ## Running the Project
 
-This project can either be run from a pre-built Docker image, or built and run directly on your local machine using the steps outlined below. The application runs on `https://localhost:5000` by default.
+This project can be run locally or with Docker. The application runs on `http://localhost:5000` by default.
 
 First clone the repository:
 
@@ -30,20 +33,9 @@ git clone <repository-url>
 cd PatientPortal
 ```
 
----
+### Environment Configuration
 
-### Running Locally
-
-This section describes how to build and run the project locally on your machine. You must also set up a MySQL database to store the patient data.
-
-#### Local Prerequisites
-
-- .NET Core SDK 3.1
-- MySQL Server 8.0.23
-
-#### 1. Create an `.env` file
-
-The app will pull these environment variables from a `.env` in the root directory that overrides the standard `appsettings.json`.
+To run the project, you must make an `.env` file with the required environment variables whether running locally, or with Docker.
 
 ```env
 Logging__LogLevel__Default=Information
@@ -54,99 +46,107 @@ AllowedHosts=*
 DBInfo__ConnectionString=server=<server>;userid=<user_id>;password=<user_password>;port=<port>;database=<db_name>;SslMode=None
 ```
 
-Replace the placeholders in the `.env.docker.dev` and `mysql.env` files with your MySQL database credentials:
+The `allowedHosts` variable can be set to `*` for local development, and changed as needed for production.
 
-- `server`: The MySQL server address (e.g., `localhost` for local MySQL server).
+The `DBInfo__ConnectionString` variable must be set to your MySQL database connection string.
+
+- `server`: The MySQL server address (e.g., `localhost` for local MySQL server, and `mysql_db` for the MySQL container in Docker).
 - `user_id`: The MySQL user ID.
 - `user_password`: The password for the MySQL user.
 - `db_name`: The name of the MySQL database.
 - `port`: The port number for the MySQL server (default is `3306`).
 
-#### 2. Restore dependencies and build the project
+---
+
+### Running Locally
+
+#### Prerequisites
+
+- .NET 8 SDK
+- MySQL Server 8.0
+
+#### 1. Configure Environment Variables
+
+Put your [`.env` file](#environment-configuration) in the root directory of the project, `/src/PatientPortal/`.
+
+#### 2. Restore and Build
+
+> **Note**: The following commands assume you are in the root directory of the repo, but you can also navigate to the `src/PatientPortal/` directory to run them without specifying the project file every line.
 
 ```bash
-dotnet restore
-dotnet build
+dotnet restore src/PatientPortal/PatientPortal.csproj
+dotnet build src/PatientPortal/PatientPortal.csproj
 ```
 
-#### 3. Create the database and apply migrations
+#### 3. Apply Migrations
 
 ```bash
-dotnet ef database update
+dotnet ef database update --project src/PatientPortal/PatientPortal.csproj
 ```
 
-#### 4. Run the application
+#### 4. Run the Application
 
 ```bash
-dotnet run
+dotnet run --project src/PatientPortal/PatientPortal.csproj
 ```
+
+The app will be available at `http://localhost:5000`.
 
 ---
 
 ### Running with Docker
 
-Using Docker Compose, you can spin up the application and a MySQL database. For more information on the operation of the MySQL image, see the [MySQL Docker Hub page](https://hub.docker.com/_/mysql).
+Using Docker Compose, you can run both the ASP.NET Core app and MySQL database in containers.
 
-#### Docker Prerequisites
+#### 1. Environment Files
 
-- Docker
-- .NET Core SDK 3.1 (if you want to generate the migration file)
+First save the former [`.env` file](#environment-configuration) in `src/PatientPortal/` as `.env.docker.dev`. This location and name can be changed in the compose file.
 
-#### 1. Create environment files
+Make sure the MySql server uses the service name `mysql_db` as the server in your connection string. This too can be changed in the compose file if desired.
 
-Create these two `.env` files in the root directory:
+Your MySQL user ID *cannot* be `root` when using Docker, so choose a different user ID.
 
-- `.env.docker.dev`
+Next, create the env file for your MySQL container in `src/PatientPortal/` as `mysql.env`.
 
-```env
-Logging__LogLevel__Default=Information
-Logging__LogLevel__Microsoft=Warning
-Logging__LogLevel__Microsoft.Hosting.Lifetime=Information
+  ```env
+  MYSQL_ROOT_PASSWORD=<root_password>
+  MYSQL_USER=<user_id>
+  MYSQL_PASSWORD=<user_password>
+  MYSQL_DATABASE=<db_name>
+  ```
 
-AllowedHosts=*
-DBInfo__ConnectionString=server=<server>;userid=<user_id>;password=<user_password>;port=3306;database=<db_name>;SslMode=None
-```
+  Make sure to use the same MySQL info in both files:
 
-- `mysql.env`
+#### 2. **(Optional)** Initialize Database
 
-```env
-MYSQL_ROOT_PASSWORD=<root_password>
-MYSQL_USER=<user_id>
-MYSQL_PASSWORD=<user_password>
-MYSQL_DATABASE=<db_name>
-```
+If you want to initialize the database with data the first time, you must create an initialization script and mount it into the MySQL container. See the MySQL Docker image [for details](https://hub.docker.com/_/mysql#initializing-a-fresh-instance).
 
-Replace the placeholders in the `.env.docker.dev` and `mysql.env` files with your MySQL database credentials:
-
-- `server` is the name of your MySQL service in the Docker Compose file (e.g., `mysql_db`).
-- `root_password` is the root password for your MySQL database.
-- `user_id` is the user ID for your MySQL database (**not** `root`).
-- `user_password` is the password for your MySQL database.
-- `db_name` is the name of your MySQL database.
-- `port`: The port number for the MySQL server (default is `3306`).
-
-#### 2. Create a migration script to initialize the database
+If you have the SDK installed, you can create a migration script from your current migrations with:
 
 ```bash
 dotnet ef migrations script -o init.sql
 ```
 
-This command will create a migration file named `init.sql` in the root directory. It will be mounted as a volume to the container.
+Once done, you can create an en env file at the root of the `Docker` directory, `src/PatientPortal/Docker/.env`, that sets `DB_INIT_PATH` to the path of your script, so that compose can mount it into the MySQL container.
 
-**Note:** Currently, this requires having the .NET SDK installed by the user. Future versions will have the migration script created during the Docker build process and included in the image.
+  ```env
+  DB_INIT_PATH="<path-to-your-script>/init.sql"
+  ```
 
-#### 3. Create an `.env` file in the Docker directory
+#### 3. Build and Run with Docker Compose
 
-```env
-DB_INIT_PATH="<path_to_your_init_sql_file>"
-```
-
-Replace `<path_to_your_init_sql_file>` with the path to the `init.sql` file created in the previous step. This path is used to mount the SQL file as a volume in the MySQL Docker container, which will be used to initialize the database.
-
-#### 4. Build and run the application using Docker Compose
+From the `Docker` directory:
 
 ```bash
-docker-compose -f docker-compose.dev.yml up -d
+docker-compose up -d
 ```
 
-This command will build the Docker images and start the containers defined in the `docker-compose.dev.yml` file.
+This will build the ASP.NET Core image, start the MySQL container, and initialize the database using the migration script specified in `DB_INIT_PATH`.
+
+The app will be available at `http://localhost:5000`.
+
+## Testing
+
+Unit tests for the PatientPortal service and logic components are located in the `tests/PatientPortal.Tests.Unit` directory.
+
+More information can be found in the [PatientPortal Unit Tests README.md](tests/PatientPortal.Tests.Unit/README.MD).
