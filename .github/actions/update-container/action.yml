@@ -1,0 +1,72 @@
+name: 'Update Container'
+description: 'Update container on EC2'
+
+inputs:
+  AWS_REGION:
+    description: 'AWS Region'
+    required: true
+    default: 'us-west-2'
+  INSTANCE_ID:
+    description: 'AWS EC2 Instance ID'
+    required: true
+  ECR_REPOSITORY:
+    description: 'ECR Repository'
+    required: true
+  TARGET_DIR:
+    description: 'Target directory'
+    required: true
+  DOCKERFILE_PATH:
+    description: 'Dockerfile path'
+    required: true
+  DOCKER_COMPOSE_PATH:
+    description: 'Docker Compose file path'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Create docker image tag
+      shell: bash
+      run: |
+        echo "IMAGE_TAG=${{ github.sha }}-$(git show -s --format=%cd --date='format:%Y-%m-%d.%H-%M-%S')" >> $GITHUB_ENV
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ inputs.ECR_REPOSITORY }}
+        DOCKERFILE_PATH: ${{ inputs.DOCKERFILE_PATH }}
+        TARGET_DIR: ${{ inputs.TARGET_DIR }}
+      shell: bash
+      run: |
+        docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} ${{ env.TARGET_DIR }}
+        docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+      
+    - name: Copy docker-compose files to S3
+      env:
+        ECR_REPOSITORY: ${{ inputs.ECR_REPOSITORY }}
+        DOCKER_COMPOSE_PATH: ${{ inputs.DOCKER_COMPOSE_PATH }}
+      shell: bash
+      run: aws s3 cp ${{ env.DOCKER_COMPOSE_PATH }} s3://deploy-instructions/${{ env.ECR_REPOSITORY }}/docker-compose.yml
+
+    - name: Run SSM Command document to update Container on EC2
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        INSTANCE_ID: ${{ inputs.INSTANCE_ID }}
+        ECR_REPOSITORY: ${{ inputs.ECR_REPOSITORY }}
+        AWS_REGION: ${{ inputs.AWS_REGION }}
+      shell: bash
+      run: >
+        aws ssm send-command
+        --document-name "ProjectServer-UpdateContainer"
+        --document-version "\$LATEST"
+        --targets '[{"Key":"InstanceIds","Values":["${{ env.INSTANCE_ID }}"]}]'
+        --parameters '{ "ecrRegistry":["${{ env.ECR_REGISTRY }}"], "repoName":["${{ env.ECR_REPOSITORY }}"], "imageTag":["${{ env.IMAGE_TAG }}"]}'
+        --timeout-seconds 600
+        --max-concurrency "50"
+        --max-errors "0"
+        --region "${{ env.AWS_REGION }}"
