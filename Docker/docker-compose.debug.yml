@@ -6,8 +6,8 @@ services:
   patientportal:
     image: patientportal
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ../src/PatientPortal
+      dockerfile: Dockerfile
     ports:
       - 5000:5000
     environment:

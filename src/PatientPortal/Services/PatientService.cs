@@ -101,7 +101,7 @@ namespace PatientPortal.Services
                 .Where(patient => string.IsNullOrEmpty(searchParams.SearchFirstName) || patient.FirstName.StartsWith(searchParams.SearchFirstName))
                 .Where(patient => string.IsNullOrEmpty(searchParams.SearchLastName) || patient.LastName.StartsWith(searchParams.SearchLastName))
                 .Where(patient => string.IsNullOrEmpty(searchParams.SearchSSN) || patient.Last4SSN == searchParams.SearchSSN)
-                .Where(patient => searchParams.SearchBirthdate == null || patient.DOB == searchParams.SearchBirthdate);
+                .Where(patient => searchParams.SearchBirthdate == null || patient.DOB.Date == searchParams.SearchBirthdate.Value.Date);
 
             if(searchParams.SearchPatientsUnderCare == true)
             {
