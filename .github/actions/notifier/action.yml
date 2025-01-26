@@ -1,0 +1,43 @@
+name: Send Notifications
+description: 'Send notifications to Slack and Discord'
+
+inputs :
+  SLACK_WEBHOOK:
+    description: 'The Slack webhook URL'
+    required: true
+  DISCORD_WEBHOOK:
+    description: 'The Discord webhook URL'
+    required: true
+  STATUS:
+    description: 'The status of the job'
+    required: true
+    default: 'success'
+  TITLE:
+    description: 'The title of the message'
+    required: true
+    default: ''
+  FIELDS:
+    description: 'The fields of the message'
+    required: false
+    default: '{}'
+
+runs:
+  using: 'composite'
+  steps:
+  - name: Send Discord Message
+    id: send-discord
+    uses: ./.github/actions/notifier/send-to-discord-webhook
+    with:
+      DISCORD_WEBHOOK: ${{ inputs.DISCORD_WEBHOOK }}
+      STATUS: ${{ inputs.STATUS }}
+      TITLE: ${{ inputs.TITLE }}
+      FIELDS: ${{ inputs.FIELDS }}
+
+  - name: Send Slack Message
+    id: send-slack
+    uses: ./.github/actions/notifier/send-to-slack-webhook
+    with:
+      SLACK_WEBHOOK: ${{ inputs.SLACK_WEBHOOK }}
+      STATUS: ${{ inputs.STATUS }}
+      TITLE: ${{ inputs.TITLE }}
+      FIELDS: ${{ inputs.FIELDS }}

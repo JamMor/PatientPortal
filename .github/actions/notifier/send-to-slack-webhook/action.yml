@@ -1,0 +1,64 @@
+name: Slack Notification
+description: 'Send a notification to a Slack webhook'
+
+inputs :
+  SLACK_WEBHOOK:
+    description: 'The Slack webhook URL'
+    required: true
+  STATUS:
+    description: 'The status of the job'
+    required: true
+    default: 'success'
+  TITLE:
+    description: 'The title of the message'
+    required: true
+    default: ''
+  FIELDS:
+    description: 'The fields of the message'
+    required: false
+    default: '{}'
+
+runs:
+  using: 'composite'
+  steps:
+  - name: Format Slack Message
+    id: format-message
+    working-directory: ${{github.action_path}}
+    env:
+      TITLE: ${{ inputs.TITLE }}
+      STATUS: ${{ inputs.STATUS }}
+      JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      FIELDS: ${{ inputs.FIELDS }}
+    shell: bash
+    run: >
+      python create_message.py 
+      --title "${{ env.TITLE }}" 
+      --status "${{ env.STATUS }}" 
+      --url "${{ env.JOB_URL }}" 
+      --fields '${{ env.FIELDS }}'
+
+  - name: Send Slack Message
+    id: send-message
+    working-directory: ${{github.action_path}}
+    env:
+      SLACK_WEBHOOK: ${{ inputs.SLACK_WEBHOOK }}
+    shell: bash
+    run: |
+      response=$(curl \
+        --silent \
+        --write-out 'HTTPSTATUS:%{response_code}' \
+        -H "Content-Type: application/json" \
+        --data @slack-message.json \
+        ${{ env.SLACK_WEBHOOK }} \
+        )
+      body=$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
+      status=$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+      if [ "$status" -lt 200 ] || [ "$status" -gt 299 ]; then
+        echo "Slack notification failed with status code $status"
+        echo "Response: $body"
+        exit 1
+      else
+        echo "Slack notification sent successfully"
+      fi
+
+ 
