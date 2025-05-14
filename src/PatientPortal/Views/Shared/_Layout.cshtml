@@ -30,7 +30,7 @@
                         <h6 class="p-2 text-dark">Welcome, @Context.Session.GetString("Name")!</h6>
                     }
                     <ul class="navbar-nav flex-grow-1 order-sm-first">
-                        <li class="nav-item">
+                        <li class="nav-item border-left border-right border-muted">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         @if(@Context.Session.GetString("Role") == "Admin")
@@ -45,9 +45,15 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Patients" asp-action="PatientManager">Patients</a>
                         </li>
                         }
+                        @if(@Context.Session.GetString("Role") == null)
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        }
                     </ul>
                      @if(@Context.Session.GetInt32("UserId") != null)
                     {
@@ -67,7 +73,9 @@
 
     <footer class="border-top footer text-muted bg-white mt-1">
         <div class="container">
-            &copy; 2021 - PatientPortal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2021 - 2026 - PatientPortal 
+            - <a asp-area="" asp-controller="Home" asp-action="About">About</a> 
+            - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
