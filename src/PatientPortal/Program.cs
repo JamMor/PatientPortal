@@ -23,6 +23,7 @@ builder.Services.AddDbContext<PatientPortalContext>(options =>
 // Add other services
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
+builder.Services.AddIdentityServices();
 builder.Services.AddCoreServices();
 builder.Services.AddViewServices();
 builder.Services.AddTestServices();
@@ -47,6 +48,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
