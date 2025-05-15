@@ -22,6 +22,8 @@ namespace PatientPortal.Configuration
                 
                 // User settings
                 options.User.RequireUniqueEmail = false;
+                // TODO: Current usernames use special characters, but consider restricting in future
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+<>$";
                 
                 // Lockout settings
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);

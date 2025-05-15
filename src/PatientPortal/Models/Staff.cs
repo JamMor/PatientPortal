@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace PatientPortal.Models
 {
@@ -54,6 +55,7 @@ namespace PatientPortal.Models
 
         //Relationship Properties=============
 
+        public IdentityUser User { get; set; }
         public List<PatientStaffConnection> Patients { get; set; }
         public List<Visit> Visits { get; set; }
         public List<TestResult> TestsOrdered { get; set; }

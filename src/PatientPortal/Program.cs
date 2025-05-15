@@ -1,11 +1,14 @@
 using System;
 using System.IO;
+using System.Threading.Tasks; // TODO: MIGRATION
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity; // TODO: MIGRATION
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PatientPortal.Configuration;
 using PatientPortal.Models;
+using PatientPortal.Services; // TODO: MIGRATION - Remove after staff data migration
 
 // Load environment variables from .env file
 string rootDir = Directory.GetCurrentDirectory();
@@ -13,6 +16,15 @@ string dotenvPath = Path.Combine(rootDir, ".env");
 DotEnv.Load(dotenvPath);
 
 var builder = WebApplication.CreateBuilder(args);
+
+// TODO: MIGRATION START - Remove this entire block after staff data migration
+// Check for migration command before building web app
+if (args.Length > 0 && args[0] == "migrate-staff")
+{
+    await RunStaffMigration(builder);
+    return;
+}
+// TODO: MIGRATION END
 
 // Add database context
 var connectionString = builder.Configuration["DBInfo:ConnectionString"];
@@ -60,3 +72,27 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+// TODO: MIGRATION START - Remove this entire method after staff data migration
+static async Task RunStaffMigration(WebApplicationBuilder builder)
+{
+    // Build services needed for migration
+    var connectionString = builder.Configuration["DBInfo:ConnectionString"];
+    builder.Services.AddDbContext<PatientPortalContext>(options =>
+        options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 23)))
+    );
+    builder.Services.AddIdentityServices();
+    
+    var app = builder.Build();
+    
+    using var scope = app.Services.CreateScope();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var context = scope.ServiceProvider.GetRequiredService<PatientPortalContext>();
+    
+    var migration = new StaffPasswordMigration(userManager, context);
+    await migration.MigrateAsync();
+    
+    Console.WriteLine("\nPress any key to exit...");
+    Console.ReadKey();
+}
+// TODO: MIGRATION END
