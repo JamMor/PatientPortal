@@ -16,32 +16,23 @@ namespace PatientPortal.Services
         }
 
         //COMMANDS
-        public bool DoesStaffExist(string staffUsername)
-        {
-            return _context.Staff
-                .Any(staff => staff.StaffUsername == staffUsername);
-        }
-
-        public int CreateStaff(StaffFormView staffFormView)
+        // Creates NON-admin staff, with auth
+        public Staff CreateStaff(StaffFormView staffFormView, IdentityUser user)
         {
             Staff newStaff = new Staff()
             {
                 FirstName = staffFormView.FirstName,
                 LastName = staffFormView.LastName,
                 Role = staffFormView.Role,
-                StaffUsername = staffFormView.StaffUsername,
-                Password = staffFormView.Password,
+                User = user,
                 IsAdmin = false,
                 MessagingLink = new MessagingLink()
             };
 
-            PasswordHasher<Staff> hasher = new PasswordHasher<Staff>();
-            newStaff.Password = hasher.HashPassword(newStaff, newStaff.Password);
-            
             _context.Staff.Add(newStaff);
             _context.SaveChanges();
 
-            return newStaff.StaffId;
+            return newStaff;
         }
 
         public void DeleteStaff(int staffId)
