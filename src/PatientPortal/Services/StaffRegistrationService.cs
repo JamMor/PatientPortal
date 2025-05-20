@@ -31,12 +31,12 @@ namespace PatientPortal.Services
 
             if (!createUserResult.Succeeded)
             {
-                return new ExtendedIdentityResult<Staff>(createUserResult.IdentityResult, null);
+                return ExtendedIdentityResult<Staff>.Failure(createUserResult.IdentityResult);
             }
 
             Staff staff = _staffService.CreateStaff(staffFormView, createUserResult.Value);
 
-            return new ExtendedIdentityResult<Staff>(createUserResult.IdentityResult, staff);
+            return ExtendedIdentityResult<Staff>.Success(staff);
         }
     }
 }
