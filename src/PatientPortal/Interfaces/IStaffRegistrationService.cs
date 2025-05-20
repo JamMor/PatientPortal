@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
 using PatientPortal.Models;
+using PatientPortal.Infrastructure;
 
 namespace PatientPortal.Interfaces
 {
     public interface IStaffRegistrationService
     {
-        Task<Staff> RegisterStaffAsync(StaffFormView staffFormView);
+        Task<ExtendedIdentityResult<Staff>> RegisterStaffAsync(StaffFormView staffFormView);
     }
 }
