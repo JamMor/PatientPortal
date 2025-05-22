@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Threading.Tasks;
 using PatientPortal.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
+using PatientPortal.Extensions;
 
 namespace PatientPortal.Controllers
 {
@@ -27,10 +28,10 @@ namespace PatientPortal.Controllers
             }
         }
 
-        private ILoginService _loginService;
-        public LoginController(ILoginService loginService)
+        private readonly IAuthService _authService;
+        public LoginController(IAuthService authService)
         {
-            _loginService = loginService;
+            _authService = authService;
         }
 
         [HttpGet("")]
@@ -52,21 +53,18 @@ namespace PatientPortal.Controllers
         }
         
         [HttpPost("login")]
-        public IActionResult StaffLogin(LoginStaff loginInfo)
+        public async Task<IActionResult> StaffLogin(LoginStaff loginInfo)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                LoginStaffDTO staffUser = _loginService.AttemptStaffLogin(loginInfo);
-                if(staffUser != null)
-                {
-                    HttpContext.Session.SetInt32("UserId", staffUser.StaffId);
-                    HttpContext.Session.SetString("Name", staffUser.FullName);
-                    HttpContext.Session.SetString("Role", staffUser.Role);
-                    HttpContext.Session.SetInt32("MessageLinkId", staffUser.MessagingLinkId);
+                var result = await _authService.SignInAsync(loginInfo.StaffUsername, loginInfo.LoginPassword);
 
+                if (result.Succeeded)
+                {
                     return RedirectToAction("Index");
                 }
-                ModelState.AddModelError("LoginPassword", "Incorrect login info.");
+                
+                result.AddErrorToModelState(ModelState);
             }
             return View("StaffLogin");
         }
