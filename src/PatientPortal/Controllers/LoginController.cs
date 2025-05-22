@@ -70,9 +70,9 @@ namespace PatientPortal.Controllers
         }
 
         [HttpPost("/logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await _authService.SignOutAsync();
             return RedirectToAction("Index");
         }
     }
