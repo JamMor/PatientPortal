@@ -1,10 +1,6 @@
 using System.Threading.Tasks;
 using PatientPortal.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Extensions;
 
@@ -13,21 +9,6 @@ namespace PatientPortal.Controllers
     [Route("/")]
     public class LoginController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
-        private bool IsLoggedIn
-        {
-            get
-            {
-                return uuid != null;
-            }
-        }
-
         private readonly IAuthService _authService;
         public LoginController(IAuthService authService)
         {
@@ -37,9 +18,10 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult Index()
         {
-            if(IsLoggedIn)
+            // If already authenticated, redirect based on role
+            if (User.Identity?.IsAuthenticated == true)
             {
-                if(HttpContext.Session.GetString("Role") == "Admin")
+                if (User.IsAdmin())
                 {
                     return RedirectToAction("StaffManager", "Staff");
                 }

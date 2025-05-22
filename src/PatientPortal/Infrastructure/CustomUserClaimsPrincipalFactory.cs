@@ -37,6 +37,7 @@ namespace PatientPortal.Infrastructure
                 identity.AddClaim(new Claim(ClaimTypes.GivenName, staff.FirstName));
                 identity.AddClaim(new Claim(ClaimTypes.Surname, staff.LastName));
                 identity.AddClaim(new Claim(ClaimTypes.Role, staff.Role));
+                identity.AddClaim(new Claim("IsAdmin", staff.IsAdmin.ToString(), ClaimValueTypes.Boolean));
                 identity.AddClaim(new Claim("MessageLinkId", staff.MessagingLink.MessagingLinkId.ToString()));
             }
 
