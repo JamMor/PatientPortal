@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using PatientPortal.Models;
+using PatientPortal.Infrastructure;
 using System;
 
 namespace PatientPortal.Configuration
@@ -32,6 +33,9 @@ namespace PatientPortal.Configuration
             })
             .AddEntityFrameworkStores<PatientPortalContext>()
             .AddDefaultTokenProviders();
+
+            // Register custom claims principal factory
+            services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
 
             // Configure application cookie
             services.ConfigureApplicationCookie(options =>
