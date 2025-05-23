@@ -14,14 +14,6 @@ namespace PatientPortal.Controllers
     
     public class TestController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
-
         private ITestLoginService _testLoginService;
         private ISeedViewService _seedViewService;
 

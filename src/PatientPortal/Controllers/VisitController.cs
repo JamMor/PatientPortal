@@ -6,19 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.Extensions;
 
 namespace PatientPortal.Controllers
 {
     [Route("/provider/patients/{patientId}/visit")]
     public class VisitController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
+        private int? staffId => User.GetStaffId();
 
         private IPatientViewService _patientViewService;
         private IVisitService _visitService;
@@ -44,7 +39,7 @@ namespace PatientPortal.Controllers
         {
             if(ModelState.IsValid)
             {
-                _visitService.CreateVisit(patientId, (int)uuid, formData);
+                _visitService.CreateVisit(patientId, (int)staffId, formData);
                 
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }

@@ -14,13 +14,7 @@ namespace PatientPortal.Controllers
     [Route("/provider/staff")]
     public class StaffController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
+        private int? staffId => User.GetStaffId();
 
         private IStaffService _staffService;
         private IStaffViewService _staffViewService;

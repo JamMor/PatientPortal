@@ -6,26 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.Extensions;
 
 namespace PatientPortal.Controllers
 {
     [Route("/provider/inbox")]
     public class MessagingController : Controller
     {
-        private int? linkId
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("MessageLinkId");
-            }
-        }
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
+        private int? linkId => User.GetMessageLinkId();
 
         private IMessagingService _messagingService;
         private IMessagingViewService _messagingViewService;
@@ -41,7 +29,7 @@ namespace PatientPortal.Controllers
         {
             paginationSettings.ResultsPerPage = 5;
             
-            bool isUserPatient = HttpContext.Session.GetString("Role") == "Patient";
+            bool isUserPatient = User.IsInRole("Patient");
             
             //Redirect to appropriate URL's for patient or staff member
             if(isUserPatient)

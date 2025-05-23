@@ -12,14 +12,6 @@ namespace PatientPortal.Controllers
     [Route("/provider/patients/{patientId}/issue")]
     public class HealthIssueController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
-
         private IPatientViewService _patientViewService;
         private IHealthIssueService _healthIssueService;
         public HealthIssueController(IPatientViewService patientViewService, IHealthIssueService healthIssueService)

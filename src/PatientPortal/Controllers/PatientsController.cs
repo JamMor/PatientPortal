@@ -6,19 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.Extensions;
 
 namespace PatientPortal.Controllers
 {
     [Route("/provider/patients")]
     public class PatientsController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
+        private int? staffId => User.GetStaffId();
 
         private IPatientService _patientService;
         private IPatientViewService _patientViewService;
@@ -34,7 +29,7 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult PatientManager(PatientSearch searchBar, Paginator paginationSettings)
         {
-            PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(searchBar, paginationSettings, (int)uuid);
+            PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(searchBar, paginationSettings, (int)staffId);
 
             return View("PatientManager", viewModel);
         }
@@ -86,14 +81,14 @@ namespace PatientPortal.Controllers
         [HttpPost("{patientId}/join")]
         public IActionResult MedicalTeamJoin(int patientId)
         {
-            _patientStaffConnectionService.AddStaffToPatientTeam(patientId, (int)uuid);
+            _patientStaffConnectionService.AddStaffToPatientTeam(patientId, (int)staffId);
             
             return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });
         }
         [HttpPost("{patientId}/leave")]
         public IActionResult MedicalTeamLeave(int patientId)
         {
-            _patientStaffConnectionService.RemoveStaffFromPatientTeam(patientId, (int)uuid);
+            _patientStaffConnectionService.RemoveStaffFromPatientTeam(patientId, (int)staffId);
 
             return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });
         }
