@@ -26,13 +26,6 @@ namespace PatientPortal.Controllers
                 return HttpContext.Session.GetInt32("UserId");
             }
         }
-        private bool IsLoggedIn
-        {
-            get
-            {
-                return uuid != null;
-            }
-        }
 
         private IMessagingService _messagingService;
         private IMessagingViewService _messagingViewService;

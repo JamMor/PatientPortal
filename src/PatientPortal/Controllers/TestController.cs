@@ -21,13 +21,6 @@ namespace PatientPortal.Controllers
                 return HttpContext.Session.GetInt32("UserId");
             }
         }
-        private bool IsLoggedIn
-        {
-            get
-            {
-                return uuid != null;
-            }
-        }
 
         private ITestLoginService _testLoginService;
         private ISeedViewService _seedViewService;
