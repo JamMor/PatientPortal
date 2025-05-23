@@ -12,7 +12,7 @@ namespace PatientPortal.Extensions
         /// </summary>
         public static int? GetStaffId(this ClaimsPrincipal user)
         {
-            var claim = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var claim = user?.FindFirst("StaffId")?.Value;
             return int.TryParse(claim, out var id) ? id : null;
         }
 
