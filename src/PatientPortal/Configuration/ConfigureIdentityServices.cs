@@ -1,8 +1,11 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using PatientPortal.Models;
 using PatientPortal.Infrastructure;
+using PatientPortal.Authorization.Requirements;
+using PatientPortal.Authorization.Handlers;
 using System;
 
 namespace PatientPortal.Configuration
@@ -49,6 +52,29 @@ namespace PatientPortal.Configuration
                 options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
                 options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
             });
+
+            // Configure authorization policies
+            services.AddAuthorization(options =>
+            {
+                // Set fallback policy to require authenticated users by default
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.AddPolicy(Authorization.PolicyNames.ManageStaff, policy =>
+                    policy.Requirements.Add(new AdminRequirement()));
+
+                options.AddPolicy(Authorization.PolicyNames.ManagePatients, policy =>
+                    policy.Requirements.Add(new StaffMemberRequirement()));
+
+                options.AddPolicy(Authorization.PolicyNames.MessagePatients, policy =>
+                    policy.Requirements.Add(new StaffMemberRequirement()));
+            });
+
+            // Register authorization handlers
+            services.AddSingleton<IAuthorizationHandler, AdminRequirementHandler>();
+            services.AddSingleton<IAuthorizationHandler, StaffMemberRequirementHandler>();
+
             return services;
         }
     }
