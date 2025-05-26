@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Authorization;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 using PatientPortal.Extensions;
 
 namespace PatientPortal.Controllers
 {
+    [Authorize(Policy = PolicyNames.ManagePatients)]
     [Route("/provider/patients")]
     public class PatientsController : Controller
     {

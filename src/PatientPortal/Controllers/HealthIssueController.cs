@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PatientPortal.Controllers
 {
+    [Authorize(Policy = PolicyNames.ManagePatients)]
     [Route("/provider/patients/{patientId}/issue")]
     public class HealthIssueController : Controller
     {

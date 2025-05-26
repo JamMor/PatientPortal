@@ -7,9 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 using PatientPortal.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using PatientPortal.Authorization;
 
 namespace PatientPortal.Controllers
 {
+    [Authorize(Policy = PolicyNames.ManagePatients)]
     [Route("/provider/patients/{patientId}/visit")]
     public class VisitController : Controller
     {

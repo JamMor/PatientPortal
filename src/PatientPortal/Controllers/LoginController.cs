@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using PatientPortal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PatientPortal.Interfaces;
 using PatientPortal.Extensions;
@@ -15,6 +16,7 @@ namespace PatientPortal.Controllers
             _authService = authService;
         }
 
+        [AllowAnonymous]
         [HttpGet("")]
         public IActionResult Index()
         {
@@ -34,6 +36,7 @@ namespace PatientPortal.Controllers
             return View("StaffLogin");
         }
         
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> StaffLogin(LoginStaff loginInfo)
         {
