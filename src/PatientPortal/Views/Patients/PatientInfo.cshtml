@@ -1,3 +1,4 @@
+@using PatientPortal.Extensions
 @model PatientInfoViewModel
 
 <partial name="~/Views/Shared/_PatientInfoHeader.cshtml" for="PatientHeader"/>
@@ -9,11 +10,11 @@
             <th class="col-3">Medical Team</th>
             <td>
                 <ul class="list-group list-group-flush">
-                    @foreach (StaffInfo person in @Model.MedicalTeam)
+                    @foreach (StaffInfo staff in @Model.MedicalTeam)
                     {
                         <li class="list-group-item pl-0 d-flex">
-                            <p class="my-0 mr-auto">@person.FullName, @person.Role</p> 
-                            @if(@person.StaffId == @Context.Session.GetInt32("UserId"))
+                            <p class="my-0 mr-auto">@staff.FullName, @staff.Role</p> 
+                            @if(@staff.StaffId == @User.GetStaffId())
                             {
                             <form asp-controller="Patients" asp-action="MedicalTeamLeave" asp-route-patientId="@Model.PatientId">
                                 <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
@@ -21,7 +22,7 @@
                             }
                         </li>
                     }
-                    @if(!@Model.MedicalTeam.Any(team =>team.StaffId == @Context.Session.GetInt32("UserId")))
+                    @if(!@Model.MedicalTeam.Any(staff => staff.StaffId == @User.GetStaffId()))
                     {
                         <li class="list-group-item text-right">
                             <form asp-controller="Patients" asp-action="MedicalTeamJoin" asp-route-patientId="@Model.PatientId">
