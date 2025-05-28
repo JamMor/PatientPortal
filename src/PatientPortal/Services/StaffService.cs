@@ -26,7 +26,10 @@ namespace PatientPortal.Services
                 Role = staffFormView.Role,
                 User = user,
                 IsAdmin = false,
-                MessagingLink = new MessagingLink()
+                MessagingLink = new MessagingLink(),
+                // TODO: Remove these legacy fields after migration
+                StaffUsername = user.UserName!,
+                Password = "[Managed by Identity]"
             };
 
             _context.Staff.Add(newStaff);
