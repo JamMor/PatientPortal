@@ -1,5 +1,6 @@
 using System.Security.Claims;
 
+#nullable enable
 namespace PatientPortal.Extensions
 {
     /// <summary>
