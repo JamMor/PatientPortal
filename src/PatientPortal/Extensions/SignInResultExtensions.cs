@@ -14,10 +14,12 @@ namespace PatientPortal.Extensions
             {
                 modelState.AddModelError(string.Empty, "Account is locked due to multiple failed login attempts. Please try again later.");
             }
-            if (result.IsNotAllowed) {
+            else if (result.IsNotAllowed)
+            {
                 modelState.AddModelError(string.Empty, "Login is not allowed for this account.");
             }
-            if (result.RequiresTwoFactor) {
+            else if (result.RequiresTwoFactor)
+            {
                 modelState.AddModelError(string.Empty, "Two-factor authentication is required.");
             }
             else
