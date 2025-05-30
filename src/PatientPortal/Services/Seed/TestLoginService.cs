@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Bogus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,15 +13,21 @@ namespace PatientPortal.Services
     public class TestLoginService : ITestLoginService
     {
         private PatientPortalContext _context;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private IAuthService _authService;
 
-        public TestLoginService(PatientPortalContext context)
+        public TestLoginService(PatientPortalContext context, IAuthService authService, SignInManager<IdentityUser> signInManager)
         {
             _context = context;
+            _authService = authService;
+            _signInManager = signInManager;
         }
 
         public List<TestLoginViewModel> GetAllStaff()
         {
             return _context.Staff
+                .Where(s => s.User != null)
+                .OrderBy(s => s.StaffId)
                 .Select(s => new TestLoginViewModel()
                 {
                     TestId = s.StaffId,
@@ -30,49 +37,45 @@ namespace PatientPortal.Services
                 .ToList();
         }
 
-        public LoginStaffDTO CreateAdmin()
+        public async Task<Staff> CreateAdmin()
         {
-            Staff newAdmin = new Staff()
+            string adminUsername = "JPicardNumber1";
+            string adminPassword = "password0$";
+            
+            var result = await _authService.CreateUserAsync(
+                adminUsername, 
+                adminPassword);
+
+            if (result.Succeeded)
             {
-                IsAdmin = true,
-                FirstName = "Jean-Luc",
-                LastName = "Picard",
-                Role = "Admin",
-                StaffUsername = "JPicardNumber1",
-                Password = "password0$",
-                MessagingLink = new MessagingLink()
-            };
-            PasswordHasher<Staff> hasher = new PasswordHasher<Staff>();
-            newAdmin.Password = hasher.HashPassword(newAdmin, newAdmin.Password);
-
-            _context.Staff.Add(newAdmin);
-            _context.SaveChanges();
-
-            return new LoginStaffDTO()
+                Staff newAdmin = new Staff()
                 {
-                    StaffId = newAdmin.StaffId,
-                    MessagingLinkId = newAdmin.MessagingLink.MessagingLinkId,
-                    IsAdmin = newAdmin.IsAdmin,
-                    FullName = newAdmin.FullName(),
-                    Role = newAdmin.Role
+                    IsAdmin = true,
+                    FirstName = "Jean-Luc",
+                    LastName = "Picard",
+                    Role = "Admin",
+                    StaffUsername = adminUsername,
+                    Password = adminPassword,
+                    User = result.Value,
+                    MessagingLink = new MessagingLink()
                 };
-
+                
+                _context.Staff.Add(newAdmin);
+                _context.SaveChanges();
+                
+                return newAdmin;
+            }
+            return null;
         }
         
-        public LoginStaffDTO LoginStaffById(int staffId)
+        public async Task LoginStaffById(int staffId)
         {
-            Staff staffmember = _context.Staff
-                .Include(staff => staff.MessagingLink)
-                .FirstOrDefault(s => s.StaffId == staffId);
+            IdentityUser user = _context.Staff
+                .Where(s => s.StaffId == staffId)
+                .Select(s => s.User)
+                .FirstOrDefault();
 
-            return new LoginStaffDTO()
-                {
-                    StaffId = staffmember.StaffId,
-                    MessagingLinkId = staffmember.MessagingLink.MessagingLinkId,
-                    IsAdmin = staffmember.IsAdmin,
-                    FullName = staffmember.FullName(),
-                    Role = staffmember.Role
-                };
+            await _signInManager.SignInAsync(user, false);
         }
 
         private bool disposedValue;
