@@ -34,7 +34,8 @@ builder.Services.AddDbContext<PatientPortalContext>(options =>
 
 // Add other services
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSession();
+// TODO: Deprecated. Pending removal.
+// builder.Services.AddSession();
 builder.Services.AddIdentityServices();
 builder.Services.AddCoreServices();
 builder.Services.AddViewServices();
@@ -65,7 +66,8 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseSession();
+// TODO: Deprecated. Pending removal.
+// app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

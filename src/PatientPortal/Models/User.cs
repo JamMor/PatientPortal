@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PatientPortal.Models
 {
+    [Obsolete("This model was never used. It has been replaced by IdentityUser and Staff.")]
     public class User
     {
         [Key]

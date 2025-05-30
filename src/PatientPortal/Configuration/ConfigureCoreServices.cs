@@ -10,7 +10,8 @@ namespace PatientPortal.Configuration
         {
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IStaffRegistrationService, StaffRegistrationService>();
-            services.AddTransient<ILoginService, LoginService>();
+            // TODO: Deprecated. Pending removal.
+            // services.AddTransient<ILoginService, LoginService>();
             services.AddTransient<IStaffService, StaffService>();
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<IPatientStaffConnectionService, PatientStaffConnectionService>();
