@@ -1,10 +1,12 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace PatientPortal.Models
 {
-    public class PatientPortalContext : DbContext
+    public class PatientPortalContext : IdentityDbContext<IdentityUser>
     {
-        public PatientPortalContext(DbContextOptions options) : base(options) { }
+        public PatientPortalContext(DbContextOptions<PatientPortalContext> options) : base(options) { }
 
         public DbSet<Staff> Staff { get;set; }
         public DbSet<Patient> Patients { get;set; }
