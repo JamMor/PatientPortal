@@ -52,10 +52,10 @@ Run only this project:
 dotnet test tests/PatientPortal.Tests.Unit/PatientPortal.Tests.Unit.csproj
 ```
 
-Filter by class:
+Filter by class (requires fully qualified class name):
 
 ```sh
-dotnet test -- --filter-class ClassName
+dotnet test -- --filter-class "PatientPortal.Tests.Unit.Services.StaffServiceTests"
 ```
 
 Filter by trait:
