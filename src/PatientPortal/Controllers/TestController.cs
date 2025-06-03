@@ -40,12 +40,18 @@ namespace PatientPortal.Controllers
         [HttpPost("/test/create")]
         public async Task<IActionResult> TestCreate()
         {
-            Staff newAdmin = await _testLoginService.CreateAdmin();
-            if (newAdmin == null)
+            var result = await _testLoginService.CreateAdmin();
+            if (result.Succeeded)
             {
+                Staff newAdmin = result.Value;
                 await _testLoginService.LoginStaffById(newAdmin.StaffId);
             }
-            
+            else
+            {
+                Console.WriteLine("Failed to create admin user.");
+                Console.WriteLine(string.Join(", ", result.IdentityResult.Errors.Select(e => e.Description)));
+                // result.AddErrorDictionaryToModelState(ModelState);
+            }
             return RedirectToAction("StaffManager", "Staff");
         }
 

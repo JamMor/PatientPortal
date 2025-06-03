@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Bogus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Infrastructure;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
@@ -37,7 +38,7 @@ namespace PatientPortal.Services
                 .ToList();
         }
 
-        public async Task<Staff> CreateAdmin()
+        public async Task<ExtendedIdentityResult<Staff>> CreateAdmin()
         {
             string adminUsername = "JPicardNumber1";
             string adminPassword = "Password0$";
@@ -63,9 +64,10 @@ namespace PatientPortal.Services
                 _context.Staff.Add(newAdmin);
                 _context.SaveChanges();
                 
-                return newAdmin;
+                return ExtendedIdentityResult<Staff>.Success(newAdmin);
             }
-            return null;
+
+            return ExtendedIdentityResult<Staff>.Failure(result.IdentityResult);
         }
         
         public async Task LoginStaffById(int staffId)

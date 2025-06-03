@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bogus;
+using PatientPortal.Infrastructure;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
@@ -9,7 +10,7 @@ namespace PatientPortal.Interfaces
     public interface ITestLoginService : IDisposable
     {
         List<TestLoginViewModel> GetAllStaff();
-        Task<Staff> CreateAdmin();
+        Task<ExtendedIdentityResult<Staff>> CreateAdmin();
         Task LoginStaffById(int staffId);
     }
 }
