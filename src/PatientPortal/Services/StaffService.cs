@@ -54,8 +54,7 @@ namespace PatientPortal.Services
         public IQueryable<Staff> GetStaffbyId(int staffId)
         {
             IQueryable<Staff> staffmember = _context.Staff
-                .Include(staff => staff.Patients)
-                .Include(staff => staff.MessagingLink);
+                .Where(staff => staff.StaffId == staffId);
 
             return staffmember;
         }
