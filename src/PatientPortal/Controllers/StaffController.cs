@@ -79,9 +79,9 @@ namespace PatientPortal.Controllers
     
 
         [HttpPost("{staffId}/delete")]
-        public IActionResult StaffDelete(int staffId)
+        public async Task<IActionResult> StaffDelete(int staffId)
         {
-            _staffService.DeleteStaff(staffId);
+            await _staffRegistrationService.DeleteStaffAsync(staffId);
             
             return RedirectToAction("StaffManager", "Staff");
         }

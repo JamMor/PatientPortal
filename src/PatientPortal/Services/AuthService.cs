@@ -25,6 +25,11 @@ namespace PatientPortal.Services
             return new ExtendedIdentityResult<IdentityUser>(result, user);
         }
 
+        public async Task<IdentityResult> DeleteUserAsync(IdentityUser user)
+        {
+            return await _userManager.DeleteAsync(user);
+        }
+
         public async Task<SignInResult> SignInAsync(string username, string password)
         {
             return await _signInManager.PasswordSignInAsync(
