@@ -40,7 +40,7 @@ namespace PatientPortal.Services
         public async Task<Staff> CreateAdmin()
         {
             string adminUsername = "JPicardNumber1";
-            string adminPassword = "password0$";
+            string adminPassword = "Password0$";
             
             var result = await _authService.CreateUserAsync(
                 adminUsername, 
