@@ -15,6 +15,7 @@ public class StaffRegistrationServiceTests : IDisposable
     private readonly IAuthService _authService;
     private readonly IStaffService _staffService;
     private readonly StaffRegistrationService _registrationService;
+    private readonly IdentityErrorDescriber _errorDescriber = new();
 
     public StaffRegistrationServiceTests()
     {
@@ -93,11 +94,7 @@ public class StaffRegistrationServiceTests : IDisposable
             Role = "Nurse"
         };
 
-        var identityError = new IdentityError
-        {
-            Code = "DuplicateUserName",
-            Description = "Username 'existinguser' is already taken."
-        };
+        var identityError = _errorDescriber.DuplicateUserName("existinguser");
         var failureResult = new ExtendedIdentityResult<IdentityUser>(
             IdentityResult.Failed(identityError),
             null
@@ -135,8 +132,8 @@ public class StaffRegistrationServiceTests : IDisposable
 
         var identityErrors = new[]
         {
-            new IdentityError { Code = "PasswordTooShort", Description = "Password must be at least 10 characters." },
-            new IdentityError { Code = "PasswordRequiresUpper", Description = "Password must contain uppercase." }
+            _errorDescriber.PasswordTooShort(10),
+            _errorDescriber.PasswordRequiresUpper()
         };
         var failureResult = new ExtendedIdentityResult<IdentityUser>(
             IdentityResult.Failed(identityErrors),
@@ -337,9 +334,9 @@ public class StaffRegistrationServiceTests : IDisposable
 
         var identityErrors = new[]
         {
-            new IdentityError { Code = "InvalidUserName", Description = "Username contains invalid characters." },
-            new IdentityError { Code = "PasswordTooShort", Description = "Password too short." },
-            new IdentityError { Code = "PasswordRequiresDigit", Description = "Password requires digit." }
+            _errorDescriber.InvalidUserName("invalid user!"),
+            _errorDescriber.PasswordTooShort(6),
+            _errorDescriber.PasswordRequiresDigit()
         };
         var failureResult = new ExtendedIdentityResult<IdentityUser>(
             IdentityResult.Failed(identityErrors),
