@@ -29,12 +29,7 @@ namespace PatientPortal.Controllers
         {
             List<TestLoginViewModel> allStaff = _testLoginService.GetAllStaff();
 
-            if(allStaff.Count >= 0)
-            {
-                return Ok(new {Status = allStaff.Count, StaffInfo = allStaff, Message = $"Returned {allStaff.Count} staff"});
-            }
-
-            return NoContent();
+            return PartialView("Views/Login/_TestingLogins.cshtml", allStaff);
         }
 
         [HttpPost("/test/create")]
