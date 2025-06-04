@@ -1,38 +1,36 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Authorization;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.Extensions;
 
 namespace PatientPortal.Controllers
 {
+    [Authorize(Policy = PolicyNames.ManageStaff)]
     [Route("/provider/staff")]
     public class StaffController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
-        private bool IsLoggedIn
-        {
-            get
-            {
-                return uuid != null;
-            }
-        }
+        private int? staffId => User.GetStaffId();
 
         private IStaffService _staffService;
         private IStaffViewService _staffViewService;
-        public StaffController(IStaffService staffService, IStaffViewService staffViewService)
+        private IStaffRegistrationService _staffRegistrationService;
+
+        public StaffController(
+            IStaffService staffService,
+            IStaffViewService staffViewService,
+            IStaffRegistrationService staffRegistrationService)
         {
             _staffService = staffService;
             _staffViewService = staffViewService;
+            _staffRegistrationService = staffRegistrationService;
         }
 
 //==============Staff Manager==============================
@@ -51,20 +49,22 @@ namespace PatientPortal.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult StaffCreate(StaffFormView staffFormView)
+        public async Task<IActionResult> StaffCreate(StaffFormView staffFormView)
         {
-            if(!_staffService.DoesStaffExist(staffFormView.StaffUsername))
+            if (ModelState.IsValid)
             {
-                if(ModelState.IsValid)
-                {
-                    int staffId = _staffService.CreateStaff(staffFormView);
+                var result = await _staffRegistrationService.RegisterStaffAsync(staffFormView);
 
-                    return RedirectToAction("StaffInfo", "Staff", new { staffId = staffId });
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("StaffInfo", "Staff", new { staffId = result.Value.StaffId });
                 }
-            }
-            else
-            {
-                ModelState.AddModelError("StaffUsername","This username is already taken.");
+
+                result.AddErrorDictionaryToModelState(ModelState,
+                    usernameField: nameof(StaffFormView.StaffUsername),
+                    passwordField: nameof(StaffFormView.Password),
+                    confirmPasswordField: nameof(StaffFormView.ConfirmPassword)
+                );
             }
             return View("StaffForm");
         }
@@ -79,9 +79,9 @@ namespace PatientPortal.Controllers
     
 
         [HttpPost("{staffId}/delete")]
-        public IActionResult StaffDelete(int staffId)
+        public async Task<IActionResult> StaffDelete(int staffId)
         {
-            _staffService.DeleteStaff(staffId);
+            await _staffRegistrationService.DeleteStaffAsync(staffId);
             
             return RedirectToAction("StaffManager", "Staff");
         }

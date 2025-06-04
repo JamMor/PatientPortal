@@ -1,72 +1,85 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Authorization;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.Extensions;
 
 namespace PatientPortal.Controllers
 {
     [Route("/provider/inbox")]
     public class MessagingController : Controller
     {
-        private int? linkId
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("MessageLinkId");
-            }
-        }
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
-        private bool IsLoggedIn
-        {
-            get
-            {
-                return uuid != null;
-            }
-        }
+        private int? linkId => User.GetMessageLinkId();
 
         private IMessagingService _messagingService;
         private IMessagingViewService _messagingViewService;
-        public MessagingController(IMessagingService messagingService, IMessagingViewService messagingViewService)
+        private readonly IAuthorizationService _authorizationService;
+        
+        public MessagingController(
+            IMessagingService messagingService, 
+            IMessagingViewService messagingViewService,
+            IAuthorizationService authorizationService)
         {
             _messagingService = messagingService;
             _messagingViewService = messagingViewService;
+            _authorizationService = authorizationService;
+        }
+
+        private class InboxType
+        {
+            public const string WithoutPatients = "staff";
+            public const string WithPatients = "patient";
         }
 
         //===========================Inbox Manager==============================
         [HttpGet("{inbox?}")]
-        public IActionResult Inbox(string inbox, ConversationSearch inboxFilters, Paginator paginationSettings)
+        public async Task<IActionResult> Inbox(string inbox, ConversationSearch inboxFilters, Paginator paginationSettings)
         {
             paginationSettings.ResultsPerPage = 5;
             
-            bool isUserPatient = HttpContext.Session.GetString("Role") == "Patient";
+            bool isUserStaff = User.GetStaffId().HasValue;
+            // Check if user can manage patients (staff member)
+            
             
             //Redirect to appropriate URL's for patient or staff member
-            if(isUserPatient)
+
+            // Patient Users
+            // TODO: Revisit patient inbox logic when patients get login access
+            // Currently patients don't have login, so this branch is not used
+            if(!isUserStaff)
             {
+                // Force patient inbox
                 if(inbox != "")
                 {
-                    RedirectToAction("Inbox", new {inbox = ""});
+                    return RedirectToAction("Inbox", new {inbox = ""});
                 }
             }
-            else if(!isUserPatient)
+            // Staff Users
+            else
             {
-                if(inbox != "staff" || inbox != "patient")
+                var messagePatientsAuthorization = await _authorizationService.AuthorizeAsync(User, PolicyNames.MessagePatients);
+                bool CanMessagePatients = messagePatientsAuthorization.Succeeded;
+
+                if (!CanMessagePatients)
                 {
-                    RedirectToAction("Inbox", new {inbox = "patient"});
+                    inbox = InboxType.WithoutPatients;
+                }
+
+                // If invalid inbox type, redirect to default staff inbox                
+                if(inbox != InboxType.WithoutPatients && inbox != InboxType.WithPatients)
+                {
+                    return RedirectToAction("Inbox", new {inbox = InboxType.WithPatients});
                 }
             }
 
-            inboxFilters.IsPatientInbox = inbox != "staff";
+            inboxFilters.IsPatientInbox = inbox != InboxType.WithoutPatients;
             MessageInboxView inboxView = _messagingViewService.ReturnInboxView((int)linkId, inboxFilters, paginationSettings);
 
             return View("Inbox", inboxView);

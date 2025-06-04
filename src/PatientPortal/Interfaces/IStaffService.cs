@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
@@ -8,8 +9,7 @@ namespace PatientPortal.Interfaces
     public interface IStaffService : IDisposable
     {
         //Commands
-        bool DoesStaffExist(string staffUsername);
-        int CreateStaff(StaffFormView staffInfo);
+        Staff CreateStaff(StaffFormView staffInfo, IdentityUser user);
         void DeleteStaff(int staffId);
 
         //Queries

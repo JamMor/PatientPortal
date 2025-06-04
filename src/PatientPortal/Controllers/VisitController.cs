@@ -6,26 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using PatientPortal.Authorization;
 
 namespace PatientPortal.Controllers
 {
+    [Authorize(Policy = PolicyNames.ManagePatients)]
     [Route("/provider/patients/{patientId}/visit")]
     public class VisitController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
-        private bool IsLoggedIn
-        {
-            get
-            {
-                return uuid != null;
-            }
-        }
+        private int? staffId => User.GetStaffId();
 
         private IPatientViewService _patientViewService;
         private IVisitService _visitService;
@@ -51,7 +42,7 @@ namespace PatientPortal.Controllers
         {
             if(ModelState.IsValid)
             {
-                _visitService.CreateVisit(patientId, (int)uuid, formData);
+                _visitService.CreateVisit(patientId, (int)staffId, formData);
                 
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }

@@ -19,7 +19,11 @@ namespace PatientPortal.Services
         public StaffInfoViewModel GetStaffInfo(int staffId)
         {
             IQueryable<Staff> staffQuery = _staffService.GetStaffbyId(staffId);
-
+            
+            staffQuery = staffQuery
+                .Include(staff => staff.Patients)
+                .Include(staff => staff.MessagingLink);
+            
             StaffInfoViewModel staffInfo = staffQuery
             .Select(s => new StaffInfoViewModel()
             {
@@ -32,7 +36,7 @@ namespace PatientPortal.Services
                 CreatedAt = s.CreatedAt,
                 UpdatedAt = s.UpdatedAt
             })
-            .FirstOrDefault(staff => staff.StaffId == staffId);
+            .FirstOrDefault();
 
             return staffInfo;
         }

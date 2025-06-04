@@ -16,32 +16,26 @@ namespace PatientPortal.Services
         }
 
         //COMMANDS
-        public bool DoesStaffExist(string staffUsername)
-        {
-            return _context.Staff
-                .Any(staff => staff.StaffUsername == staffUsername);
-        }
-
-        public int CreateStaff(StaffFormView staffFormView)
+        // Creates NON-admin staff, with auth
+        public Staff CreateStaff(StaffFormView staffFormView, IdentityUser user)
         {
             Staff newStaff = new Staff()
             {
                 FirstName = staffFormView.FirstName,
                 LastName = staffFormView.LastName,
                 Role = staffFormView.Role,
-                StaffUsername = staffFormView.StaffUsername,
-                Password = staffFormView.Password,
+                User = user,
                 IsAdmin = false,
-                MessagingLink = new MessagingLink()
+                MessagingLink = new MessagingLink(),
+                // TODO: Remove these legacy fields after migration
+                StaffUsername = user.UserName!,
+                Password = "[Managed by Identity]"
             };
 
-            PasswordHasher<Staff> hasher = new PasswordHasher<Staff>();
-            newStaff.Password = hasher.HashPassword(newStaff, newStaff.Password);
-            
             _context.Staff.Add(newStaff);
             _context.SaveChanges();
 
-            return newStaff.StaffId;
+            return newStaff;
         }
 
         public void DeleteStaff(int staffId)
@@ -60,8 +54,7 @@ namespace PatientPortal.Services
         public IQueryable<Staff> GetStaffbyId(int staffId)
         {
             IQueryable<Staff> staffmember = _context.Staff
-                .Include(staff => staff.Patients)
-                .Include(staff => staff.MessagingLink);
+                .Where(staff => staff.StaffId == staffId);
 
             return staffmember;
         }

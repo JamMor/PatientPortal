@@ -1,34 +1,20 @@
 using System;
 using System.Linq;
 using PatientPortal.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Bogus;
 using PatientPortal.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace PatientPortal.Controllers
 {
-    
+    [AllowAnonymous]
     public class TestController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
-        private bool IsLoggedIn
-        {
-            get
-            {
-                return uuid != null;
-            }
-        }
-
         private ITestLoginService _testLoginService;
         private ISeedViewService _seedViewService;
 
@@ -43,36 +29,31 @@ namespace PatientPortal.Controllers
         {
             List<TestLoginViewModel> allStaff = _testLoginService.GetAllStaff();
 
-            if(allStaff.Count >= 0)
-            {
-                return Ok(new {Status = allStaff.Count, StaffInfo = allStaff, Message = $"Returned {allStaff.Count} staff"});
-            }
-
-            return NoContent();
+            return PartialView("Views/Login/_TestingLogins.cshtml", allStaff);
         }
 
         [HttpPost("/test/create")]
-        public IActionResult TestCreate()
+        public async Task<IActionResult> TestCreate()
         {
-            LoginStaffDTO newAdmin = _testLoginService.CreateAdmin();
-
-            HttpContext.Session.SetInt32("UserId", newAdmin.StaffId);
-            HttpContext.Session.SetString("Name", newAdmin.FullName);
-            HttpContext.Session.SetString("Role", newAdmin.Role);
-            HttpContext.Session.SetInt32("MessageLinkId", newAdmin.MessagingLinkId);
-            
+            var result = await _testLoginService.CreateAdmin();
+            if (result.Succeeded)
+            {
+                Staff newAdmin = result.Value;
+                await _testLoginService.LoginStaffById(newAdmin.StaffId);
+            }
+            else
+            {
+                Console.WriteLine("Failed to create admin user.");
+                Console.WriteLine(string.Join(", ", result.IdentityResult.Errors.Select(e => e.Description)));
+                // result.AddErrorDictionaryToModelState(ModelState);
+            }
             return RedirectToAction("StaffManager", "Staff");
         }
 
         [HttpPost("/test/options")]
-        public IActionResult TestLoginOptions(int staffId)
+        public async Task<IActionResult> TestLoginOptions(int staffId)
         {
-            LoginStaffDTO staffmember = _testLoginService.LoginStaffById(staffId);
-                
-            HttpContext.Session.SetInt32("UserId", staffmember.StaffId);
-            HttpContext.Session.SetString("Name", staffmember.FullName);
-            HttpContext.Session.SetString("Role", staffmember.Role);
-            HttpContext.Session.SetInt32("MessageLinkId", staffmember.MessagingLinkId);
+            await _testLoginService.LoginStaffById(staffId);
 
             return RedirectToAction("Index", "Login");
         }

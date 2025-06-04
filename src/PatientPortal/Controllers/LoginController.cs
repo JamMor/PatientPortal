@@ -1,44 +1,29 @@
-using System.Linq;
+using System.Threading.Tasks;
 using PatientPortal.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
+using PatientPortal.Extensions;
 
 namespace PatientPortal.Controllers
 {
     [Route("/")]
     public class LoginController : Controller
     {
-        private int? uuid
+        private readonly IAuthService _authService;
+        public LoginController(IAuthService authService)
         {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
-        private bool IsLoggedIn
-        {
-            get
-            {
-                return uuid != null;
-            }
+            _authService = authService;
         }
 
-        private ILoginService _loginService;
-        public LoginController(ILoginService loginService)
-        {
-            _loginService = loginService;
-        }
-
+        [AllowAnonymous]
         [HttpGet("")]
         public IActionResult Index()
         {
-            if(IsLoggedIn)
+            // If already authenticated, redirect based on role
+            if (User.Identity?.IsAuthenticated == true)
             {
-                if(HttpContext.Session.GetString("Role") == "Admin")
+                if (User.IsAdmin())
                 {
                     return RedirectToAction("StaffManager", "Staff");
                 }
@@ -51,30 +36,28 @@ namespace PatientPortal.Controllers
             return View("StaffLogin");
         }
         
+        [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult StaffLogin(LoginStaff loginInfo)
+        public async Task<IActionResult> StaffLogin(LoginStaff loginInfo)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                LoginStaffDTO staffUser = _loginService.AttemptStaffLogin(loginInfo);
-                if(staffUser != null)
-                {
-                    HttpContext.Session.SetInt32("UserId", staffUser.StaffId);
-                    HttpContext.Session.SetString("Name", staffUser.FullName);
-                    HttpContext.Session.SetString("Role", staffUser.Role);
-                    HttpContext.Session.SetInt32("MessageLinkId", staffUser.MessagingLinkId);
+                var result = await _authService.SignInAsync(loginInfo.StaffUsername, loginInfo.LoginPassword);
 
+                if (result.Succeeded)
+                {
                     return RedirectToAction("Index");
                 }
-                ModelState.AddModelError("LoginPassword", "Incorrect login info.");
+                
+                result.AddErrorToModelState(ModelState);
             }
             return View("StaffLogin");
         }
 
         [HttpPost("/logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await _authService.SignOutAsync();
             return RedirectToAction("Index");
         }
     }

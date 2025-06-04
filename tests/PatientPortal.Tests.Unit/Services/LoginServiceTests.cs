@@ -8,6 +8,7 @@ namespace PatientPortal.Tests.Unit.Services;
 // TODO: Add tests for null/empty login payloads and whitespace usernames.
 // TODO: Add tests for lockout/failed-attempt behavior if introduced.
 // TODO: Add boundary tests for password hashing/length constraints and case-insensitive username option if desired.
+[Obsolete("This test class is for a service that is no longer used. It has been replaced by tests for AuthService and TestLoginService.")]
 public class LoginServiceTests : IDisposable
 {
     private readonly PatientPortalContext _context;

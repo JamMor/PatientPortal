@@ -2,4 +2,9 @@
 <partial name="_StandardStaffLogin.cshtml" model="new LoginStaff()"/>
 <hr>
 @* TestLogin Can Be Removed After *@
-<partial name="_TestingLogins.cshtml" />
+<div id="test-login-container-squared"></div>
+<script>
+    $(function() {
+        $("#test-login-container-squared").load("/Test/staff");
+    });
+</script>
