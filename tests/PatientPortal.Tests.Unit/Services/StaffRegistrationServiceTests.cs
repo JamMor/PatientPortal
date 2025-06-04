@@ -21,6 +21,7 @@ public class StaffRegistrationServiceTests : IDisposable
         // Create in-memory database for testing
         var options = new DbContextOptionsBuilder<PatientPortalContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
         _context = new PatientPortalContext(options);
@@ -357,6 +358,164 @@ public class StaffRegistrationServiceTests : IDisposable
         Assert.Contains(result.IdentityResult.Errors, e => e.Code == "InvalidUserName");
         Assert.Contains(result.IdentityResult.Errors, e => e.Code == "PasswordTooShort");
         Assert.Contains(result.IdentityResult.Errors, e => e.Code == "PasswordRequiresDigit");
+    }
+
+    #endregion
+
+    #region DeleteStaffAsync Tests
+
+    [Fact]
+    public async Task DeleteStaffAsync_WithStaffAndUser_DeletesBothSuccessfully()
+    {
+        // Arrange
+        var identityUser = new IdentityUser { UserName = "staffuser", Id = "user-123" };
+        var staff = new Staff
+        {
+            FirstName = "Test",
+            LastName = "Staff",
+            Role = "Doctor",
+            User = identityUser,
+            IsAdmin = false,
+            MessagingLink = new MessagingLink(),
+            StaffUsername = "staffuser",
+            Password = "[Managed by Identity]"
+        };
+        _context.Staff.Add(staff);
+        await _context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        _authService.DeleteUserAsync(identityUser)
+            .Returns(IdentityResult.Success);
+
+        // Act
+        var result = await _registrationService.DeleteStaffAsync(staff.StaffId);
+
+        // Assert
+        Assert.True(result.Succeeded);
+        
+        // Verify staff was deleted from database
+        var deletedStaff = await _context.Staff.FindAsync([staff.StaffId], cancellationToken: TestContext.Current.CancellationToken);
+        Assert.Null(deletedStaff);
+        
+        // Verify DeleteUserAsync was called
+        await _authService.Received(1).DeleteUserAsync(identityUser);
+    }
+
+    [Fact]
+    public async Task DeleteStaffAsync_WithStaffWithoutUser_DeletesStaffSuccessfully()
+    {
+        // Arrange
+        var staff = new Staff
+        {
+            FirstName = "Legacy",
+            LastName = "Staff",
+            Role = "Nurse",
+            User = null,
+            IsAdmin = false,
+            MessagingLink = new MessagingLink(),
+            StaffUsername = "legacystaff",
+            Password = "oldpassword"
+        };
+        _context.Staff.Add(staff);
+        await _context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await _registrationService.DeleteStaffAsync(staff.StaffId);
+
+        // Assert
+        Assert.True(result.Succeeded);
+        
+        // Verify staff was deleted from database
+        var deletedStaff = await _context.Staff.FindAsync([staff.StaffId], cancellationToken: TestContext.Current.CancellationToken);
+        Assert.Null(deletedStaff);
+        
+        // Verify DeleteUserAsync was NOT called (no user to delete)
+        await _authService.DidNotReceive().DeleteUserAsync(Arg.Any<IdentityUser>());
+    }
+
+    [Fact]
+    public async Task DeleteStaffAsync_WithNonExistentStaff_ReturnsFailure()
+    {
+        // Arrange
+        var nonExistentStaffId = 99999;
+
+        // Act
+        var result = await _registrationService.DeleteStaffAsync(nonExistentStaffId);
+
+        // Assert
+        Assert.False(result.Succeeded);
+        Assert.Single(result.Errors);
+        Assert.Equal("Staff member not found.", result.Errors.First().Description);
+        
+        // Verify DeleteUserAsync was NOT called
+        await _authService.DidNotReceive().DeleteUserAsync(Arg.Any<IdentityUser>());
+    }
+
+    [Fact]
+    public async Task DeleteStaffAsync_WhenUserDeletionFails_ReturnsFailure()
+    {
+        // Arrange
+        var identityUser = new IdentityUser { UserName = "staffuser", Id = "user-456" };
+        var staff = new Staff
+        {
+            FirstName = "Protected",
+            LastName = "User",
+            Role = "Admin",
+            User = identityUser,
+            IsAdmin = true,
+            MessagingLink = new MessagingLink(),
+            StaffUsername = "staffuser",
+            Password = "[Managed by Identity]"
+        };
+        _context.Staff.Add(staff);
+        await _context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        var userDeletionError = new IdentityError
+        {
+            Code = "UserDeletionFailed",
+            Description = "Cannot delete user account."
+        };
+        _authService.DeleteUserAsync(identityUser)
+            .Returns(IdentityResult.Failed(userDeletionError));
+
+        // Act
+        var result = await _registrationService.DeleteStaffAsync(staff.StaffId);
+
+        // Assert
+        Assert.False(result.Succeeded);
+        Assert.Contains(result.Errors, e => e.Code == "UserDeletionFailed");
+        Assert.Contains(result.Errors, e => e.Description == "Cannot delete user account.");
+    }
+
+    [Fact]
+    public async Task DeleteStaffAsync_WhenExceptionOccurs_CatchesAndReturnsFailure()
+    {
+        // Arrange
+        var identityUser = new IdentityUser { UserName = "erroruser", Id = "user-789" };
+        var staff = new Staff
+        {
+            FirstName = "Error",
+            LastName = "Case",
+            Role = "Technician",
+            User = identityUser,
+            IsAdmin = false,
+            MessagingLink = new MessagingLink(),
+            StaffUsername = "erroruser",
+            Password = "[Managed by Identity]"
+        };
+        _context.Staff.Add(staff);
+        await _context.SaveChangesAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        // Force an exception during user deletion
+        _authService.DeleteUserAsync(identityUser)
+            .Returns<IdentityResult>(x => throw new System.Exception("Database connection failed"));
+
+        // Act
+        var result = await _registrationService.DeleteStaffAsync(staff.StaffId);
+
+        // Assert
+        Assert.False(result.Succeeded);
+        Assert.Single(result.Errors);
+        Assert.Equal("An error occurred while deleting the staff member.", result.Errors.First().Description);
     }
 
     #endregion
