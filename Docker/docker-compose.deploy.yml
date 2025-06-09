@@ -23,7 +23,7 @@ services:
     depends_on:
       mysql_db:
         condition: service_healthy
-    image: ${REGISTRY}patientportal:${IMAGE_TAG}
+    image: ${IMAGE_NAME}
     env_file:
       - ./app.env
     ports:
