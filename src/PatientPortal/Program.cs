@@ -78,6 +78,8 @@ app.Run();
 // TODO: MIGRATION START - Remove this entire method after staff data migration
 static async Task RunStaffMigration(WebApplicationBuilder builder)
 {
+    Console.WriteLine("Entering staff data migration mode...");
+    
     // Build services needed for migration
     var connectionString = builder.Configuration["DBInfo:ConnectionString"];
     builder.Services.AddDbContext<PatientPortalContext>(options =>
@@ -88,13 +90,20 @@ static async Task RunStaffMigration(WebApplicationBuilder builder)
     var app = builder.Build();
     
     using var scope = app.Services.CreateScope();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     var context = scope.ServiceProvider.GetRequiredService<PatientPortalContext>();
     
-    var migration = new StaffPasswordMigration(userManager, context);
-    await migration.MigrateAsync();
+    // Run database migrations first
+    Console.WriteLine("Applying database migrations...");
+    await context.Database.MigrateAsync();
+    Console.WriteLine("Database migrations completed.");
     
-    Console.WriteLine("\nPress any key to exit...");
-    Console.ReadKey();
+    // Then migrate staff data
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    var migration = new StaffPasswordMigration(userManager, context);
+    
+    Console.WriteLine("Starting staff data migration...");
+    await migration.MigrateAsync();
+    Console.WriteLine("Staff data migration completed.");
 }
 // TODO: MIGRATION END
