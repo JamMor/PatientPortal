@@ -8,6 +8,11 @@ nupkg/
 # Visual Studio Code
 .vscode
 
+# Github Actions and Workflows
+.github/*
+!.github/actions
+!.github/workflows
+
 # Rider
 .idea
 

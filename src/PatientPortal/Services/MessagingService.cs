@@ -176,6 +176,7 @@ namespace PatientPortal.Services
                         .ThenInclude(link => link.Staff)
                     .Include(convo => convo.Messages)
                         .ThenInclude(msg => msg.UnreadBy)
+                    .AsSplitQuery()
                     .Where(convo => convo.ConversationParticipants
                         .Any(joined => joined.MessagingLinkId == linkId))
                     .Where(convo => convo.WithPatient == inboxFilters.IsPatientInbox);

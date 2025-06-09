@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PatientPortal.Models;
 using PatientPortal.Services;
@@ -48,32 +49,10 @@ public class StaffServiceTests : IDisposable
 
     #region CRUD Tests
 
-    [Fact]
-    public void DoesStaffExist_WithExistingStaff_ReturnsTrue()
-    {
-        // Arrange
-        var staff = CreateStaff("John", "Doctor", "jdoctor", "Doctor");
-        AddStaff(staff);
-
-        // Act
-        var result = _staffService.DoesStaffExist("jdoctor");
-
-        // Assert
-        Assert.True(result);
-    }
+    // NOTE: DoesStaffExist removed - Identity framework now handles username uniqueness validation
 
     [Fact]
-    public void DoesStaffExist_WithNonExistingStaff_ReturnsFalse()
-    {
-        // Act
-        var result = _staffService.DoesStaffExist("nonexistentuser");
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void CreateStaff_WithValidData_ReturnsStaffId()
+    public void CreateStaff_WithValidData_ReturnsStaff()
     {
         // Arrange
         var staffFormView = new StaffFormView
@@ -84,23 +63,20 @@ public class StaffServiceTests : IDisposable
             Password = "password123",
             Role = "Nurse"
         };
+        var identityUser = new IdentityUser { UserName = "jnurse" };
 
         // Act
-        var staffId = _staffService.CreateStaff(staffFormView);
+        var createdStaff = _staffService.CreateStaff(staffFormView, identityUser);
 
         // Assert
-        Assert.True(staffId > 0);
-        
-        var createdStaff = _context.Staff.Find(staffId);
         Assert.NotNull(createdStaff);
+        Assert.True(createdStaff.StaffId > 0);
         Assert.Equal("Jane", createdStaff.FirstName);
         Assert.Equal("Nurse", createdStaff.LastName);
-        Assert.Equal("jnurse", createdStaff.StaffUsername);
         Assert.Equal("Nurse", createdStaff.Role);
         Assert.False(createdStaff.IsAdmin);
         Assert.NotNull(createdStaff.MessagingLink);
-        // Password should be hashed, not plain text
-        Assert.NotEqual("password123", createdStaff.Password);
+        Assert.Equal(identityUser, createdStaff.User);
     }
 
     [Fact]
@@ -348,43 +324,7 @@ public class StaffServiceTests : IDisposable
 
     #region Edge Case Tests
 
-    [Fact]
-    public void DoesStaffExist_CaseSensitive_ReturnsFalseForDifferentCase()
-    {
-        // Arrange
-        var staff = CreateStaff("John", "Doe", "jdoe", "Doctor", false);
-        AddStaff(staff);
-
-        // Act - Searching with different case
-        var result = _staffService.DoesStaffExist("JDOE");
-
-        // Assert - In-memory provider is case-sensitive by default
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void CreateStaff_HashesPassword_DifferentFromOriginal()
-    {
-        // Arrange
-        var originalPassword = "mySecretPassword123";
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Test",
-            LastName = "User",
-            StaffUsername = "testuser",
-            Password = originalPassword,
-            Role = "Doctor"
-        };
-
-        // Act
-        var staffId = _staffService.CreateStaff(staffFormView);
-
-        // Assert
-        var createdStaff = _context.Staff.Find(staffId);
-        Assert.NotNull(createdStaff);
-        Assert.NotEqual(originalPassword, createdStaff.Password);
-        Assert.True(createdStaff.Password.Length > originalPassword.Length); // Hashed passwords are longer
-    }
+    // NOTE: Password hashing is now handled by Identity framework in AuthService, not StaffService
 
     [Fact]
     public void CreateStaff_SetsIsAdminFalse_ByDefault()
@@ -398,12 +338,12 @@ public class StaffServiceTests : IDisposable
             Password = "password",
             Role = "Doctor"
         };
+        var identityUser = new IdentityUser { UserName = "newstaff" };
 
         // Act
-        var staffId = _staffService.CreateStaff(staffFormView);
+        var createdStaff = _staffService.CreateStaff(staffFormView, identityUser);
 
         // Assert
-        var createdStaff = _context.Staff.Find(staffId);
         Assert.NotNull(createdStaff);
         Assert.False(createdStaff.IsAdmin);
     }
@@ -420,16 +360,17 @@ public class StaffServiceTests : IDisposable
             Password = "password",
             Role = "Nurse"
         };
+        var identityUser = new IdentityUser { UserName = "linktest" };
 
         // Act
-        var staffId = _staffService.CreateStaff(staffFormView);
+        var createdStaff = _staffService.CreateStaff(staffFormView, identityUser);
 
         // Assert
-        var createdStaff = _context.Staff
+        var savedStaff = _context.Staff
             .Include(s => s.MessagingLink)
-            .FirstOrDefault(s => s.StaffId == staffId);
-        Assert.NotNull(createdStaff);
-        Assert.NotNull(createdStaff.MessagingLink);
+            .FirstOrDefault(s => s.StaffId == createdStaff.StaffId);
+        Assert.NotNull(savedStaff);
+        Assert.NotNull(savedStaff.MessagingLink);
     }
 
     [Fact]

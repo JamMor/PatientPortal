@@ -6,27 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PatientPortal.Controllers
 {
+    [Authorize(Policy = PolicyNames.ManagePatients)]
     [Route("/provider/patients/{patientId}/issue")]
     public class HealthIssueController : Controller
     {
-        private int? uuid
-        {
-            get
-            {
-                return HttpContext.Session.GetInt32("UserId");
-            }
-        }
-        private bool IsLoggedIn
-        {
-            get
-            {
-                return uuid != null;
-            }
-        }
-
         private IPatientViewService _patientViewService;
         private IHealthIssueService _healthIssueService;
         public HealthIssueController(IPatientViewService patientViewService, IHealthIssueService healthIssueService)

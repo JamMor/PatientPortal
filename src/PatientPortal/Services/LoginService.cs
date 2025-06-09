@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +8,7 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Services
 {
+    [Obsolete("This service is no longer used. It has been replaced by AuthService and TestLoginService.")]
     public class LoginService : ILoginService
     {
         private PatientPortalContext _context;

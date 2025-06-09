@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
+// TODO: Consider an explicit PatientParticipant that is a one to one link. Thus
+// a conversation can never have more than one patient involved if at all. 
+// This would also simplify the "WithPatient" field and inbox logic.
 namespace PatientPortal.Models
 {
     public class Conversation

@@ -1,6 +1,26 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
-
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h1 class="h3 mb-3 text-center text-primary font-weight-bold">Privacy Policy</h1>
+                    <partial name="_DisclaimerAlert.cshtml" />
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item">This project is for educational and demonstration purposes only.
+                        </li>
+                        <li class="list-group-item">No real patient or healthcare data should be entered or stored in
+                            this system.</li>
+                        <li class="list-group-item">The software does <em>not</em> currently implement or guarantee
+                            compliance with HIPAA, GDPR, or any other privacy or security regulations.</li>
+                        <li class="list-group-item">Security features are minimal and intended for demonstration only.
+                        </li>
+                    </ul>
+                    <partial name="_ContactAlert.cshtml" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,30 +1,26 @@
+@model IEnumerable<TestLoginViewModel>
 
 <h5>Demo Logins:</h5>
-<div id="test-login-container"> 
-    <p id="loading-text"class="text-muted">Loading...</p>
+<div id="test-login-container">
     <div class="container m-3">
-        <form id="test-login-options" class="d-flex p-1 test-login" asp-controller="Test" asp-action="TestLoginOptions">
-
-        </form>
+    @if(Model != null && Model.Any())
+    {
+    <form id="test-login-options" class="d-flex p-1 test-login" asp-controller="Test" asp-action="TestLoginOptions">
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        @foreach(var staff in Model)
+        {
+            <button name='staffId' value='@staff.TestId' class='mx-1 btn btn-sm btn-warning'>
+                Login <span class='text-nowrap'>@staff.TestName</span>
+            </button>
+        }
+    </form>
+    }
+    else
+    {
+    <form class='d-flex' method='post' action='/test/create'>
+        <button class='mx-1 btn btn-sm btn-warning'>Create Picard</button>
+    </form>
+    }
+    
     </div>
 </div>
-
-<script type="text/javascript">
-        $(document).ready(function() {
-            jQuery.get({
-                url: "/test/staff",
-                success: function(data) {
-                    $("#loading-text").remove();
-                    console.log(data);
-                    let count = parseInt(data["status"]);
-                    if(count > 0){
-                    data["staffInfo"].forEach(s => 
-                        $("#test-login-options").append(`<button name='staffId' class='mx-1 btn btn-sm btn-warning' value='${s.testId}'>Login <span class='text-nowrap'>${s.testName}</span></button>`)
-                    )}
-                    else if(count == 0){
-                        $("#test-login-container").prepend("<div class='container m-3'><form class='d-flex' method='post' action='/test/create'><button class='mx-1 btn btn-sm btn-warning'>Create Picard</button></form></div>")
-                    }
-                }
-            });
-        });
-</script>
