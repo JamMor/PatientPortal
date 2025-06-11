@@ -1,5 +1,3 @@
-//using system not needed once console.writeline removed...
-//
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PatientPortal.Models
 {
-    public class MessagingLink
+    public class MessagingLink : IValidatableObject
     {
         [Key]
         public int MessagingLinkId { get; set; }
@@ -16,7 +14,6 @@ namespace PatientPortal.Models
         [ForeignKey("StaffId")]
         public Staff Staff { get; set; }
 
-        [OneUser]
         public int? PatientId { get; set; }
         [ForeignKey("PatientId")]
         public Patient Patient { get; set; }
@@ -32,28 +29,16 @@ namespace PatientPortal.Models
         {
             get => StaffId == null ? "Patient" : "Staff";
         }
-    }
-    public class OneUser : ValidationAttribute
-    {
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var messenger = (MessagingLink)validationContext.ObjectInstance;
-            if ((messenger.StaffId == null && messenger.PatientId == null) || (messenger.StaffId != null && messenger.PatientId != null))
+            if (StaffId == null && PatientId == null)
             {
-                return new ValidationResult("Error with assigning users to MessengerLink.");
-            }
-            else
+                yield return new ValidationResult("MessengerLink must have either a StaffId or a PatientId.", new[] { "StaffId", "PatientId" });
+            } 
+            if (StaffId != null && PatientId != null)
             {
-                Console.WriteLine("Only one assigned User!");
-                if (messenger.StaffId != null)
-                {
-                    Console.WriteLine("It's a staffmember!");
-                }
-                if (messenger.PatientId != null)
-                {
-                    Console.WriteLine("It's a patient!");
-                }
-                return ValidationResult.Success;
+                yield return new ValidationResult("MessengerLink cannot have both a StaffId and a PatientId.", new[] { "StaffId", "PatientId" });
             }
         }
     }
