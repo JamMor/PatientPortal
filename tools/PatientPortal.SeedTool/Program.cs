@@ -1,5 +1,10 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Parsing;
+using Microsoft.Extensions.Configuration;
+
+var config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: true)
+    .Build();
 
 Option<int> staffOption = new("--staff")
 {
@@ -13,7 +18,8 @@ Option<int> patientsOption = new("--patients")
 };
 Option<string?> connectionStringOption = new("--connection-string")
 {
-    Description = "Database connection string (optional, reads from environment if not provided)"
+    Description = "Database connection string (optional, reads from main project's appsettings.json if not provided)",
+    DefaultValueFactory = parseresult => config["DBInfo:ConnectionString"]
 };
 
 var rootCommand = new RootCommand("PatientPortal Database Seeding Tool - Seeds fake staff and patient data")
@@ -32,6 +38,11 @@ rootCommand.SetAction(parseresult =>
     if (staffToGenerate == 0 && patientsToGenerate == 0)
     {
         Console.WriteLine("No staff or patients to generate. Exiting.");
+        return 1;
+    }
+    if(string.IsNullOrEmpty(connectionString))
+    {
+        Console.WriteLine("No connection string provided. Cannot seed database.");
         return 1;
     }
     else
