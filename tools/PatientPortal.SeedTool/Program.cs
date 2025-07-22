@@ -1,6 +1,8 @@
 ﻿using System.CommandLine;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using PatientPortal.SeedTool;
+using PatientPortal.SeedTool.Configuration;
 using PatientPortal.SeedTool.Validation;
 
 var config = new ConfigurationBuilder()
@@ -49,8 +51,29 @@ rootCommand.SetAction(async parseresult =>
         return 1;
     }
 
-    await Seeder.SeedDatabase(staffToGenerate, patientsToGenerate, connectionString);
-    return 0;
+    try
+    {
+        // Build service provider with all required services
+        using var serviceProvider = ServiceConfiguration.BuildServiceProvider(connectionString);
+        
+        // Create scope for scoped services (DbContext, etc.)
+        using var scope = serviceProvider.CreateScope();
+        
+        // Resolve orchestrator from DI container
+        var orchestrator = scope.ServiceProvider.GetRequiredService<SeedOrchestrator>();
+        
+        // Execute seeding
+        await orchestrator.SeedDatabaseAsync(staffToGenerate, patientsToGenerate);
+        
+        return 0;
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine($"✗ Fatal error: {ex.Message}");
+        return 1;
+    }
 });
+
+
 
 return await rootCommand.Parse(args).InvokeAsync();
