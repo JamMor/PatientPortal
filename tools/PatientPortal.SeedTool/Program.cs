@@ -1,7 +1,7 @@
 ﻿using System.CommandLine;
-using System.CommandLine.Parsing;
 using Microsoft.Extensions.Configuration;
 using PatientPortal.SeedTool;
+using PatientPortal.SeedTool.Validation;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: true)
@@ -10,18 +10,18 @@ var config = new ConfigurationBuilder()
 Option<int> staffOption = new("--staff")
 {
     Description = "Number of staff members to seed",
-    Validators = { IsPositiveInteger() }
+    Validators = { CliOptionsValidators.IsPositiveInteger() }
 };
 Option<int> patientsOption = new("--patients")
 {
     Description = "Number of patients to seed",
-    Validators = { IsPositiveInteger() }
+    Validators = { CliOptionsValidators.IsPositiveInteger() }
 };
 Option<string> connectionStringOption = new("--connection-string")
 {
     Description = "Database connection string (optional, reads from main project's appsettings.json if not provided)",
     DefaultValueFactory = parseresult => config["DBInfo:ConnectionString"] ?? string.Empty,
-    Validators = { DoesConnectionStringExist() }
+    Validators = { CliOptionsValidators.DoesConnectionStringExist() }
 };
 
 var rootCommand = new RootCommand("PatientPortal Database Seeding Tool - Seeds fake staff and patient data")
@@ -54,24 +54,3 @@ rootCommand.SetAction(async parseresult =>
 });
 
 return await rootCommand.Parse(args).InvokeAsync();
-
-static Action<OptionResult> IsPositiveInteger()
-{
-    return result =>
-    {
-        if (result.GetValueOrDefault<int>() < 0)
-        {
-            result.AddError("Patients must be a non-negative integer.");
-        }
-    };
-}
-static Action<OptionResult> DoesConnectionStringExist()
-{
-    return result =>
-    {
-        if (string.IsNullOrEmpty(result.GetValueOrDefault<string>()))
-        {
-            result.AddError("Connection string must be provided in command line, or in appsettings.json.");
-        }
-    };
-}
