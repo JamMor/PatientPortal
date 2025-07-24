@@ -1,5 +1,6 @@
 using PatientPortal.Models;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.SeedTool.Services;
 
 namespace PatientPortal.SeedTool;
 
@@ -9,10 +10,12 @@ namespace PatientPortal.SeedTool;
 public class SeedOrchestrator
 {
     private readonly PatientPortalContext _context;
+    private readonly StaffSeedService _staffSeedService;
 
-    public SeedOrchestrator(PatientPortalContext context)
+    public SeedOrchestrator(PatientPortalContext context, StaffSeedService staffSeedService)
     {
         _context = context;
+        _staffSeedService = staffSeedService;
     }
 
     /// <summary>
@@ -40,7 +43,8 @@ public class SeedOrchestrator
 
             if (staffCount > 0)
             {
-                // TODO: Uncomment when StaffSeedService is implemented
+                await _staffSeedService.SeedStaffAsync(staffCount);
+                Console.WriteLine();
             }
             if (patientCount > 0)
             {

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PatientPortal.Models;
+using PatientPortal.SeedTool.DataGenerators;
+using PatientPortal.SeedTool.Services;
 
 namespace PatientPortal.SeedTool.Configuration;
 
@@ -44,9 +46,13 @@ public static class ServiceConfiguration
         })
         .AddEntityFrameworkStores<PatientPortalContext>();
 
-        // Register seed services
+        // Register data generators (stateless, can be singleton)
+        services.AddSingleton<StaffDataGenerator>();
+        services.AddSingleton<IdentityUserDataGenerator>();
+
+        // Register seed services (stateful, scoped to match DbContext)
         services.AddScoped<SeedOrchestrator>();
-        // services.AddScoped<StaffSeedService>(); // TODO: Implement StaffSeedService
+        services.AddScoped<StaffSeedService>();
         // services.AddScoped<PatientSeedService>(); // TODO: Implement PatientSeedService
 
         return services.BuildServiceProvider();
