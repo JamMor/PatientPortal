@@ -12,15 +12,18 @@ public class SeedOrchestrator
 {
     private readonly PatientPortalContext _context;
     private readonly StaffSeedService _staffSeedService;
+    private readonly PatientSeedService _patientSeedService;
     private readonly ILogger<SeedOrchestrator> _logger;
 
     public SeedOrchestrator(
         PatientPortalContext context, 
         StaffSeedService staffSeedService,
+        PatientSeedService patientSeedService,
         ILogger<SeedOrchestrator> logger)
     {
         _context = context;
         _staffSeedService = staffSeedService;
+        _patientSeedService = patientSeedService;
         _logger = logger;
     }
 
@@ -47,9 +50,10 @@ public class SeedOrchestrator
                 await _staffSeedService.SeedStaffAsync(staffCount);
             }
             
+            // Seed patients
             if (patientCount > 0)
             {
-                // TODO: Uncomment when PatientSeedService is implemented
+                await _patientSeedService.SeedPatientsAsync(patientCount);
             }
 
             // Display final summary

@@ -51,15 +51,14 @@ public class StaffSeedService
 
         _logger.LogInformation("Generating {Count} staff members...", staffCount);
 
-        // Generate all staff data upfront using pure data generator
+        // Generate all staff data
         var staffList = _staffDataGenerator.GenerateNStaff(staffCount);
 
-        // Create IdentityUser for each staff member and link them
+        // Create IdentityUser for each staff member from first and last name and link them
         for (int i = 0; i < staffList.Count; i++)
         {
             var staff = staffList[i];
 
-            // Create IdentityUser based on staff's first and last name
             var identityUser = await CreateIdentityUserAsync(staff.FirstName, staff.LastName);
 
             if (identityUser == null)
@@ -70,7 +69,6 @@ public class StaffSeedService
                 continue;
             }
 
-            // Link Staff to IdentityUser
             staff.User = identityUser;
             _context.Staff.Add(staff);
             successCount++;

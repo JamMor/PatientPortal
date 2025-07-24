@@ -65,11 +65,12 @@ public static class ServiceConfiguration
         // Register data generators (stateless, can be singleton)
         services.AddSingleton<StaffDataGenerator>();
         services.AddSingleton<IdentityUserDataGenerator>();
+        services.AddSingleton<PatientDataGenerator>();
 
         // Register seed services (stateful, scoped to match DbContext)
         services.AddScoped<SeedOrchestrator>();
         services.AddScoped<StaffSeedService>();
-        // services.AddScoped<PatientSeedService>(); // TODO: Implement PatientSeedService
+        services.AddScoped<PatientSeedService>();
 
         return services.BuildServiceProvider();
     }
