@@ -1,5 +1,6 @@
 using PatientPortal.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PatientPortal.SeedTool.Services;
 
 namespace PatientPortal.SeedTool;
@@ -11,11 +12,16 @@ public class SeedOrchestrator
 {
     private readonly PatientPortalContext _context;
     private readonly StaffSeedService _staffSeedService;
+    private readonly ILogger<SeedOrchestrator> _logger;
 
-    public SeedOrchestrator(PatientPortalContext context, StaffSeedService staffSeedService)
+    public SeedOrchestrator(
+        PatientPortalContext context, 
+        StaffSeedService staffSeedService,
+        ILogger<SeedOrchestrator> logger)
     {
         _context = context;
         _staffSeedService = staffSeedService;
+        _logger = logger;
     }
 
     /// <summary>
@@ -23,48 +29,38 @@ public class SeedOrchestrator
     /// </summary>
     public async Task SeedDatabaseAsync(int staffCount, int patientCount)
     {
-        // TODO: Implement actual seeding logic here
-        Console.WriteLine("=== PatientPortal Seed Tool ===");
-        Console.WriteLine($"Staff to create: {staffCount}");
-        Console.WriteLine($"Patients to create: {patientCount}");
-        Console.WriteLine();
-        Console.WriteLine("================================================");
+        ConsoleWrites.WriteHeader();
+        ConsoleWrites.WriteOperationParams(staffCount, patientCount);
 
         try
         {
-            // Test connection by getting current counts
+            // Get current counts
             int currentStaff = await _context.Staff.CountAsync();
             int currentPatients = await _context.Patients.CountAsync();
-                
-            Console.WriteLine($"✓ Connected to database");
-            Console.WriteLine($"  Current Staff: {currentStaff}");
-            Console.WriteLine($"  Current Patients: {currentPatients}");
-            Console.WriteLine();
+            
+            _logger.LogInformation("Database connected - Current: {Staff} staff, {Patients} patients", 
+                currentStaff, currentPatients);
 
+            // Seed staff
             if (staffCount > 0)
             {
                 await _staffSeedService.SeedStaffAsync(staffCount);
-                Console.WriteLine();
             }
+            
             if (patientCount > 0)
             {
                 // TODO: Uncomment when PatientSeedService is implemented
             }
 
-            // Display final counts
+            // Display final summary
             int finalStaff = await _context.Staff.CountAsync();
             int finalPatients = await _context.Patients.CountAsync();
-            Console.WriteLine("Final counts:");
-            Console.WriteLine($"  Total Staff: {finalStaff} (+{finalStaff - currentStaff})");
-            Console.WriteLine($"  Total Patients: {finalPatients} (+{finalPatients - currentPatients})");
+            
+            ConsoleWrites.WriteOperationResults(currentStaff, currentPatients, finalStaff, finalPatients);
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"✗ Error: {ex.Message}");
-            if (ex.InnerException != null)
-            {
-                Console.Error.WriteLine($"  Inner: {ex.InnerException.Message}");
-            }
+            _logger.LogError(ex, "Seeding failed");
             throw;
         }
     }

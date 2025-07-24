@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
 using PatientPortal.SeedTool.DataGenerators;
 using PatientPortal.SeedTool.Services;
@@ -16,10 +17,25 @@ public static class ServiceConfiguration
     /// Builds and configures the service provider with all required services.
     /// </summary>
     /// <param name="connectionString">Database connection string for MySQL</param>
+    /// <param name="logLevel">Minimum log level for application logs (default: Information). Use LogLevel.Debug to see SQL queries.</param>
     /// <returns>Configured ServiceProvider</returns>
-    public static ServiceProvider BuildServiceProvider(string connectionString)
+    public static ServiceProvider BuildServiceProvider(string connectionString, LogLevel logLevel = LogLevel.Information)
     {
         var services = new ServiceCollection();
+
+        // Register logging with filters to suppress verbose EF Core SQL queries
+        services.AddLogging(builder =>
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(logLevel);
+            
+            // Suppress EF Core database command logging (SQL queries) unless Debug or Trace level
+            if (logLevel > LogLevel.Debug)
+            {
+                builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
+                builder.AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning);
+            }
+        });
 
         // Register DbContext with MySQL
         services.AddDbContext<PatientPortalContext>(options =>

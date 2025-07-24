@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
 using PatientPortal.SeedTool.DataGenerators;
 
@@ -21,17 +22,20 @@ public class StaffSeedService
     private readonly UserManager<IdentityUser> _userManager;
     private readonly StaffDataGenerator _staffDataGenerator;
     private readonly IdentityUserDataGenerator _identityUserDataGenerator;
+    private readonly ILogger<StaffSeedService> _logger;
 
     public StaffSeedService(
         PatientPortalContext context, 
         UserManager<IdentityUser> userManager,
         StaffDataGenerator staffDataGenerator,
-        IdentityUserDataGenerator identityUserDataGenerator)
+        IdentityUserDataGenerator identityUserDataGenerator,
+        ILogger<StaffSeedService> logger)
     {
         _context = context;
         _userManager = userManager;
         _staffDataGenerator = staffDataGenerator;
         _identityUserDataGenerator = identityUserDataGenerator;
+        _logger = logger;
     }
 
     /// <summary>
@@ -45,7 +49,7 @@ public class StaffSeedService
         int successCount = 0;
         int failCount = 0;
 
-        Console.WriteLine($"Seeding {staffCount} staff members...");
+        _logger.LogInformation("Generating {Count} staff members...", staffCount);
 
         // Generate all staff data upfront using pure data generator
         var staffList = _staffDataGenerator.GenerateNStaff(staffCount);
@@ -60,26 +64,36 @@ public class StaffSeedService
 
             if (identityUser == null)
             {
+                _logger.LogWarning("Skipping staff member '{FirstName} {LastName}' due to IdentityUser creation failure", 
+                    staff.FirstName, staff.LastName);
                 failCount++;
                 continue;
             }
 
             // Link Staff to IdentityUser
             staff.User = identityUser;
-
             _context.Staff.Add(staff);
             successCount++;
         }
 
-        // Save all staff records to database
+        // Save all staff records to database in one operation
         await _context.SaveChangesAsync();
 
-        Console.WriteLine($"✓ Staff seeding complete: {successCount} created, {failCount} failed");
+        if (failCount > 0)
+        {
+            _logger.LogWarning("Staff seeding complete: {Success} created, {Failed} failed", successCount, failCount);
+        }
+        else
+        {
+            _logger.LogInformation("Staff seeding complete: {Success} created", successCount);
+        }
+        
         return successCount;
     }
 
     /// <summary>
     /// Creates an IdentityUser account based on staff member's name.
+    /// Retries once on duplicate username errors.
     /// </summary>
     /// <param name="firstName">Staff member's first name</param>
     /// <param name="lastName">Staff member's last name</param>
@@ -95,17 +109,23 @@ public class StaffSeedService
         // Retry once with a new username if duplicate
         if (result.Errors.Any(e => e.Code == IdentityErrorCodes.DuplicateUserName))
         {
-            Console.Error.WriteLine($"Duplicate username '{identityUser.UserName}' for '{firstName} {lastName}', retrying with a new username...");
+            _logger.LogWarning("Duplicate username '{Username}' for '{FirstName} {LastName}', retrying", 
+                identityUser.UserName, firstName, lastName);
+            
             userProps = _identityUserDataGenerator.GenerateIdentityUserProperties(firstName, lastName);
             identityUser.UserName = userProps.Username;
             result = await _userManager.CreateAsync(identityUser, userProps.Password);
         }
+        
         if (result.Succeeded)
         {
             return identityUser;
         }
 
-        Console.Error.WriteLine($"  ✗ Failed to create user for '{firstName} {lastName}'.");
+        // Log detailed error information
+        _logger.LogError("Failed to create IdentityUser for '{FirstName} {LastName}': {Errors}", 
+            firstName, lastName, string.Join(", ", result.Errors.Select(e => $"{e.Code}: {e.Description}")));
+        
         return null;
     }
 }
