@@ -14,10 +14,10 @@ public class StaffDataGenerator
     private const string defaultPassword = "[Managed by Identity]";
 
     /// <summary>
-    /// Generates a list of fake staff members.
+    /// Generates a specified number of fake staff members.
     /// </summary>
     /// <param name="count">Number of staff members to generate</param>
-    /// <returns>List of generated Staff entities (not yet persisted)</returns>
+    /// <returns>List of generated Staff objects</returns>
     public List<Staff> GenerateNStaff(int count)
     {
         var staffFaker = new Faker<Staff>()
