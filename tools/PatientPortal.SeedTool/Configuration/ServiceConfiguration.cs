@@ -66,6 +66,11 @@ public static class ServiceConfiguration
         services.AddSingleton<StaffDataGenerator>();
         services.AddSingleton<IdentityUserDataGenerator>();
         services.AddSingleton<PatientDataGenerator>();
+        services.AddSingleton<AddressDataGenerator>();
+        services.AddSingleton<PatientStaffConnectionDataGenerator>();
+        services.AddSingleton<VisitDataGenerator>();
+        services.AddSingleton<TestResultDataGenerator>();
+        services.AddSingleton<HealthIssueDataGenerator>();
 
         // Register seed services (stateful, scoped to match DbContext)
         services.AddScoped<SeedOrchestrator>();
