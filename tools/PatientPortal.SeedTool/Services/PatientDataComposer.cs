@@ -68,17 +68,17 @@ public class PatientDataComposer
 
         patient.MedicalTeam = _connectionDataGenerator.GenerateConnectionsForStaffIds(selectedStaffIds, patient.CreatedAt);
 
-        patient.Visits = _visitDataGenerator.GenerateNStandaloneVisitsForPatient(
+        patient.Visits = _visitDataGenerator.GenerateVisitsWithoutNavProps(
             BetweenOneAnd(MaxIndependentVisitsPerPatient),
             selectedStaffIds,
             patient.CreatedAt);
 
-        patient.Tests = _testResultDataGenerator.GenerateNStandaloneTestResultsForPatient(
+        patient.Tests = _testResultDataGenerator.GenerateTestResultsWithoutNavProps(
             BetweenOneAnd(MaxIndependentTestResultsPerPatient),
             selectedStaffIds,
             patient.CreatedAt);
 
-        patient.HealthIssues = _healthIssueDataGenerator.GenerateNStandaloneHealthIssuesForPatient(
+        patient.HealthIssues = _healthIssueDataGenerator.GenerateHealthIssuesWithoutNavProps(
             BetweenOneAnd(MaxIndependentHealthIssuesPerPatient),
             patient.CreatedAt);
     }
