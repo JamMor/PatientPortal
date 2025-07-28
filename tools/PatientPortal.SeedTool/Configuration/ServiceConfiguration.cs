@@ -72,6 +72,9 @@ public static class ServiceConfiguration
         services.AddSingleton<TestResultDataGenerator>();
         services.AddSingleton<HealthIssueDataGenerator>();
 
+        // Register data composers (stateless, can be singleton)
+        services.AddSingleton<PatientDataComposer>();
+
         // Register seed services (stateful, scoped to match DbContext)
         services.AddScoped<SeedOrchestrator>();
         services.AddScoped<StaffSeedService>();
