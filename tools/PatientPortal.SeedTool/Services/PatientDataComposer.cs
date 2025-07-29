@@ -35,9 +35,14 @@ public class PatientDataComposer
     // Configuration constants for data composition
     private const double AddressProbability = 0.33; // 33% chance of having an address
     private const int MaxStaffPerPatient = 3;
+
     private const int MaxIndependentVisitsPerPatient = 3;
     private const int MaxIndependentTestResultsPerPatient = 2;
     private const int MaxIndependentHealthIssuesPerPatient = 2;
+
+    private const int MaxRelatedHealthIssuesPerPatient = 3;
+    private const int MaxVisitsPerHealthIssue = 4;
+    private const int MaxTestResultsPerHealthIssue = 3;
 
     /// <summary>
     /// Creates a list of patients with basic demographic data.
@@ -81,6 +86,56 @@ public class PatientDataComposer
         patient.HealthIssues = _healthIssueDataGenerator.GenerateHealthIssuesWithoutNavProps(
             BetweenOneAnd(MaxIndependentHealthIssuesPerPatient),
             patient.CreatedAt);
+    }
+
+    /// <summary>
+    /// Creates health issues with associated visits and test results for a list of patients.
+    /// Requires patients to have valid PatientIds and medical team from the database.
+    /// </summary>
+    /// <param name="patients">List of persisted patients (must have PatientId and medical team)</param>
+    /// <param name="availableStaffIds">List of all available staff IDs</param>
+    /// <returns>List of HealthIssue objects with associated visits and test results</returns>
+    public List<HealthIssue> CreateHealthIssuesWithVisitsAndTests(List<Patient> patients, List<int> availableStaffIds)
+    {
+        var allIssues = new List<HealthIssue>();
+
+        foreach (var patient in patients)
+        {
+            int issueCount = BetweenOneAnd(MaxRelatedHealthIssuesPerPatient);
+            List<HealthIssue> issues = _healthIssueDataGenerator.GenerateHealthIssuesWithPatientId(
+                issueCount,
+                patient.PatientId,
+                patient.CreatedAt);
+
+            foreach (var issue in issues)
+            {
+                List<int> medicalTeamIds = patient.MedicalTeam.Select(mt => mt.StaffId).ToList();
+
+                List<Visit> visits = _visitDataGenerator.GenerateVisitsWithPatientId(
+                    BetweenOneAnd(MaxVisitsPerHealthIssue),
+                    patient.PatientId,
+                    medicalTeamIds,
+                    issue.CreatedAt);
+
+                List<TestResult> tests = _testResultDataGenerator.GenerateTestResultsWithPatientId(
+                    BetweenOneAnd(MaxTestResultsPerHealthIssue),
+                    patient.PatientId,
+                    medicalTeamIds,
+                    issue.CreatedAt);
+
+                issue.AssociatedVisits = visits
+                    .Select(v => new VisitHealthIssueAssociation { Visit = v })
+                    .ToList();
+
+                issue.AssociatedTestResults = tests
+                    .Select(t => new TestHealthIssueAssociation { TestResult = t })
+                    .ToList();
+            }
+
+            allIssues.AddRange(issues);
+        }
+
+        return allIssues;
     }
 
     private static int BetweenOneAnd(int max)
