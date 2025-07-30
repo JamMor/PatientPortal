@@ -1,5 +1,6 @@
 using PatientPortal.Models;
 using PatientPortal.SeedTool.DataGenerators.Messaging;
+using PatientPortal.SeedTool.DTOs.Messaging;
 
 namespace PatientPortal.SeedTool.Services;
 
@@ -10,7 +11,13 @@ public class MessagingDataComposer
 {
     private readonly ConversationDataGenerator _conversationDataGenerator;
     private readonly MessageDataGenerator _messageDataGenerator;
-    
+
+    //TODO: Fix duplication
+    private const int ConversationThreshold = 2;
+    // private const int MaxNewConversationsPerLink = 4;
+    private const int MaxNewConversationsPerLink = (ConversationThreshold - 1) + 3;
+
+    private const int MaxAdditionalCorrespondents = 2;
     private const int MaxMessagesPerParticipant = 5;
 
     public MessagingDataComposer(
@@ -21,7 +28,43 @@ public class MessagingDataComposer
         _messageDataGenerator = messageDataGenerator;
     }
 
-    public Conversation CreateConversationWithMessages(bool forPatient, List<int> participantIds, DateTime earliestDate)
+    public List<Conversation> CreateConversationsForPatients(List<LinkConversationInfo> patientConversationInfos) =>
+        CreateConversationsWithMessages(patientConversationInfos, forPatient: true);
+    public List<Conversation> CreateConversationsForStaffToStaff(List<LinkConversationInfo> patientConversationInfos) =>
+        CreateConversationsWithMessages(patientConversationInfos, forPatient: false);
+    
+    private List<Conversation> CreateConversationsWithMessages(List<LinkConversationInfo> conversationInfos, bool forPatient)
+    {
+        List<Conversation> conversations = new List<Conversation>();
+
+        foreach (LinkConversationInfo info in conversationInfos)
+        {
+            int minimumToReachThreshold = ConversationThreshold - info.ConversationCount;
+            int conversationsToCreate = Random.Shared.Next(minimumToReachThreshold, MaxNewConversationsPerLink + 1);
+
+            for (int i = 0; i < conversationsToCreate; i++)
+            {
+                var participants = SelectConversationParticipants(info.PrimaryLinkInfo, info.PotentialCorrespondentInfos);
+
+                List<int> participantIds = participants.Select(p => p.MessagingLinkId).ToList();
+                DateTime mostRecentCreatedDate = participants.Max(p => p.CreatedAt);
+
+                var conversation = CreateConversationWithMessages(forPatient, participantIds, mostRecentCreatedDate);
+
+                conversations.Add(conversation);
+            }
+        }
+        return conversations;
+    }
+
+    private static List<ParticipantInfo> SelectConversationParticipants(ParticipantInfo primaryInfo, List<ParticipantInfo> potentialCorrespondents)
+    {
+        List<ParticipantInfo> correspondents = GetRandomSubset(potentialCorrespondents, BetweenOneAnd(MaxAdditionalCorrespondents));
+
+        return correspondents.Append(primaryInfo).ToList();
+    }
+
+    private Conversation CreateConversationWithMessages(bool forPatient, List<int> participantIds, DateTime earliestDate)
     {
         var conversation = _conversationDataGenerator.GenerateConversation(forPatient, earliestDate);
         List<Message> messages;
