@@ -1,13 +1,13 @@
 namespace PatientPortal.SeedTool.DTOs.Messaging
 {
-    public class LinkConversationInfo
+    public class ConversationDTO
     {
-        public required ParticipantInfo PrimaryLinkInfo;
-        public required List<ParticipantInfo> PotentialCorrespondentInfos;
+        public required ParticipantDTO PrimaryLinkInfo;
+        public required List<ParticipantDTO> PotentialCorrespondentInfos;
         public int ConversationCount;
     }
 
-    public class ParticipantInfo
+    public class ParticipantDTO
     {
         public int MessagingLinkId { get; set; }
         public DateTime CreatedAt { get; set; }

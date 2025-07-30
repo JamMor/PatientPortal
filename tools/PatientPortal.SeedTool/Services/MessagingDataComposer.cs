@@ -28,16 +28,16 @@ public class MessagingDataComposer
         _messageDataGenerator = messageDataGenerator;
     }
 
-    public List<Conversation> CreateConversationsForPatients(List<LinkConversationInfo> patientConversationInfos) =>
+    public List<Conversation> CreateConversationsForPatients(List<ConversationDTO> patientConversationInfos) =>
         CreateConversationsWithMessages(patientConversationInfos, forPatient: true);
-    public List<Conversation> CreateConversationsForStaffToStaff(List<LinkConversationInfo> patientConversationInfos) =>
+    public List<Conversation> CreateConversationsForStaffToStaff(List<ConversationDTO> patientConversationInfos) =>
         CreateConversationsWithMessages(patientConversationInfos, forPatient: false);
     
-    private List<Conversation> CreateConversationsWithMessages(List<LinkConversationInfo> conversationInfos, bool forPatient)
+    private List<Conversation> CreateConversationsWithMessages(List<ConversationDTO> conversationInfos, bool forPatient)
     {
         List<Conversation> conversations = new List<Conversation>();
 
-        foreach (LinkConversationInfo info in conversationInfos)
+        foreach (ConversationDTO info in conversationInfos)
         {
             int minimumToReachThreshold = ConversationThreshold - info.ConversationCount;
             int conversationsToCreate = Random.Shared.Next(minimumToReachThreshold, MaxNewConversationsPerLink + 1);
@@ -57,9 +57,9 @@ public class MessagingDataComposer
         return conversations;
     }
 
-    private static List<ParticipantInfo> SelectConversationParticipants(ParticipantInfo primaryInfo, List<ParticipantInfo> potentialCorrespondents)
+    private static List<ParticipantDTO> SelectConversationParticipants(ParticipantDTO primaryInfo, List<ParticipantDTO> potentialCorrespondents)
     {
-        List<ParticipantInfo> correspondents = GetRandomSubset(potentialCorrespondents, BetweenOneAnd(MaxAdditionalCorrespondents));
+        List<ParticipantDTO> correspondents = GetRandomSubset(potentialCorrespondents, BetweenOneAnd(MaxAdditionalCorrespondents));
 
         return correspondents.Append(primaryInfo).ToList();
     }
