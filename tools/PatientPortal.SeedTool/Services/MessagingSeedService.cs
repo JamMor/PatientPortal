@@ -62,13 +62,13 @@ public class MessagingSeedService
             })
             .ToListAsync();
 
-        Dictionary<int, ParticipantDTO> allStaffParticipantInfo = await _context.Staff
+        List<ParticipantDTO> allStaffParticipantInfo = await _context.Staff
                     .Select(s => new ParticipantDTO
                     {
                         MessagingLinkId = s.MessagingLink.MessagingLinkId,
                         CreatedAt = s.MessagingLink.CreatedAt
                     })
-                    .ToDictionaryAsync(pi => pi.MessagingLinkId);
+                    .ToListAsync();
 
         List<ConversationDTO> staffConversationDTOs = await staffLinksUnderThresholdQuery
             .Select(ml => new ConversationDTO
@@ -80,9 +80,16 @@ public class MessagingSeedService
                 },
                 ConversationCount =
                     ml.ParticipatingConversations.Count(cp => cp.Conversation.WithPatient == false),
-                PotentialCorrespondentInfos = allStaffParticipantInfo.Where(pi => pi.Key != ml.MessagingLinkId).Select(pi => pi.Value).ToList()
+                PotentialCorrespondentInfos = new List<ParticipantDTO>()
             })
             .ToListAsync();
+            
+        foreach (var staffDTO in staffConversationDTOs)
+        {
+            staffDTO.PotentialCorrespondentInfos = allStaffParticipantInfo
+                .Where(info => info.MessagingLinkId != staffDTO.PrimaryLinkInfo.MessagingLinkId)
+                .ToList();
+        }
 
         // Generate conversations
         List<Conversation> allConversations = [];
