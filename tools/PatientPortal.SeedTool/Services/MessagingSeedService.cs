@@ -31,8 +31,11 @@ public class MessagingSeedService
     /// Seeds conversations for all MessagingLinks with fewer than the conversation threshold.
     /// </summary>
     /// <returns>Number of conversations created</returns>
-    public async Task<int> SeedMessagingAsync()
+    public async Task<(int, int)> SeedMessagingAsync()
     {
+        int patientConversationsSeeded = 0;
+        int staffConversationsSeeded = 0;
+
         // Queries for MessagingLinks under thresholds
         var patientLinksUnderThresholdQuery =  _context.MessagingLinks
             .Where(ml => ml.PatientId != null)
@@ -92,25 +95,27 @@ public class MessagingSeedService
         }
 
         // Generate conversations
-        List<Conversation> allConversations = [];
 
+        List<Conversation> patientConversations = [];
         if (patientsConversationsDTOs.Count > 0)
         {
-            var patientConversations = _messagingDataComposer.CreateConversationsForPatients(patientsConversationsDTOs);
-            allConversations.AddRange(patientConversations);
+            patientConversations = _messagingDataComposer.CreateConversationsForPatients(patientsConversationsDTOs);
         }
 
+        List<Conversation> staffConversations =[];
         if (staffConversationDTOs.Count > 0)
         {
-            var staffConversations = _messagingDataComposer.CreateConversationsForStaffToStaff(staffConversationDTOs);
-            allConversations.AddRange(staffConversations);
+            staffConversations = _messagingDataComposer.CreateConversationsForStaffToStaff(staffConversationDTOs);
         }
 
-        _context.Conversations.AddRange(allConversations);
+        _context.Conversations.AddRange(patientConversations);
+        _context.Conversations.AddRange(staffConversations);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Successfully seeded {PatientCount} patient and {StaffCount} staff conversations", patientsConversationsDTOs.Count, staffConversationDTOs.Count);
+        patientConversationsSeeded = patientConversations.Count;
+        staffConversationsSeeded = staffConversations.Count;
+        _logger.LogInformation("Successfully seeded {PatientCount} patient and {StaffCount} staff conversations", patientConversationsSeeded, staffConversationsSeeded);
 
-        return allConversations.Count;
+        return (patientConversationsSeeded, staffConversationsSeeded);
     }
 }

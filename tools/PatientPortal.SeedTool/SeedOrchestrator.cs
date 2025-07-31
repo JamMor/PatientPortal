@@ -36,7 +36,7 @@ public class SeedOrchestrator
     public async Task SeedDatabaseAsync(int staffCount, int patientCount, bool seedMessages)
     {
         ConsoleWrites.WriteHeader();
-        ConsoleWrites.WriteOperationParams(staffCount, patientCount);
+        ConsoleWrites.WriteOperationParams(staffCount, patientCount, seedMessages);
 
         try
         {
@@ -47,27 +47,32 @@ public class SeedOrchestrator
                 currentStaff, currentPatients);
 
             // Seed staff
+            int seededStaff = 0;
             if (staffCount > 0)
             {
-                await _staffSeedService.SeedStaffAsync(staffCount);
+                seededStaff = await _staffSeedService.SeedStaffAsync(staffCount);
             }
             
             // Seed patients
+            int seededPatients = 0;
             if (patientCount > 0)
             {
+                seededPatients = await _patientSeedService.SeedPatientsAsync(patientCount);
             }
 
             // Seed messaging
+            int seededPatientConversations = 0;
+            int seededStaffConversations = 0;
             if (seedMessages)
             {
-                await _messagingSeedService.SeedMessagingAsync();
+                (seededPatientConversations, seededStaffConversations) = await _messagingSeedService.SeedMessagingAsync();
             }
 
             // Display final summary
             int finalStaff = await _context.Staff.CountAsync();
             int finalPatients = await _context.Patients.CountAsync();
             
-            ConsoleWrites.WriteOperationResults(currentStaff, currentPatients, finalStaff, finalPatients);
+            ConsoleWrites.WriteOperationResults(seededStaff, seededPatients, seededPatientConversations, seededStaffConversations);
         }
         catch (Exception ex)
         {

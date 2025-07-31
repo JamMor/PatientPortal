@@ -26,7 +26,7 @@ public class ConsoleWrites
         Console.WriteLine();
     }
 
-    public static void WriteOperationParams(int initialStaff, int initialPatients)
+    public static void WriteOperationParams(int initialStaff, int initialPatients, bool isSeedingMessages = false)
     {
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -34,15 +34,19 @@ public class ConsoleWrites
         Console.ResetColor();
         Console.WriteLine($"  Staff:    {initialStaff}");
         Console.WriteLine($"  Patients: {initialPatients}");
+        Console.WriteLine($"  Seeding Messages: {(isSeedingMessages ? "Yes" : "No")}");
     }
 
-    public static void WriteOperationResults(int initialStaff, int initialPatients, int finalStaff, int finalPatients)
+    public static void WriteOperationResults(int seededPatients, int seededStaff, int seededPatientConversations, int seededStaffConversations)
     {
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.DarkCyan;
         Console.WriteLine("Operation Results:");
         Console.ResetColor();
-        Console.WriteLine($"  Staff:    {finalStaff} (↑{finalStaff - initialStaff})");
-        Console.WriteLine($"  Patients: {finalPatients} (↑{finalPatients - initialPatients})");
+        Console.WriteLine($"  Staff:    {seededStaff}");
+        Console.WriteLine($"  Patients: {seededPatients}");
+        Console.WriteLine("  -----------------------------");
+        Console.WriteLine($"  Patient Conversations: {seededPatientConversations}");
+        Console.WriteLine($"  Staff Conversations: {seededStaffConversations}");
     }
 }
