@@ -93,9 +93,8 @@ public class PatientDataComposer
     /// Requires patients to have valid PatientIds and medical team from the database.
     /// </summary>
     /// <param name="patients">List of persisted patients (must have PatientId and medical team)</param>
-    /// <param name="availableStaffIds">List of all available staff IDs</param>
     /// <returns>List of HealthIssue objects with associated visits and test results</returns>
-    public List<HealthIssue> CreateHealthIssuesWithVisitsAndTests(List<Patient> patients, List<int> availableStaffIds)
+    public List<HealthIssue> CreateHealthIssuesWithVisitsAndTests(List<Patient> patients)
     {
         var allIssues = new List<HealthIssue>();
 

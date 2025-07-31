@@ -50,8 +50,9 @@ public class PatientSeedService
         _context.Patients.AddRange(patientList);
         await _context.SaveChangesAsync();
 
+        // TODO: Create DTOs so as not to rely on assumed Patient properties population
         // Phase 2: Create health issues with associated visits and tests (requires PatientId)
-        var relatedHealthIssues = _patientDataComposer.CreateHealthIssuesWithVisitsAndTests(patientList, currentStaffIds);
+        var relatedHealthIssues = _patientDataComposer.CreateHealthIssuesWithVisitsAndTests(patientList);
         _context.HealthIssues.AddRange(relatedHealthIssues);
         await _context.SaveChangesAsync();
 
