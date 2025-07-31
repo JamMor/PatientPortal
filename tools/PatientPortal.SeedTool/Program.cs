@@ -19,6 +19,11 @@ Option<int> patientsOption = new("--patients")
     Description = "Number of patients to seed",
     Validators = { CliOptionsValidators.IsPositiveInteger() }
 };
+Option<bool> messagesOption = new("--messages")
+{
+    Description = "Seed conversations and messages for all messaging links under the conversation threshold",
+    DefaultValueFactory = parseresult => false
+};
 Option<string> connectionStringOption = new("--connection-string")
 {
     Description = "Database connection string (optional, reads from main project's appsettings.json if not provided)",
@@ -30,6 +35,7 @@ var rootCommand = new RootCommand("PatientPortal Database Seeding Tool - Seeds f
 {
     staffOption,
     patientsOption,
+    messagesOption,
     connectionStringOption
 };
 
@@ -37,12 +43,13 @@ rootCommand.SetAction(async parseresult =>
 {
     int staffToGenerate = parseresult.GetValue(staffOption);
     int patientsToGenerate = parseresult.GetValue(patientsOption);
+    bool seedMessages = parseresult.GetValue(messagesOption);
     //TODO: Why does this string need to be nullable? The default value factory 
     // should ensure it's never null, but the compiler isn't convinced.
     string? connectionString = parseresult.GetValue(connectionStringOption);
-    if (staffToGenerate == 0 && patientsToGenerate == 0)
+    if (staffToGenerate == 0 && patientsToGenerate == 0 && seedMessages != true)
     {
-        Console.WriteLine("No staff or patients to generate. Exiting.");
+        Console.WriteLine("No operations specified. Exiting.");
         return 1;
     }
     if (string.IsNullOrEmpty(connectionString))
@@ -63,7 +70,7 @@ rootCommand.SetAction(async parseresult =>
         var orchestrator = scope.ServiceProvider.GetRequiredService<SeedOrchestrator>();
         
         // Execute seeding
-        await orchestrator.SeedDatabaseAsync(staffToGenerate, patientsToGenerate);
+        await orchestrator.SeedDatabaseAsync(staffToGenerate, patientsToGenerate, seedMessages);
         
         return 0;
     }

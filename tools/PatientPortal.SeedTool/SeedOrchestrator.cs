@@ -13,24 +13,27 @@ public class SeedOrchestrator
     private readonly PatientPortalContext _context;
     private readonly StaffSeedService _staffSeedService;
     private readonly PatientSeedService _patientSeedService;
+    private readonly MessagingSeedService _messagingSeedService;
     private readonly ILogger<SeedOrchestrator> _logger;
 
     public SeedOrchestrator(
         PatientPortalContext context, 
         StaffSeedService staffSeedService,
         PatientSeedService patientSeedService,
+        MessagingSeedService messagingSeedService,
         ILogger<SeedOrchestrator> logger)
     {
         _context = context;
         _staffSeedService = staffSeedService;
         _patientSeedService = patientSeedService;
+        _messagingSeedService = messagingSeedService;
         _logger = logger;
     }
 
     /// <summary>
-    /// Seeds the database with the specified number of staff and patients.
+    /// Seeds the database with the specified number of staff and patients, and messaging.
     /// </summary>
-    public async Task SeedDatabaseAsync(int staffCount, int patientCount)
+    public async Task SeedDatabaseAsync(int staffCount, int patientCount, bool seedMessages)
     {
         ConsoleWrites.WriteHeader();
         ConsoleWrites.WriteOperationParams(staffCount, patientCount);
@@ -40,7 +43,6 @@ public class SeedOrchestrator
             // Get current counts
             int currentStaff = await _context.Staff.CountAsync();
             int currentPatients = await _context.Patients.CountAsync();
-            
             _logger.LogInformation("Database connected - Current: {Staff} staff, {Patients} patients", 
                 currentStaff, currentPatients);
 
@@ -53,7 +55,12 @@ public class SeedOrchestrator
             // Seed patients
             if (patientCount > 0)
             {
-                await _patientSeedService.SeedPatientsAsync(patientCount);
+            }
+
+            // Seed messaging
+            if (seedMessages)
+            {
+                await _messagingSeedService.SeedMessagingAsync();
             }
 
             // Display final summary

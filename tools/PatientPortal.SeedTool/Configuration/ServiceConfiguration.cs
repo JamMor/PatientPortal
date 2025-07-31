@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
 using PatientPortal.SeedTool.DataGenerators;
+using PatientPortal.SeedTool.DataGenerators.Messaging;
 using PatientPortal.SeedTool.Services;
 
 namespace PatientPortal.SeedTool.Configuration;
@@ -71,14 +72,18 @@ public static class ServiceConfiguration
         services.AddSingleton<VisitDataGenerator>();
         services.AddSingleton<TestResultDataGenerator>();
         services.AddSingleton<HealthIssueDataGenerator>();
+        services.AddSingleton<ConversationDataGenerator>();
+        services.AddSingleton<MessageDataGenerator>();
 
-        // Register data composers (stateless, can be singleton)
+        // Data composers (stateless, singleton)
         services.AddSingleton<PatientDataComposer>();
+        services.AddSingleton<MessagingDataComposer>();
 
-        // Register seed services (stateful, scoped to match DbContext)
+        // Seed services (stateful, scoped to match DbContext)
         services.AddScoped<SeedOrchestrator>();
         services.AddScoped<StaffSeedService>();
         services.AddScoped<PatientSeedService>();
+        services.AddScoped<MessagingSeedService>();
 
         return services.BuildServiceProvider();
     }
