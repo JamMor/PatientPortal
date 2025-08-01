@@ -1,8 +1,8 @@
 using PatientPortal.Models;
-using PatientPortal.SeedTool.DataGenerators.Messaging;
-using PatientPortal.SeedTool.DTOs.Messaging;
+using PatientPortal.SeedTool.Features.MessageSeeding.DataGenerators;
+using PatientPortal.SeedTool.Features.MessageSeeding.DTOs;
 
-namespace PatientPortal.SeedTool.Services;
+namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 
 /// <summary>
 /// Composes fully populated Conversation entities from messaging generators.
@@ -32,7 +32,7 @@ public class MessagingDataComposer
         CreateConversationsWithMessages(patientConversationInfos, forPatient: true);
     public List<Conversation> CreateConversationsForStaffToStaff(List<ConversationDTO> patientConversationInfos) =>
         CreateConversationsWithMessages(patientConversationInfos, forPatient: false);
-    
+
     private List<Conversation> CreateConversationsWithMessages(List<ConversationDTO> conversationInfos, bool forPatient)
     {
         List<Conversation> conversations = new List<Conversation>();

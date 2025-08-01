@@ -1,6 +1,7 @@
 using Bogus;
+using PatientPortal.Models;
 
-namespace PatientPortal.SeedTool.DataGenerators;
+namespace PatientPortal.SeedTool.Features.StaffSeeding.DataGenerators;
 public class IdentityUserDataGenerator
 {
     /// <summary>

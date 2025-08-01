@@ -1,7 +1,7 @@
 using Bogus;
 using PatientPortal.Models;
 
-namespace PatientPortal.SeedTool.DataGenerators;
+namespace PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 
 /// <summary>
 /// Generates fake HealthIssue data.

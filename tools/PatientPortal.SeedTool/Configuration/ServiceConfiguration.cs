@@ -3,9 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
-using PatientPortal.SeedTool.DataGenerators;
-using PatientPortal.SeedTool.DataGenerators.Messaging;
-using PatientPortal.SeedTool.Services;
+using PatientPortal.SeedTool.Features.StaffSeeding.Services;
+using PatientPortal.SeedTool.Features.PatientSeeding.Services;
+using PatientPortal.SeedTool.Features.MessageSeeding.Services;
+using PatientPortal.SeedTool.Features.StaffSeeding.DataGenerators;
+using PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
+using PatientPortal.SeedTool.Features.MessageSeeding.DataGenerators;
 
 namespace PatientPortal.SeedTool.Configuration;
 
@@ -29,7 +32,7 @@ public static class ServiceConfiguration
         {
             builder.AddConsole();
             builder.SetMinimumLevel(logLevel);
-            
+
             // Suppress EF Core database command logging (SQL queries) unless Debug or Trace level
             if (logLevel > LogLevel.Debug)
             {
@@ -56,7 +59,7 @@ public static class ServiceConfiguration
             options.Password.RequireLowercase = true;
             options.Password.RequireUppercase = true;
             options.Password.RequireNonAlphanumeric = true;
-            
+
             // User settings - must match main app for consistent username validation
             options.User.RequireUniqueEmail = false;
             options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+<>$";

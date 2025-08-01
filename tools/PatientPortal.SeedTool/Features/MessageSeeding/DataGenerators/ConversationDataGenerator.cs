@@ -1,7 +1,7 @@
 using Bogus;
 using PatientPortal.Models;
 
-namespace PatientPortal.SeedTool.DataGenerators.Messaging;
+namespace PatientPortal.SeedTool.Features.MessageSeeding.DataGenerators;
 
 /// <summary>
 /// Generates fake Conversation data.

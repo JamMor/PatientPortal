@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
-using PatientPortal.SeedTool.DataGenerators;
+using PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 
-namespace PatientPortal.SeedTool.Services;
+namespace PatientPortal.SeedTool.Features.PatientSeeding.Services;
 
 /// <summary>
 /// Service for seeding fake patient data into the database.

@@ -1,7 +1,7 @@
 using PatientPortal.Models;
-using PatientPortal.SeedTool.DataGenerators;
+using PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 
-namespace PatientPortal.SeedTool.Services;
+namespace PatientPortal.SeedTool.Features.PatientSeeding.Services;
 
 /// <summary>
 /// Composes patient data by orchestrating multiple data generators.

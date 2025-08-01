@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
-using PatientPortal.SeedTool.DataGenerators;
+using PatientPortal.SeedTool.Features.StaffSeeding.DataGenerators;
 
-namespace PatientPortal.SeedTool.Services;
+namespace PatientPortal.SeedTool.Features.StaffSeeding.Services;
 
 internal static class IdentityErrorCodes
 {
     private static readonly IdentityErrorDescriber Describer = new();
-    
+
     public static readonly string DuplicateUserName = Describer.DuplicateUserName("").Code;
 
 }
@@ -25,7 +25,7 @@ public class StaffSeedService
     private readonly ILogger<StaffSeedService> _logger;
 
     public StaffSeedService(
-        PatientPortalContext context, 
+        PatientPortalContext context,
         UserManager<IdentityUser> userManager,
         StaffDataGenerator staffDataGenerator,
         IdentityUserDataGenerator identityUserDataGenerator,
@@ -63,7 +63,7 @@ public class StaffSeedService
 
             if (identityUser == null)
             {
-                _logger.LogWarning("Skipping staff member '{FirstName} {LastName}' due to IdentityUser creation failure", 
+                _logger.LogWarning("Skipping staff member '{FirstName} {LastName}' due to IdentityUser creation failure",
                     staff.FirstName, staff.LastName);
                 failCount++;
                 continue;
@@ -85,7 +85,7 @@ public class StaffSeedService
         {
             _logger.LogInformation("Staff seeding complete: {Success} created", successCount);
         }
-        
+
         return successCount;
     }
 
@@ -103,27 +103,27 @@ public class StaffSeedService
         // Try creating user, with one retry on duplicate username
         IdentityUser identityUser = new IdentityUser { UserName = userProps.Username };
         var result = await _userManager.CreateAsync(identityUser, userProps.Password);
-        
+
         // Retry once with a new username if duplicate
         if (result.Errors.Any(e => e.Code == IdentityErrorCodes.DuplicateUserName))
         {
-            _logger.LogWarning("Duplicate username '{Username}' for '{FirstName} {LastName}', retrying", 
+            _logger.LogWarning("Duplicate username '{Username}' for '{FirstName} {LastName}', retrying",
                 identityUser.UserName, firstName, lastName);
-            
+
             userProps = _identityUserDataGenerator.GenerateIdentityUserProperties(firstName, lastName);
             identityUser.UserName = userProps.Username;
             result = await _userManager.CreateAsync(identityUser, userProps.Password);
         }
-        
+
         if (result.Succeeded)
         {
             return identityUser;
         }
 
         // Log detailed error information
-        _logger.LogError("Failed to create IdentityUser for '{FirstName} {LastName}': {Errors}", 
+        _logger.LogError("Failed to create IdentityUser for '{FirstName} {LastName}': {Errors}",
             firstName, lastName, string.Join(", ", result.Errors.Select(e => $"{e.Code}: {e.Description}")));
-        
+
         return null;
     }
 }

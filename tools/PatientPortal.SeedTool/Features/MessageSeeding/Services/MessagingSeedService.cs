@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
-using PatientPortal.SeedTool.DTOs.Messaging;
+using PatientPortal.SeedTool.Features.MessageSeeding.DTOs;
 
-namespace PatientPortal.SeedTool.Services;
+namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 
 /// <summary>
 /// Seeds conversations and messages for existing patients and staff.
@@ -37,7 +37,7 @@ public class MessagingSeedService
         int staffConversationsSeeded = 0;
 
         // Queries for MessagingLinks under thresholds
-        var patientLinksUnderThresholdQuery =  _context.MessagingLinks
+        var patientLinksUnderThresholdQuery = _context.MessagingLinks
             .Where(ml => ml.PatientId != null)
             .Where(ml => ml.ParticipatingConversations.Count < ConversationThreshold);
 
@@ -86,7 +86,7 @@ public class MessagingSeedService
                 PotentialCorrespondentInfos = new List<ParticipantDTO>()
             })
             .ToListAsync();
-            
+
         foreach (var staffDTO in staffConversationDTOs)
         {
             staffDTO.PotentialCorrespondentInfos = allStaffParticipantInfo
@@ -102,7 +102,7 @@ public class MessagingSeedService
             patientConversations = _messagingDataComposer.CreateConversationsForPatients(patientsConversationsDTOs);
         }
 
-        List<Conversation> staffConversations =[];
+        List<Conversation> staffConversations = [];
         if (staffConversationDTOs.Count > 0)
         {
             staffConversations = _messagingDataComposer.CreateConversationsForStaffToStaff(staffConversationDTOs);

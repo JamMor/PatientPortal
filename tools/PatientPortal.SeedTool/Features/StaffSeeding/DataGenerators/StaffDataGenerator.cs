@@ -1,7 +1,7 @@
 using Bogus;
 using PatientPortal.Models;
 
-namespace PatientPortal.SeedTool.DataGenerators;
+namespace PatientPortal.SeedTool.Features.StaffSeeding.DataGenerators;
 
 /// <summary>
 /// Generates fake staff data using Bogus library.

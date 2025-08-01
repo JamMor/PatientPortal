@@ -1,7 +1,9 @@
 using PatientPortal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using PatientPortal.SeedTool.Services;
+using PatientPortal.SeedTool.Features.StaffSeeding.Services;
+using PatientPortal.SeedTool.Features.PatientSeeding.Services;
+using PatientPortal.SeedTool.Features.MessageSeeding.Services;
 
 namespace PatientPortal.SeedTool;
 
@@ -17,7 +19,7 @@ public class SeedOrchestrator
     private readonly ILogger<SeedOrchestrator> _logger;
 
     public SeedOrchestrator(
-        PatientPortalContext context, 
+        PatientPortalContext context,
         StaffSeedService staffSeedService,
         PatientSeedService patientSeedService,
         MessagingSeedService messagingSeedService,
@@ -43,7 +45,7 @@ public class SeedOrchestrator
             // Get current counts
             int currentStaff = await _context.Staff.CountAsync();
             int currentPatients = await _context.Patients.CountAsync();
-            _logger.LogInformation("Database connected - Current: {Staff} staff, {Patients} patients", 
+            _logger.LogInformation("Database connected - Current: {Staff} staff, {Patients} patients",
                 currentStaff, currentPatients);
 
             // Seed staff
@@ -52,7 +54,7 @@ public class SeedOrchestrator
             {
                 seededStaff = await _staffSeedService.SeedStaffAsync(staffCount);
             }
-            
+
             // Seed patients
             int seededPatients = 0;
             if (patientCount > 0)
@@ -71,7 +73,7 @@ public class SeedOrchestrator
             // Display final summary
             int finalStaff = await _context.Staff.CountAsync();
             int finalPatients = await _context.Patients.CountAsync();
-            
+
             ConsoleWrites.WriteOperationResults(seededStaff, seededPatients, seededPatientConversations, seededStaffConversations);
         }
         catch (Exception ex)

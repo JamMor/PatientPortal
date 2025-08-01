@@ -1,4 +1,4 @@
-namespace PatientPortal.SeedTool.DTOs.Messaging
+namespace PatientPortal.SeedTool.Features.MessageSeeding.DTOs
 {
     public class ConversationDTO
     {
