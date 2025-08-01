@@ -1,3 +1,5 @@
+namespace PatientPortal.SeedTool;
+
 public class ConsoleWrites
 {
     public static void WriteHeader()
@@ -5,14 +7,14 @@ public class ConsoleWrites
         // Top border in magenta
         Console.ForegroundColor = ConsoleColor.Magenta;
         Console.WriteLine("╔════════════════════════════════════════╗");
-        
+
         // Middle line: magenta borders with cyan text
         Console.Write("║");
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write("   PatientPortal Database Seed Tool     ");
         Console.ForegroundColor = ConsoleColor.Magenta;
         Console.WriteLine("║");
-        
+
         // Bottom border in magenta
         Console.WriteLine("╚════════════════════════════════════════╝");
         Console.ResetColor();
@@ -26,7 +28,11 @@ public class ConsoleWrites
         Console.WriteLine();
     }
 
-    public static void WriteOperationParams(int initialStaff, int initialPatients, bool isSeedingMessages = false)
+    public static void WriteOperationParams(
+        int initialStaff,
+        int initialPatients,
+        bool isSeedingMessages = false
+    )
     {
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -37,7 +43,12 @@ public class ConsoleWrites
         Console.WriteLine($"  Seeding Messages: {(isSeedingMessages ? "Yes" : "No")}");
     }
 
-    public static void WriteOperationResults(int seededPatients, int seededStaff, int seededPatientConversations, int seededStaffConversations)
+    public static void WriteOperationResults(
+        int seededPatients,
+        int seededStaff,
+        int seededPatientConversations,
+        int seededStaffConversations
+    )
     {
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.DarkCyan;

@@ -14,7 +14,10 @@ public class PatientStaffConnectionDataGenerator
     /// <param name="staffIds">List of staff IDs to create connections for</param>
     /// <param name="createdAt">Connection creation date</param>
     /// <returns>List of PatientStaffConnection objects</returns>
-    public List<PatientStaffConnection> GenerateConnectionsForStaffIds(List<int> staffIds, DateTime createdAt)
+    public List<PatientStaffConnection> GenerateConnectionsForStaffIds(
+        List<int> staffIds,
+        DateTime createdAt
+    )
     {
         var patientStaffConnectionFaker = new Faker<PatientStaffConnection>()
             .RuleFor(c => c.StaffId, f => staffIds[f.IndexFaker])

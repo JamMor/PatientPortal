@@ -10,7 +10,6 @@ internal static class IdentityErrorCodes
     private static readonly IdentityErrorDescriber Describer = new();
 
     public static readonly string DuplicateUserName = Describer.DuplicateUserName("").Code;
-
 }
 
 /// <summary>
@@ -29,7 +28,8 @@ public class StaffSeedService
         UserManager<IdentityUser> userManager,
         StaffDataGenerator staffDataGenerator,
         IdentityUserDataGenerator identityUserDataGenerator,
-        ILogger<StaffSeedService> logger)
+        ILogger<StaffSeedService> logger
+    )
     {
         _context = context;
         _userManager = userManager;
@@ -45,7 +45,8 @@ public class StaffSeedService
     /// <returns>Number of successfully created staff members</returns>
     public async Task<int> SeedStaffAsync(int staffCount)
     {
-        if (staffCount <= 0) return 0;
+        if (staffCount <= 0)
+            return 0;
         int successCount = 0;
         int failCount = 0;
 
@@ -63,8 +64,11 @@ public class StaffSeedService
 
             if (identityUser == null)
             {
-                _logger.LogWarning("Skipping staff member '{FirstName} {LastName}' due to IdentityUser creation failure",
-                    staff.FirstName, staff.LastName);
+                _logger.LogWarning(
+                    "Skipping staff member '{FirstName} {LastName}' due to IdentityUser creation failure",
+                    staff.FirstName,
+                    staff.LastName
+                );
                 failCount++;
                 continue;
             }
@@ -79,7 +83,11 @@ public class StaffSeedService
 
         if (failCount > 0)
         {
-            _logger.LogWarning("Staff seeding complete: {Success} created, {Failed} failed", successCount, failCount);
+            _logger.LogWarning(
+                "Staff seeding complete: {Success} created, {Failed} failed",
+                successCount,
+                failCount
+            );
         }
         else
         {
@@ -98,7 +106,10 @@ public class StaffSeedService
     /// <returns>Created IdentityUser or null if creation failed</returns>
     private async Task<IdentityUser?> CreateIdentityUserAsync(string firstName, string lastName)
     {
-        var userProps = _identityUserDataGenerator.GenerateIdentityUserProperties(firstName, lastName);
+        var userProps = _identityUserDataGenerator.GenerateIdentityUserProperties(
+            firstName,
+            lastName
+        );
 
         // Try creating user, with one retry on duplicate username
         IdentityUser identityUser = new IdentityUser { UserName = userProps.Username };
@@ -107,10 +118,17 @@ public class StaffSeedService
         // Retry once with a new username if duplicate
         if (result.Errors.Any(e => e.Code == IdentityErrorCodes.DuplicateUserName))
         {
-            _logger.LogWarning("Duplicate username '{Username}' for '{FirstName} {LastName}', retrying",
-                identityUser.UserName, firstName, lastName);
+            _logger.LogWarning(
+                "Duplicate username '{Username}' for '{FirstName} {LastName}', retrying",
+                identityUser.UserName,
+                firstName,
+                lastName
+            );
 
-            userProps = _identityUserDataGenerator.GenerateIdentityUserProperties(firstName, lastName);
+            userProps = _identityUserDataGenerator.GenerateIdentityUserProperties(
+                firstName,
+                lastName
+            );
             identityUser.UserName = userProps.Username;
             result = await _userManager.CreateAsync(identityUser, userProps.Password);
         }
@@ -121,8 +139,12 @@ public class StaffSeedService
         }
 
         // Log detailed error information
-        _logger.LogError("Failed to create IdentityUser for '{FirstName} {LastName}': {Errors}",
-            firstName, lastName, string.Join(", ", result.Errors.Select(e => $"{e.Code}: {e.Description}")));
+        _logger.LogError(
+            "Failed to create IdentityUser for '{FirstName} {LastName}': {Errors}",
+            firstName,
+            lastName,
+            string.Join(", ", result.Errors.Select(e => $"{e.Code}: {e.Description}"))
+        );
 
         return null;
     }

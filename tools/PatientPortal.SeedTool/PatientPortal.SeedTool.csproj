@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\PatientPortal\PatientPortal.csproj" />
   </ItemGroup>
@@ -21,5 +20,4 @@
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);MSB3277</NoWarn>
   </PropertyGroup>
-
 </Project>

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
-using PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 
 namespace PatientPortal.SeedTool.Features.PatientSeeding.Services;
 
@@ -17,7 +16,8 @@ public class PatientSeedService
     public PatientSeedService(
         PatientPortalContext context,
         ILogger<PatientSeedService> logger,
-        PatientDataComposer patientDataComposer)
+        PatientDataComposer patientDataComposer
+    )
     {
         _context = context;
         _logger = logger;
@@ -31,7 +31,8 @@ public class PatientSeedService
     /// <returns>Number of successfully created patients</returns>
     public async Task<int> SeedPatientsAsync(int patientCount)
     {
-        if (patientCount <= 0) return 0;
+        if (patientCount <= 0)
+            return 0;
 
         _logger.LogInformation("Generating {Count} patients with medical data...", patientCount);
 
@@ -52,7 +53,9 @@ public class PatientSeedService
 
         // TODO: Create DTOs so as not to rely on assumed Patient properties population
         // Phase 2: Create health issues with associated visits and tests (requires PatientId)
-        var relatedHealthIssues = _patientDataComposer.CreateHealthIssuesWithVisitsAndTests(patientList);
+        var relatedHealthIssues = _patientDataComposer.CreateHealthIssuesWithVisitsAndTests(
+            patientList
+        );
         _context.HealthIssues.AddRange(relatedHealthIssues);
         await _context.SaveChangesAsync();
 

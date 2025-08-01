@@ -22,7 +22,8 @@ public class PatientDataComposer
         PatientStaffConnectionDataGenerator connectionDataGenerator,
         VisitDataGenerator visitDataGenerator,
         TestResultDataGenerator testResultDataGenerator,
-        HealthIssueDataGenerator healthIssueDataGenerator)
+        HealthIssueDataGenerator healthIssueDataGenerator
+    )
     {
         _patientDataGenerator = patientDataGenerator;
         _addressDataGenerator = addressDataGenerator;
@@ -69,23 +70,32 @@ public class PatientDataComposer
         }
 
         // Select random staff members for medical team
-        List<int> selectedStaffIds = GetRandomSubset(availableStaffIds, BetweenOneAnd(MaxStaffPerPatient));
+        List<int> selectedStaffIds = GetRandomSubset(
+            availableStaffIds,
+            BetweenOneAnd(MaxStaffPerPatient)
+        );
 
-        patient.MedicalTeam = _connectionDataGenerator.GenerateConnectionsForStaffIds(selectedStaffIds, patient.CreatedAt);
+        patient.MedicalTeam = _connectionDataGenerator.GenerateConnectionsForStaffIds(
+            selectedStaffIds,
+            patient.CreatedAt
+        );
 
         patient.Visits = _visitDataGenerator.GenerateVisitsWithoutNavProps(
             BetweenOneAnd(MaxIndependentVisitsPerPatient),
             selectedStaffIds,
-            patient.CreatedAt);
+            patient.CreatedAt
+        );
 
         patient.Tests = _testResultDataGenerator.GenerateTestResultsWithoutNavProps(
             BetweenOneAnd(MaxIndependentTestResultsPerPatient),
             selectedStaffIds,
-            patient.CreatedAt);
+            patient.CreatedAt
+        );
 
         patient.HealthIssues = _healthIssueDataGenerator.GenerateHealthIssuesWithoutNavProps(
             BetweenOneAnd(MaxIndependentHealthIssuesPerPatient),
-            patient.CreatedAt);
+            patient.CreatedAt
+        );
     }
 
     /// <summary>
@@ -104,7 +114,8 @@ public class PatientDataComposer
             List<HealthIssue> issues = _healthIssueDataGenerator.GenerateHealthIssuesWithPatientId(
                 issueCount,
                 patient.PatientId,
-                patient.CreatedAt);
+                patient.CreatedAt
+            );
 
             foreach (var issue in issues)
             {
@@ -114,13 +125,15 @@ public class PatientDataComposer
                     BetweenOneAnd(MaxVisitsPerHealthIssue),
                     patient.PatientId,
                     medicalTeamIds,
-                    issue.CreatedAt);
+                    issue.CreatedAt
+                );
 
                 List<TestResult> tests = _testResultDataGenerator.GenerateTestResultsWithPatientId(
                     BetweenOneAnd(MaxTestResultsPerHealthIssue),
                     patient.PatientId,
                     medicalTeamIds,
-                    issue.CreatedAt);
+                    issue.CreatedAt
+                );
 
                 issue.AssociatedVisits = visits
                     .Select(v => new VisitHealthIssueAssociation { Visit = v })

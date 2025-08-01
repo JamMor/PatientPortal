@@ -8,7 +8,7 @@ namespace PatientPortal.SeedTool.Features.MessageSeeding.DataGenerators;
 /// </summary>
 public class MessageDataGenerator
 {
-    // Range of days after the earliest date for message creation to ensure 
+    // Range of days after the earliest date for message creation to ensure
     // messages threads are grouped in a realistic way.
     private static readonly int RangeOfDaysForMessageCreation = 10;
 
@@ -19,7 +19,11 @@ public class MessageDataGenerator
     /// <param name="senderLinkId">ID of the sender's MessagingLink</param>
     /// <param name="earliestDate">Earliest possible message date</param>
     /// <returns>List of generated Message objects</returns>
-    public List<Message> GenerateMessagesWithLinkId(int count, int senderLinkId, DateTime earliestDate)
+    public List<Message> GenerateMessagesWithLinkId(
+        int count,
+        int senderLinkId,
+        DateTime earliestDate
+    )
     {
         DateTime maxDate = earliestDate.AddDays(RangeOfDaysForMessageCreation) < DateTime.Today
             ? earliestDate.AddDays(RangeOfDaysForMessageCreation)

@@ -14,6 +14,7 @@ public class MessagingDataComposer
 
     //TODO: Fix duplication
     private const int ConversationThreshold = 2;
+
     // private const int MaxNewConversationsPerLink = 4;
     private const int MaxNewConversationsPerLink = (ConversationThreshold - 1) + 3;
 
@@ -22,34 +23,51 @@ public class MessagingDataComposer
 
     public MessagingDataComposer(
         ConversationDataGenerator conversationDataGenerator,
-        MessageDataGenerator messageDataGenerator)
+        MessageDataGenerator messageDataGenerator
+    )
     {
         _conversationDataGenerator = conversationDataGenerator;
         _messageDataGenerator = messageDataGenerator;
     }
 
-    public List<Conversation> CreateConversationsForPatients(List<ConversationDTO> patientConversationInfos) =>
-        CreateConversationsWithMessages(patientConversationInfos, forPatient: true);
-    public List<Conversation> CreateConversationsForStaffToStaff(List<ConversationDTO> patientConversationInfos) =>
-        CreateConversationsWithMessages(patientConversationInfos, forPatient: false);
+    public List<Conversation> CreateConversationsForPatients(
+        List<ConversationDTO> patientConversationInfos
+    ) => CreateConversationsWithMessages(patientConversationInfos, forPatient: true);
 
-    private List<Conversation> CreateConversationsWithMessages(List<ConversationDTO> conversationInfos, bool forPatient)
+    public List<Conversation> CreateConversationsForStaffToStaff(
+        List<ConversationDTO> patientConversationInfos
+    ) => CreateConversationsWithMessages(patientConversationInfos, forPatient: false);
+
+    private List<Conversation> CreateConversationsWithMessages(
+        List<ConversationDTO> conversationInfos,
+        bool forPatient
+    )
     {
         List<Conversation> conversations = new List<Conversation>();
 
         foreach (ConversationDTO info in conversationInfos)
         {
             int minimumToReachThreshold = ConversationThreshold - info.ConversationCount;
-            int conversationsToCreate = Random.Shared.Next(minimumToReachThreshold, MaxNewConversationsPerLink + 1);
+            int conversationsToCreate = Random.Shared.Next(
+                minimumToReachThreshold,
+                MaxNewConversationsPerLink + 1
+            );
 
             for (int i = 0; i < conversationsToCreate; i++)
             {
-                var participants = SelectConversationParticipants(info.PrimaryLinkInfo, info.PotentialCorrespondentInfos);
+                var participants = SelectConversationParticipants(
+                    info.PrimaryLinkInfo,
+                    info.PotentialCorrespondentInfos
+                );
 
                 List<int> participantIds = participants.Select(p => p.MessagingLinkId).ToList();
                 DateTime mostRecentCreatedDate = participants.Max(p => p.CreatedAt);
 
-                var conversation = CreateConversationWithMessages(forPatient, participantIds, mostRecentCreatedDate);
+                var conversation = CreateConversationWithMessages(
+                    forPatient,
+                    participantIds,
+                    mostRecentCreatedDate
+                );
 
                 conversations.Add(conversation);
             }
@@ -57,19 +75,35 @@ public class MessagingDataComposer
         return conversations;
     }
 
-    private static List<ParticipantDTO> SelectConversationParticipants(ParticipantDTO primaryInfo, List<ParticipantDTO> potentialCorrespondents)
+    private static List<ParticipantDTO> SelectConversationParticipants(
+        ParticipantDTO primaryInfo,
+        List<ParticipantDTO> potentialCorrespondents
+    )
     {
-        List<ParticipantDTO> correspondents = GetRandomSubset(potentialCorrespondents, BetweenOneAnd(MaxAdditionalCorrespondents));
+        List<ParticipantDTO> correspondents = GetRandomSubset(
+            potentialCorrespondents,
+            BetweenOneAnd(MaxAdditionalCorrespondents)
+        );
 
         return correspondents.Append(primaryInfo).ToList();
     }
 
-    private Conversation CreateConversationWithMessages(bool forPatient, List<int> participantIds, DateTime earliestDate)
+    private Conversation CreateConversationWithMessages(
+        bool forPatient,
+        List<int> participantIds,
+        DateTime earliestDate
+    )
     {
-        var conversation = _conversationDataGenerator.GenerateConversation(forPatient, earliestDate);
+        var conversation = _conversationDataGenerator.GenerateConversation(
+            forPatient,
+            earliestDate
+        );
         List<Message> messages;
         List<ConversationParticipant> conversationParticipants;
-        (messages, conversationParticipants) = CreateMessagesAndParticipants(participantIds, earliestDate);
+        (messages, conversationParticipants) = CreateMessagesAndParticipants(
+            participantIds,
+            earliestDate
+        );
 
         conversation.Messages = messages;
         conversation.ConversationParticipants = conversationParticipants;
@@ -77,7 +111,9 @@ public class MessagingDataComposer
     }
 
     private (List<Message>, List<ConversationParticipant>) CreateMessagesAndParticipants(
-        List<int> participantIds, DateTime firstMessageTime)
+        List<int> participantIds,
+        DateTime firstMessageTime
+    )
     {
         List<Message> messages = CreateInitialMessageInList(firstMessageTime, participantIds);
         List<ConversationParticipant> conversationParticipants = [];
@@ -89,13 +125,12 @@ public class MessagingDataComposer
                 messageCount,
                 participantId,
                 firstMessageTime
-                );
-
+            );
 
             var conversationParticipant = new ConversationParticipant
             {
                 MessagingLinkId = participantId,
-                CreatedAt = participantMessages.Min(m => m.CreatedAt)
+                CreatedAt = participantMessages.Min(m => m.CreatedAt),
             };
 
             conversationParticipants.Add(conversationParticipant);
@@ -110,7 +145,10 @@ public class MessagingDataComposer
         int randomParticipantId = GetRandomSubset(participantIds, 1).Single();
 
         var listWithInitialMessage = _messageDataGenerator.GenerateMessagesWithLinkId(
-            1, randomParticipantId, createdAt);
+            1,
+            randomParticipantId,
+            createdAt
+        );
         listWithInitialMessage[0].CreatedAt = createdAt;
 
         return listWithInitialMessage;

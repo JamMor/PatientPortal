@@ -27,7 +27,10 @@ public class ConversationDataGenerator
         return new Faker<Conversation>()
             .RuleFor(c => c.WithPatient, withPatient)
             .RuleFor(c => c.Subject, f => f.Lorem.Sentence())
-            .RuleFor(c => c.CreatedAt, f => f.Date.Between(oldestPossible, DateTime.Today.AddDays(-5)))
+            .RuleFor(
+                c => c.CreatedAt,
+                f => f.Date.Between(oldestPossible, DateTime.Today.AddDays(-5))
+            )
             .RuleFor(c => c.UpdatedAt, (f, c) => c.CreatedAt)
             .Generate();
     }

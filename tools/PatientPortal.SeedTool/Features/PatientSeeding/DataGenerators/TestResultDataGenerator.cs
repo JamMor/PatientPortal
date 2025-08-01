@@ -17,8 +17,11 @@ public class TestResultDataGenerator
     /// <param name="staffIds">List of Staff IDs</param>
     /// <param name="earliestDate">Earliest possible test date</param>
     /// <returns>List of generated TestResult objects</returns>
-    public List<TestResult> GenerateTestResultsWithoutNavProps(int count, List<int> staffIds, DateTime earliestDate)
-        => CreateFaker(null, staffIds, earliestDate).Generate(count);
+    public List<TestResult> GenerateTestResultsWithoutNavProps(
+        int count,
+        List<int> staffIds,
+        DateTime earliestDate
+    ) => CreateFaker(null, staffIds, earliestDate).Generate(count);
 
     /// <summary>
     /// Generates fake TestResult objects with a specified PatientId, suitable for direct saving with established relationships.
@@ -28,10 +31,18 @@ public class TestResultDataGenerator
     /// <param name="staffIds">List of Staff IDs</param>
     /// <param name="earliestDate">Earliest possible test date</param>
     /// <returns>List of generated TestResult objects</returns>
-    public List<TestResult> GenerateTestResultsWithPatientId(int count, int patientId, List<int> staffIds, DateTime earliestDate)
-        => CreateFaker(patientId, staffIds, earliestDate).Generate(count);
+    public List<TestResult> GenerateTestResultsWithPatientId(
+        int count,
+        int patientId,
+        List<int> staffIds,
+        DateTime earliestDate
+    ) => CreateFaker(patientId, staffIds, earliestDate).Generate(count);
 
-    private static Faker<TestResult> CreateFaker(int? patientId, List<int> staffIds, DateTime earliestDate)
+    private static Faker<TestResult> CreateFaker(
+        int? patientId,
+        List<int> staffIds,
+        DateTime earliestDate
+    )
     {
         var testResultFaker = new Faker<TestResult>();
 
@@ -42,7 +53,10 @@ public class TestResultDataGenerator
             .RuleFor(t => t.StaffId, f => f.PickRandom(staffIds))
             .RuleFor(t => t.Type, f => f.PickRandom(TestTypes))
             .RuleFor(t => t.Comment, f => f.Lorem.Paragraph(2))
-            .RuleFor(t => t.CreatedAt, f => f.Date.Between(earliestDate, DateTime.Today.AddDays(-5)))
+            .RuleFor(
+                t => t.CreatedAt,
+                f => f.Date.Between(earliestDate, DateTime.Today.AddDays(-5))
+            )
             .RuleFor(t => t.UpdatedAt, (f, t) => t.CreatedAt);
     }
 }

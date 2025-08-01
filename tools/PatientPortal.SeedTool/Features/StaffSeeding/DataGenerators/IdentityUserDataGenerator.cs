@@ -1,12 +1,12 @@
 using Bogus;
-using PatientPortal.Models;
 
 namespace PatientPortal.SeedTool.Features.StaffSeeding.DataGenerators;
+
 public class IdentityUserDataGenerator
 {
     /// <summary>
-    /// Default password for IdentityUsers that matches the password 
-    /// requirements of Identity configuration: 
+    /// Default password for IdentityUsers that matches the password
+    /// requirements of Identity configuration:
     /// At least 10 chars, 1 digit, 1 lowercase, 1 uppercase, 1 non-alphanumeric
     /// </summary>
     private const string defaultPassword = "Password0$";
@@ -27,7 +27,7 @@ public class IdentityUserDataGenerator
     public IdentityUserProperties GenerateIdentityUserProperties(string firstName, string lastName)
     {
         var faker = new Faker();
-        /// A (hopefully) unique username from Person's first and last name, 
+        /// A (hopefully) unique username from Person's first and last name,
         /// made to be at least 10 chars and use Identity-allowed characters:
         /// `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+<>$`
         string username = faker.Internet.UserName(firstName, lastName) + "00$";
@@ -37,10 +37,6 @@ public class IdentityUserDataGenerator
             username += faker.Random.String2(10 - username.Length, "0123456789");
         }
 
-        return new IdentityUserProperties
-        {
-            Username = username,
-            Password = defaultPassword
-        };
+        return new IdentityUserProperties { Username = username, Password = defaultPassword };
     }
 }
