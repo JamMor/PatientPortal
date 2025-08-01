@@ -8,7 +8,7 @@ namespace PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 /// </summary>
 public class TestResultDataGenerator
 {
-    private static readonly string[] TestTypes = { "Vitals", "Pathology", "Imaging", "Labwork" };
+    private static readonly string[] TestTypes = ["Vitals", "Pathology", "Imaging", "Labwork"];
 
     /// <summary>
     /// Generates fake TestResult objects without navigation properties, suitable for embedding within related entities.

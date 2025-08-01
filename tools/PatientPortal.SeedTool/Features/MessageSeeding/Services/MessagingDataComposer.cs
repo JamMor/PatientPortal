@@ -37,7 +37,7 @@ public class MessagingDataComposer(
         bool forPatient
     )
     {
-        List<Conversation> conversations = new List<Conversation>();
+        List<Conversation> conversations = [];
 
         foreach (ConversationDTO info in conversationInfos)
         {
