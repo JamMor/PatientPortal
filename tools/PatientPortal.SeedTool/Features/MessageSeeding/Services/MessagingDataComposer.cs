@@ -7,10 +7,13 @@ namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 /// <summary>
 /// Composes fully populated Conversation entities from messaging generators.
 /// </summary>
-public class MessagingDataComposer
+public class MessagingDataComposer(
+    ConversationDataGenerator conversationDataGenerator,
+    MessageDataGenerator messageDataGenerator
+    )
 {
-    private readonly ConversationDataGenerator _conversationDataGenerator;
-    private readonly MessageDataGenerator _messageDataGenerator;
+    private readonly ConversationDataGenerator _conversationDataGenerator = conversationDataGenerator;
+    private readonly MessageDataGenerator _messageDataGenerator = messageDataGenerator;
 
     //TODO: Fix duplication
     private const int ConversationThreshold = 2;
@@ -20,15 +23,6 @@ public class MessagingDataComposer
 
     private const int MaxAdditionalCorrespondents = 2;
     private const int MaxMessagesPerParticipant = 5;
-
-    public MessagingDataComposer(
-        ConversationDataGenerator conversationDataGenerator,
-        MessageDataGenerator messageDataGenerator
-    )
-    {
-        _conversationDataGenerator = conversationDataGenerator;
-        _messageDataGenerator = messageDataGenerator;
-    }
 
     public List<Conversation> CreateConversationsForPatients(
         List<ConversationDTO> patientConversationInfos

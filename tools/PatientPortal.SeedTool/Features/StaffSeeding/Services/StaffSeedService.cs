@@ -15,28 +15,19 @@ internal static class IdentityErrorCodes
 /// <summary>
 /// Service for seeding fake staff data with IdentityUser accounts into the database.
 /// </summary>
-public class StaffSeedService
-{
-    private readonly PatientPortalContext _context;
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly StaffDataGenerator _staffDataGenerator;
-    private readonly IdentityUserDataGenerator _identityUserDataGenerator;
-    private readonly ILogger<StaffSeedService> _logger;
-
-    public StaffSeedService(
-        PatientPortalContext context,
-        UserManager<IdentityUser> userManager,
-        StaffDataGenerator staffDataGenerator,
-        IdentityUserDataGenerator identityUserDataGenerator,
-        ILogger<StaffSeedService> logger
+public class StaffSeedService(
+    PatientPortalContext context,
+    UserManager<IdentityUser> userManager,
+    StaffDataGenerator staffDataGenerator,
+    IdentityUserDataGenerator identityUserDataGenerator,
+    ILogger<StaffSeedService> logger
     )
-    {
-        _context = context;
-        _userManager = userManager;
-        _staffDataGenerator = staffDataGenerator;
-        _identityUserDataGenerator = identityUserDataGenerator;
-        _logger = logger;
-    }
+{
+    private readonly PatientPortalContext _context = context;
+    private readonly UserManager<IdentityUser> _userManager = userManager;
+    private readonly StaffDataGenerator _staffDataGenerator = staffDataGenerator;
+    private readonly IdentityUserDataGenerator _identityUserDataGenerator = identityUserDataGenerator;
+    private readonly ILogger<StaffSeedService> _logger = logger;
 
     /// <summary>
     /// Seeds a specified number of fake staff members with IdentityUser accounts.

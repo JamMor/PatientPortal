@@ -7,22 +7,15 @@ namespace PatientPortal.SeedTool.Features.PatientSeeding.Services;
 /// <summary>
 /// Service for seeding fake patient data into the database.
 /// </summary>
-public class PatientSeedService
-{
-    private readonly PatientPortalContext _context;
-    private readonly ILogger<PatientSeedService> _logger;
-    private readonly PatientDataComposer _patientDataComposer;
-
-    public PatientSeedService(
-        PatientPortalContext context,
-        ILogger<PatientSeedService> logger,
-        PatientDataComposer patientDataComposer
+public class PatientSeedService(
+    PatientPortalContext context,
+    ILogger<PatientSeedService> logger,
+    PatientDataComposer patientDataComposer
     )
-    {
-        _context = context;
-        _logger = logger;
-        _patientDataComposer = patientDataComposer;
-    }
+{
+    private readonly PatientPortalContext _context = context;
+    private readonly ILogger<PatientSeedService> _logger = logger;
+    private readonly PatientDataComposer _patientDataComposer = patientDataComposer;
 
     /// <summary>
     /// Seeds a specified number of fake patients with full medical history.

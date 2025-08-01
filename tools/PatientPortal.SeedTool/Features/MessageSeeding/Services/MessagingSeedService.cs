@@ -9,24 +9,17 @@ namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 /// Seeds conversations and messages for existing patients and staff.
 /// Targets any MessagingLink with fewer than the conversation threshold.
 /// </summary>
-public class MessagingSeedService
+public class MessagingSeedService(
+    PatientPortalContext context,
+    ILogger<MessagingSeedService> logger,
+    MessagingDataComposer messagingDataComposer
+    )
 {
-    private readonly PatientPortalContext _context;
-    private readonly ILogger<MessagingSeedService> _logger;
-    private readonly MessagingDataComposer _messagingDataComposer;
+    private readonly PatientPortalContext _context = context;
+    private readonly ILogger<MessagingSeedService> _logger = logger;
+    private readonly MessagingDataComposer _messagingDataComposer = messagingDataComposer;
 
     private const int ConversationThreshold = 2;
-
-    public MessagingSeedService(
-        PatientPortalContext context,
-        ILogger<MessagingSeedService> logger,
-        MessagingDataComposer messagingDataComposer
-    )
-    {
-        _context = context;
-        _logger = logger;
-        _messagingDataComposer = messagingDataComposer;
-    }
 
     /// <summary>
     /// Seeds conversations for all MessagingLinks with fewer than the conversation threshold.

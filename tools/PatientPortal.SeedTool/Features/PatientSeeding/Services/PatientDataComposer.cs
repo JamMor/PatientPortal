@@ -7,31 +7,21 @@ namespace PatientPortal.SeedTool.Features.PatientSeeding.Services;
 /// Composes patient data by orchestrating multiple data generators.
 /// Handles the composition logic for creating fully populated patient entities.
 /// </summary>
-public class PatientDataComposer
-{
-    private readonly PatientDataGenerator _patientDataGenerator;
-    private readonly AddressDataGenerator _addressDataGenerator;
-    private readonly PatientStaffConnectionDataGenerator _connectionDataGenerator;
-    private readonly VisitDataGenerator _visitDataGenerator;
-    private readonly TestResultDataGenerator _testResultDataGenerator;
-    private readonly HealthIssueDataGenerator _healthIssueDataGenerator;
-
-    public PatientDataComposer(
-        PatientDataGenerator patientDataGenerator,
-        AddressDataGenerator addressDataGenerator,
-        PatientStaffConnectionDataGenerator connectionDataGenerator,
-        VisitDataGenerator visitDataGenerator,
-        TestResultDataGenerator testResultDataGenerator,
-        HealthIssueDataGenerator healthIssueDataGenerator
+public class PatientDataComposer(
+    PatientDataGenerator patientDataGenerator,
+    AddressDataGenerator addressDataGenerator,
+    PatientStaffConnectionDataGenerator connectionDataGenerator,
+    VisitDataGenerator visitDataGenerator,
+    TestResultDataGenerator testResultDataGenerator,
+    HealthIssueDataGenerator healthIssueDataGenerator
     )
-    {
-        _patientDataGenerator = patientDataGenerator;
-        _addressDataGenerator = addressDataGenerator;
-        _connectionDataGenerator = connectionDataGenerator;
-        _visitDataGenerator = visitDataGenerator;
-        _testResultDataGenerator = testResultDataGenerator;
-        _healthIssueDataGenerator = healthIssueDataGenerator;
-    }
+{
+    private readonly PatientDataGenerator _patientDataGenerator = patientDataGenerator;
+    private readonly AddressDataGenerator _addressDataGenerator = addressDataGenerator;
+    private readonly PatientStaffConnectionDataGenerator _connectionDataGenerator = connectionDataGenerator;
+    private readonly VisitDataGenerator _visitDataGenerator = visitDataGenerator;
+    private readonly TestResultDataGenerator _testResultDataGenerator = testResultDataGenerator;
+    private readonly HealthIssueDataGenerator _healthIssueDataGenerator = healthIssueDataGenerator;
 
     // Configuration constants for data composition
     private const double AddressProbability = 0.33; // 33% chance of having an address

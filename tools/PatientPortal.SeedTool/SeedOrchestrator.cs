@@ -10,27 +10,18 @@ namespace PatientPortal.SeedTool;
 /// <summary>
 /// Orchestrates the database seeding process.
 /// </summary>
-public class SeedOrchestrator
+public class SeedOrchestrator(
+    PatientPortalContext context,
+    StaffSeedService staffSeedService,
+    PatientSeedService patientSeedService,
+    MessagingSeedService messagingSeedService,
+    ILogger<SeedOrchestrator> logger)
 {
-    private readonly PatientPortalContext _context;
-    private readonly StaffSeedService _staffSeedService;
-    private readonly PatientSeedService _patientSeedService;
-    private readonly MessagingSeedService _messagingSeedService;
-    private readonly ILogger<SeedOrchestrator> _logger;
-
-    public SeedOrchestrator(
-        PatientPortalContext context,
-        StaffSeedService staffSeedService,
-        PatientSeedService patientSeedService,
-        MessagingSeedService messagingSeedService,
-        ILogger<SeedOrchestrator> logger)
-    {
-        _context = context;
-        _staffSeedService = staffSeedService;
-        _patientSeedService = patientSeedService;
-        _messagingSeedService = messagingSeedService;
-        _logger = logger;
-    }
+    private readonly PatientPortalContext _context = context;
+    private readonly StaffSeedService _staffSeedService = staffSeedService;
+    private readonly PatientSeedService _patientSeedService = patientSeedService;
+    private readonly MessagingSeedService _messagingSeedService = messagingSeedService;
+    private readonly ILogger<SeedOrchestrator> _logger = logger;
 
     /// <summary>
     /// Seeds the database with the specified number of staff and patients, and messaging.
