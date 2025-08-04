@@ -1,9 +1,9 @@
-using PatientPortal.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using PatientPortal.SeedTool.Features.StaffSeeding.Services;
-using PatientPortal.SeedTool.Features.PatientSeeding.Services;
+using PatientPortal.Models;
 using PatientPortal.SeedTool.Features.MessageSeeding.Services;
+using PatientPortal.SeedTool.Features.PatientSeeding.Services;
+using PatientPortal.SeedTool.Features.StaffSeeding.Services;
 
 namespace PatientPortal.SeedTool;
 
@@ -15,7 +15,8 @@ public class SeedOrchestrator(
     StaffSeedService staffSeedService,
     PatientSeedService patientSeedService,
     MessagingSeedService messagingSeedService,
-    ILogger<SeedOrchestrator> logger)
+    ILogger<SeedOrchestrator> logger
+)
 {
     private readonly PatientPortalContext _context = context;
     private readonly StaffSeedService _staffSeedService = staffSeedService;
@@ -36,8 +37,11 @@ public class SeedOrchestrator(
             // Get current counts
             int currentStaff = await _context.Staff.CountAsync();
             int currentPatients = await _context.Patients.CountAsync();
-            _logger.LogInformation("Database connected - Current: {Staff} staff, {Patients} patients",
-                currentStaff, currentPatients);
+            _logger.LogInformation(
+                "Database connected - Current: {Staff} staff, {Patients} patients",
+                currentStaff,
+                currentPatients
+            );
 
             // Seed staff
             int seededStaff = 0;
@@ -58,14 +62,20 @@ public class SeedOrchestrator(
             int seededStaffConversations = 0;
             if (seedMessages)
             {
-                (seededPatientConversations, seededStaffConversations) = await _messagingSeedService.SeedMessagingAsync();
+                (seededPatientConversations, seededStaffConversations) =
+                    await _messagingSeedService.SeedMessagingAsync();
             }
 
             // Display final summary
             int finalStaff = await _context.Staff.CountAsync();
             int finalPatients = await _context.Patients.CountAsync();
 
-            ConsoleWrites.WriteOperationResults(seededStaff, seededPatients, seededPatientConversations, seededStaffConversations);
+            ConsoleWrites.WriteOperationResults(
+                seededPatients,
+                seededStaff,
+                seededPatientConversations,
+                seededStaffConversations
+            );
         }
         catch (Exception ex)
         {
