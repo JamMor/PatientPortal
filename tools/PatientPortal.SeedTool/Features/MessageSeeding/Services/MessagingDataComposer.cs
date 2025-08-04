@@ -2,6 +2,7 @@ using PatientPortal.Models;
 using PatientPortal.SeedTool.Features.MessageSeeding.DataGenerators;
 using PatientPortal.SeedTool.Features.MessageSeeding.DTOs;
 using PatientPortal.SeedTool.Utilities;
+using static PatientPortal.SeedTool.Settings.SeedSettings.MessagingSettings;
 
 namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 
@@ -15,15 +16,6 @@ public class MessagingDataComposer(
 {
     private readonly ConversationDataGenerator _conversationDataGenerator = conversationDataGenerator;
     private readonly MessageDataGenerator _messageDataGenerator = messageDataGenerator;
-
-    //TODO: Fix duplication
-    private const int ConversationThreshold = 2;
-
-    // private const int MaxNewConversationsPerLink = 4;
-    private const int MaxNewConversationsPerLink = (ConversationThreshold - 1) + 3;
-
-    private const int MaxAdditionalCorrespondents = 2;
-    private const int MaxMessagesPerParticipant = 5;
 
     public List<Conversation> CreateConversationsForPatients(
         List<ConversationDTO> patientConversationInfos

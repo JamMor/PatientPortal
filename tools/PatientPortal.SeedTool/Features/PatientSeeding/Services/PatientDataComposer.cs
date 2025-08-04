@@ -1,6 +1,7 @@
 using PatientPortal.Models;
 using PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 using PatientPortal.SeedTool.Utilities;
+using static PatientPortal.SeedTool.Settings.SeedSettings.PatientSettings;
 
 namespace PatientPortal.SeedTool.Features.PatientSeeding.Services;
 
@@ -23,18 +24,6 @@ public class PatientDataComposer(
     private readonly VisitDataGenerator _visitDataGenerator = visitDataGenerator;
     private readonly TestResultDataGenerator _testResultDataGenerator = testResultDataGenerator;
     private readonly HealthIssueDataGenerator _healthIssueDataGenerator = healthIssueDataGenerator;
-
-    // Configuration constants for data composition
-    private const double AddressProbability = 0.33; // 33% chance of having an address
-    private const int MaxStaffPerPatient = 3;
-
-    private const int MaxIndependentVisitsPerPatient = 3;
-    private const int MaxIndependentTestResultsPerPatient = 2;
-    private const int MaxIndependentHealthIssuesPerPatient = 2;
-
-    private const int MaxRelatedHealthIssuesPerPatient = 3;
-    private const int MaxVisitsPerHealthIssue = 4;
-    private const int MaxTestResultsPerHealthIssue = 3;
 
     /// <summary>
     /// Creates a list of patients with basic demographic data.

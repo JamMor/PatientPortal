@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
 using PatientPortal.SeedTool.Features.MessageSeeding.DTOs;
+using static PatientPortal.SeedTool.Settings.SeedSettings.MessagingSettings;
 
 namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 
@@ -18,8 +19,6 @@ public class MessagingSeedService(
     private readonly PatientPortalContext _context = context;
     private readonly ILogger<MessagingSeedService> _logger = logger;
     private readonly MessagingDataComposer _messagingDataComposer = messagingDataComposer;
-
-    private const int ConversationThreshold = 2;
 
     /// <summary>
     /// Seeds conversations for all MessagingLinks with fewer than the conversation threshold.
