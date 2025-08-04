@@ -1,5 +1,6 @@
 using PatientPortal.Models;
 using PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
+using PatientPortal.SeedTool.Utilities;
 
 namespace PatientPortal.SeedTool.Features.PatientSeeding.Services;
 
@@ -14,7 +15,7 @@ public class PatientDataComposer(
     VisitDataGenerator visitDataGenerator,
     TestResultDataGenerator testResultDataGenerator,
     HealthIssueDataGenerator healthIssueDataGenerator
-    )
+)
 {
     private readonly PatientDataGenerator _patientDataGenerator = patientDataGenerator;
     private readonly AddressDataGenerator _addressDataGenerator = addressDataGenerator;
@@ -54,15 +55,15 @@ public class PatientDataComposer(
     /// <param name="availableStaffIds">List of all available staff IDs</param>
     public void AttachIndependentData(Patient patient, List<int> availableStaffIds)
     {
-        if (Random.Shared.NextDouble() < AddressProbability)
+        if (Rand.RandomDouble() < AddressProbability)
         {
             patient.Address = _addressDataGenerator.GenerateAddress();
         }
 
         // Select random staff members for medical team
-        List<int> selectedStaffIds = GetRandomSubset(
+        List<int> selectedStaffIds = Rand.GetRandomSubset(
             availableStaffIds,
-            BetweenOneAnd(MaxStaffPerPatient)
+            Rand.BetweenOneAnd(MaxStaffPerPatient)
         );
 
         patient.MedicalTeam = _connectionDataGenerator.GenerateConnectionsForStaffIds(
@@ -71,19 +72,19 @@ public class PatientDataComposer(
         );
 
         patient.Visits = _visitDataGenerator.GenerateVisitsWithoutNavProps(
-            BetweenOneAnd(MaxIndependentVisitsPerPatient),
+            Rand.BetweenOneAnd(MaxIndependentVisitsPerPatient),
             selectedStaffIds,
             patient.CreatedAt
         );
 
         patient.Tests = _testResultDataGenerator.GenerateTestResultsWithoutNavProps(
-            BetweenOneAnd(MaxIndependentTestResultsPerPatient),
+            Rand.BetweenOneAnd(MaxIndependentTestResultsPerPatient),
             selectedStaffIds,
             patient.CreatedAt
         );
 
         patient.HealthIssues = _healthIssueDataGenerator.GenerateHealthIssuesWithoutNavProps(
-            BetweenOneAnd(MaxIndependentHealthIssuesPerPatient),
+            Rand.BetweenOneAnd(MaxIndependentHealthIssuesPerPatient),
             patient.CreatedAt
         );
     }
@@ -100,7 +101,7 @@ public class PatientDataComposer(
 
         foreach (var patient in patients)
         {
-            int issueCount = BetweenOneAnd(MaxRelatedHealthIssuesPerPatient);
+            int issueCount = Rand.BetweenOneAnd(MaxRelatedHealthIssuesPerPatient);
             List<HealthIssue> issues = _healthIssueDataGenerator.GenerateHealthIssuesWithPatientId(
                 issueCount,
                 patient.PatientId,
@@ -112,14 +113,14 @@ public class PatientDataComposer(
                 List<int> medicalTeamIds = patient.MedicalTeam.Select(mt => mt.StaffId).ToList();
 
                 List<Visit> visits = _visitDataGenerator.GenerateVisitsWithPatientId(
-                    BetweenOneAnd(MaxVisitsPerHealthIssue),
+                    Rand.BetweenOneAnd(MaxVisitsPerHealthIssue),
                     patient.PatientId,
                     medicalTeamIds,
                     issue.CreatedAt
                 );
 
                 List<TestResult> tests = _testResultDataGenerator.GenerateTestResultsWithPatientId(
-                    BetweenOneAnd(MaxTestResultsPerHealthIssue),
+                    Rand.BetweenOneAnd(MaxTestResultsPerHealthIssue),
                     patient.PatientId,
                     medicalTeamIds,
                     issue.CreatedAt
@@ -138,15 +139,5 @@ public class PatientDataComposer(
         }
 
         return allIssues;
-    }
-
-    private static int BetweenOneAnd(int max)
-    {
-        return Random.Shared.Next(1, max + 1);
-    }
-
-    private static List<T> GetRandomSubset<T>(List<T> list, int count)
-    {
-        return list.OrderBy(_ => Random.Shared.Next()).Take(count).ToList();
     }
 }

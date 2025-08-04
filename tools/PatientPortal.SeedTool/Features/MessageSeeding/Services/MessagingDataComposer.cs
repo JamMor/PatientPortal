@@ -1,6 +1,7 @@
 using PatientPortal.Models;
 using PatientPortal.SeedTool.Features.MessageSeeding.DataGenerators;
 using PatientPortal.SeedTool.Features.MessageSeeding.DTOs;
+using PatientPortal.SeedTool.Utilities;
 
 namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 
@@ -10,7 +11,7 @@ namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 public class MessagingDataComposer(
     ConversationDataGenerator conversationDataGenerator,
     MessageDataGenerator messageDataGenerator
-    )
+)
 {
     private readonly ConversationDataGenerator _conversationDataGenerator = conversationDataGenerator;
     private readonly MessageDataGenerator _messageDataGenerator = messageDataGenerator;
@@ -42,9 +43,9 @@ public class MessagingDataComposer(
         foreach (ConversationDTO info in conversationInfos)
         {
             int minimumToReachThreshold = ConversationThreshold - info.ConversationCount;
-            int conversationsToCreate = Random.Shared.Next(
+            int conversationsToCreate = Rand.Between(
                 minimumToReachThreshold,
-                MaxNewConversationsPerLink + 1
+                MaxNewConversationsPerLink
             );
 
             for (int i = 0; i < conversationsToCreate; i++)
@@ -74,9 +75,9 @@ public class MessagingDataComposer(
         List<ParticipantDTO> potentialCorrespondents
     )
     {
-        List<ParticipantDTO> correspondents = GetRandomSubset(
+        List<ParticipantDTO> correspondents = Rand.GetRandomSubset(
             potentialCorrespondents,
-            BetweenOneAnd(MaxAdditionalCorrespondents)
+            Rand.BetweenOneAnd(MaxAdditionalCorrespondents)
         );
 
         return correspondents.Append(primaryInfo).ToList();
@@ -114,7 +115,7 @@ public class MessagingDataComposer(
 
         foreach (var participantId in participantIds)
         {
-            int messageCount = BetweenOneAnd(MaxMessagesPerParticipant);
+            int messageCount = Rand.BetweenOneAnd(MaxMessagesPerParticipant);
             var participantMessages = _messageDataGenerator.GenerateMessagesWithLinkId(
                 messageCount,
                 participantId,
@@ -136,7 +137,7 @@ public class MessagingDataComposer(
 
     private List<Message> CreateInitialMessageInList(DateTime createdAt, List<int> participantIds)
     {
-        int randomParticipantId = GetRandomSubset(participantIds, 1).Single();
+        int randomParticipantId = Rand.GetRandomElement(participantIds);
 
         var listWithInitialMessage = _messageDataGenerator.GenerateMessagesWithLinkId(
             1,
@@ -146,16 +147,5 @@ public class MessagingDataComposer(
         listWithInitialMessage[0].CreatedAt = createdAt;
 
         return listWithInitialMessage;
-    }
-
-    // TODO: Fix Duplication
-    private static int BetweenOneAnd(int max)
-    {
-        return Random.Shared.Next(1, max + 1);
-    }
-
-    private static List<T> GetRandomSubset<T>(List<T> list, int count)
-    {
-        return list.OrderBy(_ => Random.Shared.Next()).Take(count).ToList();
     }
 }
