@@ -5,6 +5,9 @@ using PatientPortal.SeedTool.Features.StaffSeeding.DataGenerators;
 
 namespace PatientPortal.SeedTool.Features.StaffSeeding.Services;
 
+/// <summary>
+/// Composes staff data and manages IdentityUser creation for staff seeding.
+/// </summary>
 public class StaffDataComposer(
     PatientPortalContext context,
     UserManager<IdentityUser> userManager,
@@ -20,12 +23,21 @@ public class StaffDataComposer(
         identityUserDataGenerator;
     private readonly ILogger<StaffDataComposer> _logger = logger;
 
+    /// <summary>
+    /// Generates a list of fake staff members.
+    /// </summary>
+    /// <param name="count">Number of staff members to create</param>
+    /// <returns>List of generated Staff objects</returns>
     public List<Staff> CreateStaff(int count)
     {
         return _staffDataGenerator.GenerateNStaff(count);
     }
 
     /// <summary>
+    /// Creates an IdentityUser account for the given staff member.
+    /// </summary>
+    /// <param name="staff">Staff member to create an IdentityUser for</param>
+    /// <returns>Created IdentityUser or null if creation failed</returns>
     public async Task<IdentityUser?> CreateIdentityUserForStaff(Staff staff)
     {
         var identityUser = await CreateIdentityUserAsync(staff.FirstName, staff.LastName);
