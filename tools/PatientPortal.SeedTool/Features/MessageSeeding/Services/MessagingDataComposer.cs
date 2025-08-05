@@ -12,7 +12,8 @@ namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 public class MessagingDataComposer(
     ConversationDataGenerator conversationDataGenerator,
     MessageDataGenerator messageDataGenerator,
-    ConversationParticipantDataGenerator conversationParticipantDataGenerator
+    ConversationParticipantDataGenerator conversationParticipantDataGenerator,
+    UnreadDataGenerator unreadDataGenerator
 )
 {
     private readonly ConversationDataGenerator _conversationDataGenerator =
@@ -20,6 +21,7 @@ public class MessagingDataComposer(
     private readonly MessageDataGenerator _messageDataGenerator = messageDataGenerator;
     private readonly ConversationParticipantDataGenerator _conversationParticipantDataGenerator =
         conversationParticipantDataGenerator;
+    private readonly UnreadDataGenerator _unreadDataGenerator = unreadDataGenerator;
 
     public List<Conversation> CreateConversationsForPatients(
         List<ConversationDTO> patientConversationInfos
@@ -44,6 +46,7 @@ public class MessagingDataComposer(
                 MaxNewConversationsPerLink
             );
 
+            List<Conversation> newUserConversations = [];
             for (int i = 0; i < conversationsToCreate; i++)
             {
                 var participants = SelectConversationParticipants(
@@ -60,8 +63,15 @@ public class MessagingDataComposer(
                     mostRecentCreatedDate
                 );
 
-                conversations.Add(conversation);
+                newUserConversations.Add(conversation);
             }
+
+            MarkRecentMessagesasUnread(
+                info.PrimaryLinkInfo.MessagingLinkId,
+                newUserConversations,
+                forPatient
+            );
+            conversations.AddRange(newUserConversations);
         }
         return conversations;
     }
@@ -143,5 +153,31 @@ public class MessagingDataComposer(
         listWithInitialMessage[0].CreatedAt = createdAt;
 
         return listWithInitialMessage;
+    }
+
+    private void MarkRecentMessagesasUnread(
+        int userLinkId,
+        List<Conversation> conversations,
+        bool withPatient
+    )
+    {
+        var unseenMessages = conversations.SelectMany(c =>
+        {
+            var lastSentUserMessageTime = c
+                .Messages.Where(m => m.MessagingLinkId == userLinkId)
+                .Max(m => (DateTime?)m.CreatedAt);
+
+            return c
+                .Messages.Where(m =>
+                    lastSentUserMessageTime == null || m.CreatedAt > lastSentUserMessageTime
+                )
+                .Where(m => m.MessagingLinkId != userLinkId);
+        });
+
+        foreach (var message in unseenMessages)
+        {
+            var unreadEntry = _unreadDataGenerator.GenerateUnreadEntry(userLinkId, withPatient);
+            message.UnreadBy = new List<Unread> { unreadEntry };
+        }
     }
 }

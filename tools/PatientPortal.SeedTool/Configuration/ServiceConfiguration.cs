@@ -82,6 +82,8 @@ public static class ServiceConfiguration
         services.AddSingleton<HealthIssueDataGenerator>();
         services.AddSingleton<ConversationDataGenerator>();
         services.AddSingleton<MessageDataGenerator>();
+        services.AddSingleton<ConversationParticipantDataGenerator>();
+        services.AddSingleton<UnreadDataGenerator>();
 
         // Data composers (stateless, singleton)
         services.AddSingleton<StaffDataComposer>();
