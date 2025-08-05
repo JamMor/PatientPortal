@@ -11,11 +11,15 @@ namespace PatientPortal.SeedTool.Features.MessageSeeding.Services;
 /// </summary>
 public class MessagingDataComposer(
     ConversationDataGenerator conversationDataGenerator,
-    MessageDataGenerator messageDataGenerator
+    MessageDataGenerator messageDataGenerator,
+    ConversationParticipantDataGenerator conversationParticipantDataGenerator
 )
 {
-    private readonly ConversationDataGenerator _conversationDataGenerator = conversationDataGenerator;
+    private readonly ConversationDataGenerator _conversationDataGenerator =
+        conversationDataGenerator;
     private readonly MessageDataGenerator _messageDataGenerator = messageDataGenerator;
+    private readonly ConversationParticipantDataGenerator _conversationParticipantDataGenerator =
+        conversationParticipantDataGenerator;
 
     public List<Conversation> CreateConversationsForPatients(
         List<ConversationDTO> patientConversationInfos
@@ -114,11 +118,11 @@ public class MessagingDataComposer(
                 firstMessageTime
             );
 
-            var conversationParticipant = new ConversationParticipant
-            {
-                MessagingLinkId = participantId,
-                CreatedAt = participantMessages.Min(m => m.CreatedAt),
-            };
+            var conversationParticipant =
+                _conversationParticipantDataGenerator.GenerateConversationParticipant(
+                    participantId,
+                    participantMessages.Min(m => m.CreatedAt)
+                );
 
             conversationParticipants.Add(conversationParticipant);
             messages.AddRange(participantMessages);
