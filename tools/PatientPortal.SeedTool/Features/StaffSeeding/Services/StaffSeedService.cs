@@ -9,12 +9,14 @@ namespace PatientPortal.SeedTool.Features.StaffSeeding.Services;
 public class StaffSeedService(
     PatientPortalContext context,
     ILogger<StaffSeedService> logger,
-    StaffDataComposer staffDataComposer
+    StaffDataComposer staffDataComposer,
+    StaffAccountService staffAccountService
 )
 {
     private readonly PatientPortalContext _context = context;
     private readonly ILogger<StaffSeedService> _logger = logger;
     private readonly StaffDataComposer _staffDataComposer = staffDataComposer;
+    private readonly StaffAccountService _staffAccountService = staffAccountService;
 
     /// <summary>
     /// Seeds a specified number of fake staff members with IdentityUser accounts.
@@ -35,19 +37,15 @@ public class StaffSeedService(
         // Create IdentityUser for each staff member from first and last name and link them
         foreach (Staff staff in staffList)
         {
-            var identityUser = await _staffDataComposer.CreateIdentityUserForStaff(staff);
+            var identityUser = await _staffAccountService.AttachAccountForStaffAsync(staff);
 
-            if (identityUser == null)
+            if (identityUser != null)
             {
-                continue;
+                staff.User = identityUser;
+                _context.Staff.Add(staff);
+
+                successCount++;
             }
-
-            _context.Attach(identityUser); // Attach to context so EF Core tracks it without trying to insert again
-
-            staff.User = identityUser;
-            _context.Staff.Add(staff);
-
-            successCount++;
         }
 
         // Save all staff records to database in one operation
