@@ -29,9 +29,14 @@ public class PatientSeedService(
 
         _logger.LogInformation("Generating {Count} patients with medical data...", patientCount);
 
-        List<int> currentStaffIds = await _context.Staff
-            .Select(s => s.StaffId)
-            .ToListAsync();
+        List<int> currentStaffIds = await GetCurrentStaffIdsAsync();
+        if (currentStaffIds.Count == 0)
+        {
+            _logger.LogError(
+                "No staff members found in the database. Cannot seed patients without staff."
+            );
+            return 0;
+        }
 
         var patientList = _patientDataComposer.CreatePatients(patientCount);
 
@@ -55,5 +60,12 @@ public class PatientSeedService(
         _logger.LogInformation("Successfully seeded {Count} patients", patientCount);
 
         return patientCount;
+    }
+
+    private async Task<List<int>> GetCurrentStaffIdsAsync()
+    {
+        return await _context.Staff
+            .Select(s => s.StaffId)
+            .ToListAsync();
     }
 }

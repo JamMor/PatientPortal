@@ -20,7 +20,8 @@ public class PatientDataComposer(
 {
     private readonly PatientDataGenerator _patientDataGenerator = patientDataGenerator;
     private readonly AddressDataGenerator _addressDataGenerator = addressDataGenerator;
-    private readonly PatientStaffConnectionDataGenerator _connectionDataGenerator = connectionDataGenerator;
+    private readonly PatientStaffConnectionDataGenerator _connectionDataGenerator =
+        connectionDataGenerator;
     private readonly VisitDataGenerator _visitDataGenerator = visitDataGenerator;
     private readonly TestResultDataGenerator _testResultDataGenerator = testResultDataGenerator;
     private readonly HealthIssueDataGenerator _healthIssueDataGenerator = healthIssueDataGenerator;
@@ -97,36 +98,45 @@ public class PatientDataComposer(
                 patient.CreatedAt
             );
 
+            List<int> medicalTeamIds = patient.MedicalTeam.Select(mt => mt.StaffId).ToList();
+
             foreach (var issue in issues)
             {
-                List<int> medicalTeamIds = patient.MedicalTeam.Select(mt => mt.StaffId).ToList();
-
-                List<Visit> visits = _visitDataGenerator.GenerateVisitsWithPatientId(
-                    Rand.BetweenOneAnd(MaxVisitsPerHealthIssue),
-                    patient.PatientId,
-                    medicalTeamIds,
-                    issue.CreatedAt
-                );
-
-                List<TestResult> tests = _testResultDataGenerator.GenerateTestResultsWithPatientId(
-                    Rand.BetweenOneAnd(MaxTestResultsPerHealthIssue),
-                    patient.PatientId,
-                    medicalTeamIds,
-                    issue.CreatedAt
-                );
-
-                issue.AssociatedVisits = visits
-                    .Select(v => new VisitHealthIssueAssociation { Visit = v })
-                    .ToList();
-
-                issue.AssociatedTestResults = tests
-                    .Select(t => new TestHealthIssueAssociation { TestResult = t })
-                    .ToList();
+                AttachHealthIssueAssociatedData(issue, patient.PatientId, medicalTeamIds);
             }
 
             allIssues.AddRange(issues);
         }
 
         return allIssues;
+    }
+
+    public void AttachHealthIssueAssociatedData(
+        HealthIssue issue,
+        int patientId,
+        List<int> medicalTeamIds
+    )
+    {
+        List<Visit> visits = _visitDataGenerator.GenerateVisitsWithPatientId(
+            Rand.BetweenOneAnd(MaxVisitsPerHealthIssue),
+            patientId,
+            medicalTeamIds,
+            issue.CreatedAt
+        );
+
+        List<TestResult> tests = _testResultDataGenerator.GenerateTestResultsWithPatientId(
+            Rand.BetweenOneAnd(MaxTestResultsPerHealthIssue),
+            patientId,
+            medicalTeamIds,
+            issue.CreatedAt
+        );
+
+        issue.AssociatedVisits = visits
+            .Select(v => new VisitHealthIssueAssociation { Visit = v })
+            .ToList();
+
+        issue.AssociatedTestResults = tests
+            .Select(t => new TestHealthIssueAssociation { TestResult = t })
+            .ToList();
     }
 }
