@@ -38,7 +38,7 @@ public class SeedOrchestrator(
     )
     {
         ConsoleWrites.WriteHeader();
-        ConsoleWrites.WriteOperationParams(staffCount, patientCount, seedMessages);
+        ConsoleWrites.WriteOperationParams(staffCount, patientCount, seedMessages, seedPresets);
 
         try
         {
@@ -91,7 +91,9 @@ public class SeedOrchestrator(
                 seededPatients,
                 seededStaff,
                 seededPatientConversations,
-                seededStaffConversations
+                seededStaffConversations,
+                seededPresetStaff,
+                seededPresetPatients
             );
         }
         catch (Exception ex)

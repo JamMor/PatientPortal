@@ -31,7 +31,8 @@ public class ConsoleWrites
     public static void WriteOperationParams(
         int initialStaff,
         int initialPatients,
-        bool isSeedingMessages = false
+        bool isSeedingMessages = false,
+        bool isSeedingPresets = false
     )
     {
         Console.WriteLine();
@@ -41,13 +42,16 @@ public class ConsoleWrites
         Console.WriteLine($"  Staff:    {initialStaff}");
         Console.WriteLine($"  Patients: {initialPatients}");
         Console.WriteLine($"  Seeding Messages: {(isSeedingMessages ? "Yes" : "No")}");
+        Console.WriteLine($"  Seeding Presets:  {(isSeedingPresets ? "Yes" : "No")}");
     }
 
     public static void WriteOperationResults(
         int seededPatients,
         int seededStaff,
         int seededPatientConversations,
-        int seededStaffConversations
+        int seededStaffConversations,
+        int seededPresetStaff = 0,
+        int seededPresetPatients = 0
     )
     {
         Console.WriteLine();
@@ -59,5 +63,8 @@ public class ConsoleWrites
         Console.WriteLine("  -----------------------------");
         Console.WriteLine($"  Patient Conversations: {seededPatientConversations}");
         Console.WriteLine($"  Staff Conversations: {seededStaffConversations}");
+        Console.WriteLine("  -----------------------------");
+        Console.WriteLine($"  Preset Staff:    {seededPresetStaff}");
+        Console.WriteLine($"  Preset Patients: {seededPresetPatients}");
     }
 }
