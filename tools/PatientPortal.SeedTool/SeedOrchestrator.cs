@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using PatientPortal.Models;
 using PatientPortal.SeedTool.Features.MessageSeeding.Services;
 using PatientPortal.SeedTool.Features.PatientSeeding.Services;
+using PatientPortal.SeedTool.Features.PresetSeeding.Services;
 using PatientPortal.SeedTool.Features.StaffSeeding.Services;
 
 namespace PatientPortal.SeedTool;
@@ -15,6 +16,7 @@ public class SeedOrchestrator(
     StaffSeedService staffSeedService,
     PatientSeedService patientSeedService,
     MessagingSeedService messagingSeedService,
+    PresetSeedService presetSeedService,
     ILogger<SeedOrchestrator> logger
 )
 {
@@ -22,12 +24,18 @@ public class SeedOrchestrator(
     private readonly StaffSeedService _staffSeedService = staffSeedService;
     private readonly PatientSeedService _patientSeedService = patientSeedService;
     private readonly MessagingSeedService _messagingSeedService = messagingSeedService;
+    private readonly PresetSeedService _presetSeedService = presetSeedService;
     private readonly ILogger<SeedOrchestrator> _logger = logger;
 
     /// <summary>
     /// Seeds the database with the specified number of staff and patients, and messaging.
     /// </summary>
-    public async Task SeedDatabaseAsync(int staffCount, int patientCount, bool seedMessages)
+    public async Task SeedDatabaseAsync(
+        int staffCount,
+        int patientCount,
+        bool seedMessages,
+        bool seedPresets = false
+    )
     {
         ConsoleWrites.WriteHeader();
         ConsoleWrites.WriteOperationParams(staffCount, patientCount, seedMessages);
@@ -64,6 +72,15 @@ public class SeedOrchestrator(
             {
                 (seededPatientConversations, seededStaffConversations) =
                     await _messagingSeedService.SeedMessagingAsync();
+            }
+
+            // Seed presets
+            int seededPresetStaff = 0;
+            int seededPresetPatients = 0;
+            if (seedPresets)
+            {
+                (seededPresetStaff, seededPresetPatients) =
+                    await _presetSeedService.SeedPresetsAsync();
             }
 
             // Display final summary

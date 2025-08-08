@@ -7,6 +7,7 @@ using PatientPortal.SeedTool.Features.MessageSeeding.DataGenerators;
 using PatientPortal.SeedTool.Features.MessageSeeding.Services;
 using PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 using PatientPortal.SeedTool.Features.PatientSeeding.Services;
+using PatientPortal.SeedTool.Features.PresetSeeding.Services;
 using PatientPortal.SeedTool.Features.StaffSeeding.DataGenerators;
 using PatientPortal.SeedTool.Features.StaffSeeding.Services;
 
@@ -74,12 +75,14 @@ public static class ServiceConfiguration
         // Register data generators (stateless, can be singleton)
         services.AddSingleton<StaffDataGenerator>();
         services.AddSingleton<IdentityUserDataGenerator>();
+
         services.AddSingleton<PatientDataGenerator>();
         services.AddSingleton<AddressDataGenerator>();
         services.AddSingleton<PatientStaffConnectionDataGenerator>();
         services.AddSingleton<VisitDataGenerator>();
         services.AddSingleton<TestResultDataGenerator>();
         services.AddSingleton<HealthIssueDataGenerator>();
+
         services.AddSingleton<ConversationDataGenerator>();
         services.AddSingleton<MessageDataGenerator>();
         services.AddSingleton<ConversationParticipantDataGenerator>();
@@ -89,12 +92,19 @@ public static class ServiceConfiguration
         services.AddSingleton<StaffDataComposer>();
         services.AddSingleton<PatientDataComposer>();
         services.AddSingleton<MessagingDataComposer>();
+        services.AddSingleton<PresetDataComposer>();
 
         // Seed services (stateful, scoped to match DbContext)
         services.AddScoped<SeedOrchestrator>();
+
         services.AddScoped<StaffSeedService>();
+        services.AddScoped<StaffAccountService>();
         services.AddScoped<PatientSeedService>();
         services.AddScoped<MessagingSeedService>();
+
+        services.AddScoped<PresetSeedService>();
+        services.AddScoped<PresetStaffSeedService>();
+        services.AddScoped<PresetPatientSeedService>();
 
         return services.BuildServiceProvider();
     }
