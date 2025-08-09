@@ -51,6 +51,15 @@ public class SeedOrchestrator(
                 currentPatients
             );
 
+            // Seed presets
+            int seededPresetStaff = 0;
+            int seededPresetPatients = 0;
+            if (seedPresets)
+            {
+                (seededPresetStaff, seededPresetPatients) =
+                    await _presetSeedService.SeedPresetsAsync();
+            }
+
             // Seed staff
             int seededStaff = 0;
             if (staffCount > 0)
@@ -72,15 +81,6 @@ public class SeedOrchestrator(
             {
                 (seededPatientConversations, seededStaffConversations) =
                     await _messagingSeedService.SeedMessagingAsync();
-            }
-
-            // Seed presets
-            int seededPresetStaff = 0;
-            int seededPresetPatients = 0;
-            if (seedPresets)
-            {
-                (seededPresetStaff, seededPresetPatients) =
-                    await _presetSeedService.SeedPresetsAsync();
             }
 
             // Display final summary
