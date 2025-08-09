@@ -24,26 +24,33 @@ internal class Rand
     }
 
     /// <summary>
-    /// Returns a random subset of the specified list with the given count (or
-    /// maximum available if count exceeds list size).
+    /// Returns a random subset of the specified enumerable with the given count (or
+    /// maximum available if count exceeds the number of elements).
+    /// Warning: This method is O(n log n) and should not be used for excessively large collections.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the list.</typeparam>
-    /// <param name="list">The list to select from.</param>
+    /// <typeparam name="T">The type of elements in the enumerable.</typeparam>
+    /// <param name="list">The enumerable to select from.</param>
     /// <param name="count">The number of elements to select.</param>
-    /// <returns>A list containing count random elements from the original list.</returns>
-    public static List<T> GetRandomSubset<T>(List<T> list, int count)
+    /// <returns>A list containing up to <paramref name="count"/> random elements from the original enumerable.</returns>
+    public static List<T> GetRandomSubset<T>(IEnumerable<T> list, int count)
     {
         return list.OrderBy(_ => Random.Shared.Next()).Take(count).ToList();
     }
 
     /// <summary>
-    /// Returns a random element from the specified list.
+    /// Returns a random element from the specified read-only list.
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
-    /// <param name="list">The list to select from.</param>
+    /// <param name="list">The read-only list to select from.</param>
     /// <returns>A random element from the list.</returns>
-    public static T GetRandomElement<T>(List<T> list)
+    /// <exception cref="ArgumentException">Thrown if the list is null or empty.</exception>
+    public static T GetRandomElement<T>(IReadOnlyList<T> list)
     {
+        if (list == null || list.Count == 0)
+        {
+            throw new ArgumentException("List cannot be null or empty.", nameof(list));
+        }
+
         return list[Random.Shared.Next(list.Count)];
     }
 
