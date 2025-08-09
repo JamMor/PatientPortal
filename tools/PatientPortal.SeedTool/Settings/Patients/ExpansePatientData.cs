@@ -96,7 +96,7 @@ internal static class ExpansePatientData
                         + "diet. ACE inhibitor initiated; dietary counseling provided."
                 ),
                 new(
-                    ShortDescription: "Cerebrovascular Risk - Elevated",
+                    ShortDescription: "Elevated Cerebrovascular Risk",
                     LongDescription: "Cardiovascular risk stratification indicates high ten-year risk of "
                         + "major cerebrovascular event based on age, hypertension, and elevated "
                         + "LDL cholesterol. Statin therapy initiated alongside antihypertensive "
@@ -198,7 +198,7 @@ internal static class ExpansePatientData
                         + "monitoring of liver function. Counseling referral provided."
                 ),
                 new(
-                    ShortDescription: "Adjustment Disorder - Occupational",
+                    ShortDescription: "Adjustment Disorder",
                     LongDescription: "Patient reports persistent difficulty adapting to occupational stressors, "
                         + "including insomnia, irritability, and social withdrawal. Symptoms are "
                         + "exacerbated by high-pressure investigative work. Supportive therapy and "

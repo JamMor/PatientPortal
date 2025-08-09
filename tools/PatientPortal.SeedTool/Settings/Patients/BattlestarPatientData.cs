@@ -30,7 +30,7 @@ internal static class BattlestarPatientData
                         + "Ongoing cardiology referral recommended; aspirin therapy initiated."
                 ),
                 new(
-                    ShortDescription: "Abdominal Gunshot Wound (Post-Surgical)",
+                    ShortDescription: "Abdominal Gunshot Wound",
                     LongDescription: "Patient suffered two high-velocity ballistic injuries to the upper-left "
                         + "quadrant of the abdomen. Following an emergency exploratory laparotomy "
                         + "and bowel resection, the patient has recovered but remains at risk "

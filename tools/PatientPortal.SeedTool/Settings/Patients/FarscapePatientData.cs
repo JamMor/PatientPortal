@@ -32,7 +32,7 @@ internal static class FarscapePatientData
                         + "episodes, and distorted body image. Trauma-focused CBT initiated."
                 ),
                 new(
-                    ShortDescription: "Psychotic and Dissociative Features",
+                    ShortDescription: "Psychotic/Dissociative Features",
                     LongDescription: "Patient reports persistent experiences of vivid internal dialogue and the "
                         + "sensation of an autonomous internal presence. Symptoms include episodes of derealization, "
                         + "intrusive thoughts, and difficulty distinguishing internal from external stimuli. "

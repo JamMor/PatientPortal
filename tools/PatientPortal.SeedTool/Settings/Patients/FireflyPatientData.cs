@@ -71,7 +71,7 @@ internal static class FireflyPatientData
                         + "Stress management techniques and regular rest periods recommended."
                 ),
                 new(
-                    ShortDescription: "Repetitive Strain Injury - Wrist",
+                    ShortDescription: "Repetitive Strain Injury",
                     LongDescription: "Patient experiences episodic wrist pain and stiffness, likely due to "
                         + "prolonged control manipulation and vibration exposure. Physical examination "
                         + "reveals mild tenderness over the carpal region. Advised ergonomic adjustments "
@@ -141,7 +141,7 @@ internal static class FireflyPatientData
                         + "possible; ongoing psychiatric monitoring in place."
                 ),
                 new(
-                    ShortDescription: "Dissociative Identity Disturbance",
+                    ShortDescription: "Dissociative Identity Disorder",
                     LongDescription: "Patient presents with fragmented identity, abrupt behavioral state "
                         + "changes, and intrusive somatic experiences with no clear environmental "
                         + "trigger. Presentation is consistent with severe dissociative disorder "
