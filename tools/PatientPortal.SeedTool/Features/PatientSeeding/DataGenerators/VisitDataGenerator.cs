@@ -49,7 +49,7 @@ public class VisitDataGenerator
 
         return visitFaker
             .RuleFor(v => v.StaffId, f => f.PickRandom(staffIds))
-            .RuleFor(v => v.Comment, f => f.Lorem.Paragraph(2))
+            .RuleFor(v => v.Comment, f => f.Random.ClampString(f.Lorem.Paragraph(2), 5))
             .RuleFor(
                 v => v.DateOfVisit,
                 f => f.Date.Between(earliestDate, DateTime.Today.AddDays(-5))

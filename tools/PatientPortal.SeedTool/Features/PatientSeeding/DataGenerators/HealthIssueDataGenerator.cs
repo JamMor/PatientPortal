@@ -1,5 +1,6 @@
 using Bogus;
 using PatientPortal.Models;
+using PatientPortal.SeedTool.Bogus;
 
 namespace PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 
@@ -58,7 +59,7 @@ public class HealthIssueDataGenerator
         return healthIssueFaker
             .RuleFor(
                 h => h.ShortDescription,
-                f => shortDesc ?? f.Random.ClampString(f.Lorem.Sentence(2, 5), 5, 20)
+                f => (shortDesc ?? f.Medical().HealthIssueShortDescription()).Clamp(30)
             )
             .RuleFor(h => h.LongDescription, f => longDesc ?? f.Lorem.Paragraph(2))
             .RuleFor(

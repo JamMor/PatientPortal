@@ -1,5 +1,6 @@
 using Bogus;
 using PatientPortal.Models;
+using PatientPortal.SeedTool.Bogus;
 
 namespace PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 
@@ -8,8 +9,6 @@ namespace PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
 /// </summary>
 public class TestResultDataGenerator
 {
-    private static readonly string[] TestTypes = ["Vitals", "Pathology", "Imaging", "Labwork"];
-
     /// <summary>
     /// Generates fake TestResult objects without navigation properties, suitable for embedding within related entities.
     /// </summary>
@@ -51,8 +50,8 @@ public class TestResultDataGenerator
 
         return testResultFaker
             .RuleFor(t => t.StaffId, f => f.PickRandom(staffIds))
-            .RuleFor(t => t.Type, f => f.PickRandom(TestTypes))
-            .RuleFor(t => t.Comment, f => f.Lorem.Paragraph(2))
+            .RuleFor(t => t.Type, f => f.Medical().TestType())
+            .RuleFor(t => t.Comment, f => f.Random.ClampString(f.Lorem.Paragraph(2), 5))
             .RuleFor(
                 t => t.CreatedAt,
                 f => f.Date.Between(earliestDate, DateTime.Today.AddDays(-5))
