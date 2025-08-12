@@ -140,26 +140,46 @@ main {
   z-index: 2;
 }
 
-/* ===== Demo Login Scrollbar CSS ===== */
+/* ===== Demo Login Styles ===== */
+.demo-login-card {
+  border-color: #dee2e6;
+  background-color: #fdfdfd;
+}
+
+.demo-login-header {
+  background-color: #f8f9fa;
+  border-bottom-color: #dee2e6;
+}
+
+.demo-login-label {
+  color: #6c757d;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+.demo-login-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 110px;
+  overflow-y: auto;
   /* Firefox */
-  .demo-login {
-    overflow-x: auto;
-    scrollbar-width: auto;
-    scrollbar-color: #4ebaca #ffffff;
-  }
+  scrollbar-width: thin;
+  scrollbar-color: #1b6ec2 #e9ecef;
+}
 
-  /* Chrome, Edge, and Safari */
-  .demo-login::-webkit-scrollbar {
-    width: 5px;
-    height: 10px;
-  }
+/* Chrome, Edge, and Safari */
+.demo-login-buttons::-webkit-scrollbar {
+  width: 6px;
+}
 
-  .demo-login::-webkit-scrollbar-track {
-    background: #ffffff;
-  }
+.demo-login-buttons::-webkit-scrollbar-track {
+  background: #e9ecef;
+  border-radius: 6px;
+}
 
-  .demo-login::-webkit-scrollbar-thumb {
-    background-color: #4ebaca;
-    border-radius: 10px;
-    border: 2px outset #75cbd7;
-  }
+.demo-login-buttons::-webkit-scrollbar-thumb {
+  background-color: #1b6ec2;
+  border-radius: 6px;
+}
