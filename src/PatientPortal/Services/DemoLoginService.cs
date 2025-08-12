@@ -30,14 +30,15 @@ namespace PatientPortal.Services
                 {
                     DemoStaffId = s.StaffId,
                     DemoStaffName = $"{s.FirstName[0]} {s.LastName}",
-                    DemoStaffRole = s.Role
+                    DemoStaffRole = s.Role,
+                    IsDemoStaffAdmin = s.IsAdmin
                 })
                 .ToList();
         }
 
         public async Task<ExtendedIdentityResult<Staff>> CreateAdmin()
         {
-            string adminUsername = "JPicardNumber1";
+            string adminUsername = "EMcDNumber1";
             string adminPassword = "Password0$";
             
             var result = await _authService.CreateUserAsync(
@@ -49,8 +50,8 @@ namespace PatientPortal.Services
                 Staff newAdmin = new Staff()
                 {
                     IsAdmin = true,
-                    FirstName = "Jean-Luc",
-                    LastName = "Picard",
+                    FirstName = "Erin",
+                    LastName = "Macdonald",
                     Role = "Admin",
                     StaffUsername = adminUsername,
                     Password = adminPassword,

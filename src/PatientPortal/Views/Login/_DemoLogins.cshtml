@@ -5,14 +5,26 @@
     <div class="container m-3">
     @if(Model != null && Model.Any())
     {
-    <form id="demo-login-options" class="d-flex p-1 demo-login" asp-controller="DemoLogin" asp-action="LoginDemoStaff">
+    <form id="demo-login-options" class="d-flex flex-column p-1" asp-controller="DemoLogin" asp-action="LoginDemoStaff">
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
-        @foreach(var staff in Model)
-        {
-            <button name='staffId' value='@staff.DemoStaffId' class='mx-1 btn btn-sm btn-warning'>
-                Login <span class='text-nowrap'>@staff.DemoStaffName</span>
-            </button>
-        }
+            <p>Staff with Staff and Patient Administrative Privileges:</p>
+            <div class="d-flex demo-login mb-2">
+                @foreach(var staff in Model.Where(s => s.IsDemoStaffAdmin))
+                {
+                    <button name='staffId' value='@staff.DemoStaffId' class='mx-1 btn btn-sm btn-primary'>
+                        <span class='text-nowrap'>@staff.DemoStaffName</span>
+                    </button>
+                }
+            </div>
+            <p>Staff without Only Patient Administrative Privileges:</p>
+            <div class="d-flex demo-login">
+                @foreach(var staff in Model.Where(s => !s.IsDemoStaffAdmin))
+                {
+                    <button name='staffId' value='@staff.DemoStaffId' class='mx-1 btn btn-sm btn-warning'>
+                        <span class='text-nowrap'>@staff.DemoStaffName</span>
+                    </button>
+                }
+            </div>
     </form>
     }
     else

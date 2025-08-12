@@ -34,7 +34,12 @@ public class PresetDataComposer(
     public List<Staff> CreatePresetStaff(List<PresetStaffData.StaffPreset> presetStaffToSeed) =>
         presetStaffToSeed
             .Select(p =>
-                _staffDataGenerator.GenerateStaffWithDetails(p.FirstName, p.LastName, p.Role)
+                _staffDataGenerator.GenerateStaffWithDetails(
+                    p.FirstName,
+                    p.LastName,
+                    p.Role,
+                    p.IsAdmin
+                )
             )
             .ToList();
 

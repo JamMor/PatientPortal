@@ -13,7 +13,8 @@ public static class PresetStaffData
     /// <param name="FirstName">Staff member's first name.</param>
     /// <param name="LastName">Staff member's last name.</param>
     /// <param name="Role">Clinical role abbreviation: MD, RN, NP, or LPN.</param>
-    public record StaffPreset(string FirstName, string LastName, string Role);
+    /// <param name="IsAdmin">Indicates if the staff member has Staff administrative privileges.</param>
+    public record StaffPreset(string FirstName, string LastName, string Role, bool IsAdmin = false);
 
     /// <summary>
     /// All preset staff members, aggregated from every theme-specific data file.
