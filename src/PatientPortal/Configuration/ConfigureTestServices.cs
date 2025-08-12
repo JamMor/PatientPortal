@@ -9,8 +9,6 @@ namespace PatientPortal.Configuration
         public static IServiceCollection AddTestServices(this IServiceCollection services)
         {
             services.AddTransient<ITestLoginService, TestLoginService>();
-            services.AddTransient<ISeedService, SeedService>();
-            services.AddTransient<ISeedViewService, SeedViewService>();
 
             return services;
         }

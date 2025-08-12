@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bogus;
 using PatientPortal.Infrastructure;
 using PatientPortal.Models;
 

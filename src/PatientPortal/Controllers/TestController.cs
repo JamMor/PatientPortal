@@ -1,11 +1,8 @@
 using System;
 using System.Linq;
 using PatientPortal.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using Bogus;
 using PatientPortal.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
@@ -16,12 +13,10 @@ namespace PatientPortal.Controllers
     public class TestController : Controller
     {
         private ITestLoginService _testLoginService;
-        private ISeedViewService _seedViewService;
 
-        public TestController(ITestLoginService testLoginService, ISeedViewService seedViewService)
+        public TestController(ITestLoginService testLoginService)
         {
             _testLoginService = testLoginService;
-            _seedViewService = seedViewService;
         }
 
         [HttpGet("test/staff")]
@@ -57,23 +52,5 @@ namespace PatientPortal.Controllers
 
             return RedirectToAction("Index", "Login");
         }
-        
-        [HttpGet("/test/seed")]
-        public IActionResult Seed()
-        {
-            SeedFormView viewModel = _seedViewService.ReturnSeedFormView();
-            
-            return View("SeedPrompt", viewModel);
-        }
-        
-        [HttpPost("/test/seed")]
-        public IActionResult Seed(SeedFormView seedAmount)
-        {             
-            _seedViewService.SeedNStaff(seedAmount.Staff);
-            _seedViewService.SeedNPatients(seedAmount.Patients);
-
-            return RedirectToAction("Index", "Login");
-        }
-
     }
 }
