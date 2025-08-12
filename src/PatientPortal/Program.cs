@@ -39,7 +39,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddIdentityServices();
 builder.Services.AddCoreServices();
 builder.Services.AddViewServices();
-builder.Services.AddTestServices();
+builder.Services.AddDemoServices();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

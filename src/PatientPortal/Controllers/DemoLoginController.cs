@@ -10,31 +10,31 @@ using System.Threading.Tasks;
 namespace PatientPortal.Controllers
 {
     [AllowAnonymous]
-    public class TestController : Controller
+    public class DemoLoginController : Controller
     {
-        private ITestLoginService _testLoginService;
+        private IDemoLoginService _demoLoginService;
 
-        public TestController(ITestLoginService testLoginService)
+        public DemoLoginController(IDemoLoginService demoLoginService)
         {
-            _testLoginService = testLoginService;
+            _demoLoginService = demoLoginService;
         }
 
-        [HttpGet("test/staff")]
-        public IActionResult GetStaffLoginOptions()
+        [HttpGet("demo/staff")]
+        public IActionResult GetDemoStaffLoginOptions()
         {
-            List<TestLoginViewModel> allStaff = _testLoginService.GetAllStaff();
+            List<DemoLoginViewModel> allStaff = _demoLoginService.GetAllStaff();
 
-            return PartialView("Views/Login/_TestingLogins.cshtml", allStaff);
+            return PartialView("Views/Login/_DemoLogins.cshtml", allStaff);
         }
 
-        [HttpPost("/test/create")]
-        public async Task<IActionResult> TestCreate()
+        [HttpPost("/demo/create")]
+        public async Task<IActionResult> CreateDemoAdmin()
         {
-            var result = await _testLoginService.CreateAdmin();
+            var result = await _demoLoginService.CreateAdmin();
             if (result.Succeeded)
             {
                 Staff newAdmin = result.Value;
-                await _testLoginService.LoginStaffById(newAdmin.StaffId);
+                await _demoLoginService.LoginStaffById(newAdmin.StaffId);
             }
             else
             {
@@ -45,10 +45,10 @@ namespace PatientPortal.Controllers
             return RedirectToAction("StaffManager", "Staff");
         }
 
-        [HttpPost("/test/options")]
-        public async Task<IActionResult> TestLoginOptions(int staffId)
+        [HttpPost("/demo/staff")]
+        public async Task<IActionResult> LoginDemoStaff(int staffId)
         {
-            await _testLoginService.LoginStaffById(staffId);
+            await _demoLoginService.LoginStaffById(staffId);
 
             return RedirectToAction("Index", "Login");
         }

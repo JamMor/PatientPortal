@@ -8,29 +8,29 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Services
 {
-    public class TestLoginService : ITestLoginService
+    public class DemoLoginService : IDemoLoginService
     {
         private PatientPortalContext _context;
         private readonly SignInManager<IdentityUser> _signInManager;
         private IAuthService _authService;
 
-        public TestLoginService(PatientPortalContext context, IAuthService authService, SignInManager<IdentityUser> signInManager)
+        public DemoLoginService(PatientPortalContext context, IAuthService authService, SignInManager<IdentityUser> signInManager)
         {
             _context = context;
             _authService = authService;
             _signInManager = signInManager;
         }
 
-        public List<TestLoginViewModel> GetAllStaff()
+        public List<DemoLoginViewModel> GetAllStaff()
         {
             return _context.Staff
                 .Where(s => s.User != null)
                 .OrderBy(s => s.StaffId)
-                .Select(s => new TestLoginViewModel()
+                .Select(s => new DemoLoginViewModel()
                 {
-                    TestId = s.StaffId,
-                    TestName = $"{s.FirstName[0]} {s.LastName}",
-                    TestRole = s.Role
+                    DemoStaffId = s.StaffId,
+                    DemoStaffName = $"{s.FirstName[0]} {s.LastName}",
+                    DemoStaffRole = s.Role
                 })
                 .ToList();
         }
@@ -96,7 +96,7 @@ namespace PatientPortal.Services
         }
 
         // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~PatientService()
+        // ~DemoLoginService()
         // {
         //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         //     Dispose(disposing: false);

@@ -4,11 +4,11 @@ using PatientPortal.Services;
 
 namespace PatientPortal.Configuration
 {
-    public static class ConfigureTestServices
+    public static class ConfigureDemoServices
     {
-        public static IServiceCollection AddTestServices(this IServiceCollection services)
+        public static IServiceCollection AddDemoServices(this IServiceCollection services)
         {
-            services.AddTransient<ITestLoginService, TestLoginService>();
+            services.AddTransient<IDemoLoginService, DemoLoginService>();
 
             return services;
         }

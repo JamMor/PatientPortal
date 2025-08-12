@@ -6,9 +6,9 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
 {
-    public interface ITestLoginService : IDisposable
+    public interface IDemoLoginService : IDisposable
     {
-        List<TestLoginViewModel> GetAllStaff();
+        List<DemoLoginViewModel> GetAllStaff();
         Task<ExtendedIdentityResult<Staff>> CreateAdmin();
         Task LoginStaffById(int staffId);
     }

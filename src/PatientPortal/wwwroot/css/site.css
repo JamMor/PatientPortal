@@ -140,25 +140,25 @@ main {
   z-index: 2;
 }
 
-/* ===== Test Login Scrollbar CSS ===== */
+/* ===== Demo Login Scrollbar CSS ===== */
   /* Firefox */
-  .test-login {
+  .demo-login {
     overflow-x: auto;
     scrollbar-width: auto;
     scrollbar-color: #4ebaca #ffffff;
   }
 
   /* Chrome, Edge, and Safari */
-  .test-login::-webkit-scrollbar {
+  .demo-login::-webkit-scrollbar {
     width: 5px;
     height: 10px;
   }
 
-  .test-login::-webkit-scrollbar-track {
+  .demo-login::-webkit-scrollbar-track {
     background: #ffffff;
   }
 
-  .test-login::-webkit-scrollbar-thumb {
+  .demo-login::-webkit-scrollbar-thumb {
     background-color: #4ebaca;
     border-radius: 10px;
     border: 2px outset #75cbd7;
