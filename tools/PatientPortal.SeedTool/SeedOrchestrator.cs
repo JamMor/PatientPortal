@@ -13,28 +13,28 @@ namespace PatientPortal.SeedTool;
 /// </summary>
 public class SeedOrchestrator(
     PatientPortalContext context,
+    PresetSeedService presetSeedService,
     StaffSeedService staffSeedService,
     PatientSeedService patientSeedService,
     MessagingSeedService messagingSeedService,
-    PresetSeedService presetSeedService,
     ILogger<SeedOrchestrator> logger
 )
 {
     private readonly PatientPortalContext _context = context;
+    private readonly PresetSeedService _presetSeedService = presetSeedService;
     private readonly StaffSeedService _staffSeedService = staffSeedService;
     private readonly PatientSeedService _patientSeedService = patientSeedService;
     private readonly MessagingSeedService _messagingSeedService = messagingSeedService;
-    private readonly PresetSeedService _presetSeedService = presetSeedService;
     private readonly ILogger<SeedOrchestrator> _logger = logger;
 
     /// <summary>
     /// Seeds the database with the specified number of staff and patients, and messaging.
     /// </summary>
     public async Task SeedDatabaseAsync(
+        bool seedPresets,
         int staffCount,
         int patientCount,
-        bool seedMessages,
-        bool seedPresets = false
+        bool seedMessages
     )
     {
         ConsoleWrites.WriteHeader();

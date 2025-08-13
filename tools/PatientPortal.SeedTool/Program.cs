@@ -7,6 +7,11 @@ using PatientPortal.SeedTool.Validation;
 
 var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true).Build();
 
+Option<bool> presetOption = new("--presets")
+{
+    Description = "Seed preset staff members and patients",
+    DefaultValueFactory = parseresult => false,
+};
 Option<int> staffOption = new("--staff")
 {
     Description = "Number of staff members to seed",
@@ -22,11 +27,6 @@ Option<bool> messagesOption = new("--messages")
     Description = "Seed conversations and messages for all messaging links under the conversation threshold",
     DefaultValueFactory = parseresult => false,
 };
-Option<bool> presetOption = new("--presets")
-{
-    Description = "Seed preset staff members and patients",
-    DefaultValueFactory = parseresult => false,
-};
 Option<string> connectionStringOption = new("--connection-string")
 {
     Description = "Database connection string (optional, reads from main project's appsettings.json if not provided)",
@@ -36,19 +36,19 @@ Option<string> connectionStringOption = new("--connection-string")
 
 var rootCommand = new RootCommand("PatientPortal Database Seeding Tool - Seeds fake staff and patient data")
 {
+    presetOption,
     staffOption,
     patientsOption,
     messagesOption,
-    presetOption,
     connectionStringOption,
 };
 
 rootCommand.SetAction(async parseresult =>
 {
+    bool seedPresets = parseresult.GetValue(presetOption);
     int staffToGenerate = parseresult.GetValue(staffOption);
     int patientsToGenerate = parseresult.GetValue(patientsOption);
     bool seedMessages = parseresult.GetValue(messagesOption);
-    bool seedPresets = parseresult.GetValue(presetOption);
     //TODO: Why does this string need to be nullable? The default value factory
     // should ensure it's never null, but the compiler isn't convinced.
     string? connectionString = parseresult.GetValue(connectionStringOption);
@@ -76,10 +76,10 @@ rootCommand.SetAction(async parseresult =>
 
         // Execute seeding
         await orchestrator.SeedDatabaseAsync(
+            seedPresets,
             staffToGenerate,
             patientsToGenerate,
-            seedMessages,
-            seedPresets
+            seedMessages
         );
 
         return 0;
