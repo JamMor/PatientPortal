@@ -8,7 +8,7 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Services
 {
-    [Obsolete("This service is no longer used. It has been replaced by AuthService and TestLoginService.")]
+    [Obsolete("This service is no longer used. It has been replaced by AuthService and DemoLoginService.")]
     public class LoginService : ILoginService
     {
         private PatientPortalContext _context;

@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FECC1FBD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatientPortal.Tests.Unit", "tests\PatientPortal.Tests.Unit\PatientPortal.Tests.Unit.csproj", "{62FEC5FC-4441-4068-8C71-2C022D3A8417}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{3B79E211-DDD8-40CE-AC16-2A0E40F58C06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatientPortal.SeedTool", "tools\PatientPortal.SeedTool\PatientPortal.SeedTool.csproj", "{8488F9DC-428A-4775-973B-2DF87A055784}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,9 +32,14 @@ Global
 		{62FEC5FC-4441-4068-8C71-2C022D3A8417}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62FEC5FC-4441-4068-8C71-2C022D3A8417}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62FEC5FC-4441-4068-8C71-2C022D3A8417}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8488F9DC-428A-4775-973B-2DF87A055784}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8488F9DC-428A-4775-973B-2DF87A055784}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8488F9DC-428A-4775-973B-2DF87A055784}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8488F9DC-428A-4775-973B-2DF87A055784}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CC634317-702C-4946-A7FA-39F207A7A729} = {F72B0806-F76D-4DB7-AFDB-2009D4049397}
 		{62FEC5FC-4441-4068-8C71-2C022D3A8417} = {FECC1FBD-7950-49E4-B6C7-56EF642D0B93}
+		{8488F9DC-428A-4775-973B-2DF87A055784} = {3B79E211-DDD8-40CE-AC16-2A0E40F58C06}
 	EndGlobalSection
 EndGlobal

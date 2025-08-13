@@ -1,0 +1,44 @@
+@model IEnumerable<DemoLoginViewModel>
+
+<div id="demo-login-container" class="card demo-login-card">
+    <div class="card-header demo-login-header py-2">
+        <span class="badge badge-secondary mr-2">DEMO</span>
+        <small class="font-weight-bold">Quick Login</small>
+    </div>
+    <div class="card-body px-3 py-3">
+        @if(Model != null && Model.Any())
+        {
+        <form id="demo-login-options" asp-controller="DemoLogin" asp-action="LoginDemoStaff">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="mb-3">
+                <small class="demo-login-label d-block mb-2">Full Administrative Privileges</small>
+                <div class="demo-login-buttons">
+                    @foreach(var staff in Model.Where(s => s.IsDemoStaffAdmin))
+                    {
+                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm btn-primary mr-1 mb-1'>
+                            @staff.DemoStaffName
+                        </button>
+                    }
+                </div>
+            </div>
+            <div>
+                <small class="demo-login-label d-block mb-2">Patient Admin Privileges Only</small>
+                <div class="demo-login-buttons">
+                    @foreach(var staff in Model.Where(s => !s.IsDemoStaffAdmin))
+                    {
+                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm btn-warning mr-1 mb-1'>
+                            @staff.DemoStaffName
+                        </button>
+                    }
+                </div>
+            </div>
+        </form>
+        }
+        else
+        {
+        <form class='d-flex' method='post' action='/demo/create'>
+            <button class='mx-1 btn btn-sm btn-warning'>Create Picard</button>
+        </form>
+        }
+    </div>
+</div>
