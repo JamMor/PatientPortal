@@ -20,51 +20,43 @@ public class ConsoleWrites
         Console.ResetColor();
     }
 
-    public static void WriteCounts(int staffCount, int patientCount)
-    {
-        Console.ForegroundColor = ConsoleColor.DarkYellow;
-        Console.WriteLine($"Staff: {staffCount} | Patients: {patientCount}");
-        Console.ResetColor();
-        Console.WriteLine();
-    }
-
     public static void WriteOperationParams(
+        bool isSeedingPresets,
         int initialStaff,
         int initialPatients,
-        bool isSeedingMessages = false,
-        bool isSeedingPresets = false
+        bool isSeedingMessages
     )
     {
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.DarkCyan;
         Console.WriteLine("Operation Parameters:");
         Console.ResetColor();
+        Console.WriteLine($"  Seeding Presets:  {(isSeedingPresets ? "Yes" : "No")}");
         Console.WriteLine($"  Staff:    {initialStaff}");
         Console.WriteLine($"  Patients: {initialPatients}");
         Console.WriteLine($"  Seeding Messages: {(isSeedingMessages ? "Yes" : "No")}");
-        Console.WriteLine($"  Seeding Presets:  {(isSeedingPresets ? "Yes" : "No")}");
     }
 
     public static void WriteOperationResults(
+        int seededPresetStaff,
+        int seededPresetPatients,
         int seededPatients,
         int seededStaff,
         int seededPatientConversations,
-        int seededStaffConversations,
-        int seededPresetStaff = 0,
-        int seededPresetPatients = 0
+        int seededStaffConversations
     )
     {
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.DarkCyan;
         Console.WriteLine("Operation Results:");
         Console.ResetColor();
+        Console.WriteLine($"  Preset Staff:    {seededPresetStaff}");
+        Console.WriteLine($"  Preset Patients: {seededPresetPatients}");
+        Console.WriteLine("  -----------------------------");
         Console.WriteLine($"  Staff:    {seededStaff}");
         Console.WriteLine($"  Patients: {seededPatients}");
         Console.WriteLine("  -----------------------------");
         Console.WriteLine($"  Patient Conversations: {seededPatientConversations}");
         Console.WriteLine($"  Staff Conversations: {seededStaffConversations}");
-        Console.WriteLine("  -----------------------------");
-        Console.WriteLine($"  Preset Staff:    {seededPresetStaff}");
-        Console.WriteLine($"  Preset Patients: {seededPresetPatients}");
     }
 }

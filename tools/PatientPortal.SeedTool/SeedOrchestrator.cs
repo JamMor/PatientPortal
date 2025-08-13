@@ -38,7 +38,7 @@ public class SeedOrchestrator(
     )
     {
         ConsoleWrites.WriteHeader();
-        ConsoleWrites.WriteOperationParams(staffCount, patientCount, seedMessages, seedPresets);
+        ConsoleWrites.WriteOperationParams(seedPresets, staffCount, patientCount, seedMessages);
 
         try
         {
@@ -88,12 +88,12 @@ public class SeedOrchestrator(
             int finalPatients = await _context.Patients.CountAsync();
 
             ConsoleWrites.WriteOperationResults(
+                seededPresetStaff,
+                seededPresetPatients,
                 seededPatients,
                 seededStaff,
                 seededPatientConversations,
-                seededStaffConversations,
-                seededPresetStaff,
-                seededPresetPatients
+                seededStaffConversations
             );
         }
         catch (Exception ex)
