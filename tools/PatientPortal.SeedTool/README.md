@@ -1,76 +1,98 @@
 # PatientPortal.SeedTool
 
-A .NET CLI tool for seeding the PatientPortal project's database. Designed for developers to quickly initialize or reset local and test environments.
+A standalone .NET console tool for seeding the PatientPortal project's database with mock/test data. Intended for local development, testing, and portfolio demonstration purposes. This tool enables you to quickly create a "working" database so visitors can explore the PatientPortal project with realistic data.
 
-## Features
-
-- Seeds PatientPortal database with initial/test data
-- Command-line interface for easy automation
-- Supports .NET 8.0 environments
+> [!IMPORTANT]
+> The tool reads the database connection string from the main project's `appsettings.json` by default, but you can override it via the `--connection-string` option.
 
 ## Tech Stack
 
 | Category | Stack |
 | --- | --- |
-| Backend | .NET 8.0 (C#) |
-| Tooling | .NET CLI |
+| Runtime | .NET 8.0 (C#) |
+| CLI Parsing | System.CommandLine 2.0.3 |
+| Fake Data | Bogus 35.6 |
+| ORM | Entity Framework Core 8.0.16 |
+| Identity | ASP.NET Core Identity (EntityFrameworkCore 8.0) |
+| Configuration | Microsoft.Extensions.Configuration.Json 8.0.0 |
 
 ## Quick Start
 
 ```sh
 # Clone the repository
 git clone https://github.com/JamMor/PatientPortal.git
-cd PatientPortal/tools/PatientPortal.SeedTool
+cd PatientPortal
 
 # Restore dependencies
 dotnet restore
 
 # Run the seed tool
-dotnet run
+dotnet run --project tools/PatientPortal.SeedTool -- [options]
 ```
 
-## Environment Variables
+## Configuration
 
-| Variable Name | Required | Purpose | Example Value |
+By default, the tool reads the database connection string from the main PatientPortal project's `appsettings.json` file. You can override this by providing the `--connection-string` option.
+
+| Variable/Option | Required | Purpose | Example Value |
 | --- | --- | --- | --- |
-| `CONNECTION_STRING` | Yes | Database connection string | `Server=...;...` |
+| `--connection-string` or `CONNECTION_STRING` | No | Database connection string (overrides config file) | `Server=...;...` |
 
 ## Running the Project
 
-### Local Development
+### Local Development, Testing, and Demo
 
 ```sh
 dotnet restore
-dotnet run
+dotnet run --project tools/PatientPortal.SeedTool -- [options]
 ```
 
-## Available Scripts / CLI Commands
+### CLI Options
 
-| Command | Description |
+You can control what data is seeded using the following options:
+
+| Option | Description |
 | --- | --- |
-| `dotnet run` | Runs the seed tool |
-| `dotnet publish` | Builds for production |
+| `--presets` | Seed preset staff members and patients |
+| `--staff <number>` | Number of staff members to seed (must be positive integer) |
+| `--patients <number>` | Number of patients to seed (must be positive integer) |
+| `--messages` | Seed conversations and messages for all messaging links under the conversation threshold |
+| `--connection-string` | Database connection string (optional, overrides value from main project's appsettings.json) |
 
-## Testing
+You can combine options as needed. If no options are specified, the tool will exit without making changes.
 
-_No tests implemented yet._
+#### Examples
 
-## Project Structure / Architecture Overview
+Seed 10 staff and 50 patients:
 
-- Project is located in `tools/PatientPortal.SeedTool`
-- Designed to interact with the PatientPortal database
+```sh
+dotnet run --project tools/PatientPortal.SeedTool --staff 10 --patients 50
+```
 
-## Documentation
+Seed only preset demo users:
 
-- No additional documentation at this time.
+```sh
+dotnet run --project tools/PatientPortal.SeedTool --presets
+```
 
-## Deployment Notes
+Seed messages for all links:
 
-- Intended for local and test environment use only
+```sh
+dotnet run --project tools/PatientPortal.SeedTool --messages
+```
 
-## Roadmap / Future Improvements
+Use a custom connection string:
 
-- TBD
+```sh
+dotnet run --project tools/PatientPortal.SeedTool --staff 5 --connection-string "Server=localhost;..."
+```
+
+## Usage Notes
+
+> [!IMPORTANT]
+> This tool is intended for local, test, and demo/portfolio use only.
+
+To populate a deployed instance with seeded data, export a dump from your local database and import it on the target server. When using Docker, you can seed a fresh MySQL container by mounting a `.sql` dump into `/docker-entrypoint-initdb.d` — the MySQL image will execute it on first startup. See the [MySQL Docker image docs](https://hub.docker.com/_/mysql#initializing-a-fresh-instance) for details.
 
 ## License
 
