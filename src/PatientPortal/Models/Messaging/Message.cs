@@ -1,5 +1,4 @@
-//using system not needed once console.writeline removed...
-//
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +11,7 @@ namespace PatientPortal.Models
         public int MessageId { get; set; }
 
         [Required]
-        public string MessageText { get; set; }
+        public required string MessageText { get; set; }
 
         public int MessagingLinkId { get; set; }
         public int ConversationId { get; set; }
@@ -22,8 +21,8 @@ namespace PatientPortal.Models
 
         //========================================================
 
-        public MessagingLink Sender { get; set; }
-        public Conversation Conversation { get; set; }
-        public List<Unread> UnreadBy { get; set; }
+        public MessagingLink? Sender { get; set; }
+        public Conversation? Conversation { get; set; }
+        public List<Unread> UnreadBy { get; set; } = [];
     }
 }
