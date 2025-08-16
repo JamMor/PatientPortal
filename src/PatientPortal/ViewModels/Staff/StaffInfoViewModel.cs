@@ -7,7 +7,7 @@ namespace PatientPortal.Models
     public class StaffInfoViewModel
     {
         public int StaffId { get; set; }
-        public int MessagingLinkId { get; set; }
+        public int? MessagingLinkId { get; set; }
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
         public required string Role { get; set; }

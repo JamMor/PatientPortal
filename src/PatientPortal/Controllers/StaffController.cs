@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ using PatientPortal.Authorization;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 using PatientPortal.Extensions;
+using PatientPortal.DTOs;
+using System;
 
 namespace PatientPortal.Controllers
 {
@@ -53,26 +56,53 @@ namespace PatientPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _staffRegistrationService.RegisterStaffAsync(staffFormView);
-
-                if (result.Succeeded)
+                try
                 {
-                    return RedirectToAction("StaffInfo", "Staff", new { staffId = result.Value.StaffId });
-                }
+                    var staffAccountDTO = staffFormView.ToAccountDTO();
+                    var staffDTO = staffFormView.ToStaffDTO();
 
-                result.AddErrorDictionaryToModelState(ModelState,
-                    usernameField: nameof(StaffFormView.StaffUsername),
-                    passwordField: nameof(StaffFormView.Password),
-                    confirmPasswordField: nameof(StaffFormView.ConfirmPassword)
-                );
+                    var result = await _staffRegistrationService.RegisterStaffAsync(
+                        staffAccountDTO,
+                        staffDTO
+                    );
+
+                    if (result.Succeeded && result.Value != null)
+                    {
+                        return RedirectToAction(
+                            "StaffInfo",
+                            "Staff",
+                            new { staffId = result.Value.StaffId }
+                        );
+                    }
+
+                    result.AddErrorDictionaryToModelState(
+                        ModelState,
+                        usernameField: nameof(StaffFormView.StaffUsername),
+                        passwordField: nameof(StaffFormView.Password),
+                        confirmPasswordField: nameof(StaffFormView.ConfirmPassword)
+                    );
+                }
+                catch
+                {
+                    // Log the exception (not implemented here)
+                    ModelState.AddModelError(
+                        string.Empty,
+                        "An unexpected error occurred while creating the staff member."
+                    );
+                }
             }
+
             return View("StaffForm");
         }
 
         [HttpGet("{staffId}")]
         public IActionResult StaffInfo(int staffId)
         {
-            StaffInfoViewModel staffInfo = _staffViewService.GetStaffInfo(staffId);
+            StaffInfoViewModel? staffInfo = _staffViewService.GetStaffInfo(staffId);
+            if (staffInfo == null)
+            {
+                return NotFound();
+            }
 
             return View("StaffInfo", staffInfo);
         }

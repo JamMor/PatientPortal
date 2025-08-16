@@ -1,15 +1,17 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using PatientPortal.Models;
+using PatientPortal.DTOs;
 
 namespace PatientPortal.Interfaces
 {
     public interface IStaffService : IDisposable
     {
         //Commands
-        Staff CreateStaff(StaffFormView staffInfo, IdentityUser user);
+        Staff CreateStaff(StaffDTO staffDTO, IdentityUser user);
         void DeleteStaff(int staffId);
 
         //Queries

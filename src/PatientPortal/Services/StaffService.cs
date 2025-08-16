@@ -1,9 +1,11 @@
+#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
+using PatientPortal.DTOs;
 
 namespace PatientPortal.Services
 {
@@ -17,13 +19,13 @@ namespace PatientPortal.Services
 
         //COMMANDS
         // Creates NON-admin staff, with auth
-        public Staff CreateStaff(StaffFormView staffFormView, IdentityUser user)
+        public Staff CreateStaff(StaffDTO staffDTO, IdentityUser user)
         {
             Staff newStaff = new Staff()
             {
-                FirstName = staffFormView.FirstName,
-                LastName = staffFormView.LastName,
-                Role = staffFormView.Role,
+                FirstName = staffDTO.FirstName,
+                LastName = staffDTO.LastName,
+                Role = staffDTO.Role,
                 User = user,
                 IsAdmin = false,
                 MessagingLink = new MessagingLink(),
@@ -40,7 +42,7 @@ namespace PatientPortal.Services
 
         public void DeleteStaff(int staffId)
         {
-            Staff deletedStaff = _context.Staff
+            Staff? deletedStaff = _context.Staff
                 .Include(s => s.MessagingLink)
                 .SingleOrDefault(staff => staff.StaffId == staffId);
             if(deletedStaff != null)

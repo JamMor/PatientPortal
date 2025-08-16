@@ -1,9 +1,11 @@
+#nullable enable
 using System.Threading.Tasks;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 using PatientPortal.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using PatientPortal.DTOs;
 
 namespace PatientPortal.Services
 {
@@ -23,20 +25,20 @@ namespace PatientPortal.Services
             _context = context;
         }
 
-        public async Task<ExtendedIdentityResult<Staff>> RegisterStaffAsync(StaffFormView staffFormView)
+        public async Task<ExtendedIdentityResult<Staff>> RegisterStaffAsync(AccountDTO accountDTO, StaffDTO staffDTO)
         {
             // Create Identity user account
             var createUserResult = await _authService.CreateUserAsync(
-                staffFormView.StaffUsername,
-                staffFormView.Password
+                accountDTO.Username,
+                accountDTO.Password
             );
 
-            if (!createUserResult.Succeeded)
+            if (!createUserResult.Succeeded || createUserResult.Value == null)
             {
                 return ExtendedIdentityResult<Staff>.Failure(createUserResult.IdentityResult);
             }
 
-            Staff staff = _staffService.CreateStaff(staffFormView, createUserResult.Value);
+            Staff staff = _staffService.CreateStaff(staffDTO, createUserResult.Value);
 
             return ExtendedIdentityResult<Staff>.Success(staff);
         }
@@ -47,7 +49,7 @@ namespace PatientPortal.Services
 
             try
             {
-                Staff staffToDelete = await _staffService.GetStaffbyId(staffId)
+                Staff? staffToDelete = await _staffService.GetStaffbyId(staffId)
                     .Include(s => s.User)
                     .SingleOrDefaultAsync();
 
