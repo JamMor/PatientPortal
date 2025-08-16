@@ -1,3 +1,5 @@
+#nullable enable
+// Form Input Model
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,9 +12,8 @@ namespace PatientPortal.Models
     public class ReplyView
     {
         public int ConversationId { get; set; }
-        
-        [Display(Name = "Reply: ")]
-        public string MessageText { get; set; }
-    }
 
+        [Display(Name = "Reply: ")]
+        public string? MessageText { get; set; }
+    }
 }

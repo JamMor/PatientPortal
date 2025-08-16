@@ -1,3 +1,5 @@
+#nullable enable
+// Form Input Model
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,16 +10,17 @@ namespace PatientPortal.Models
     [NotMapped]
     public class NewConversationFormView
     {
-        public List<Recipient> Recipients { get; set; }
-        public Recipient PatientRecipient { get; set; }
-        public string Subject { get; set; }
+        public List<Recipient> Recipients { get; set; } = [];
+        public Recipient? PatientRecipient { get; set; }
+        public string? Subject { get; set; }
+
         [Required]
-        public string MessageText { get; set; }
-        public bool WithPatient 
+        public string? MessageText { get; set; }
+        public bool WithPatient
         {
             get
             {
-                if(PatientRecipient == null)
+                if (PatientRecipient == null)
                 {
                     return false;
                 }
@@ -33,9 +36,8 @@ namespace PatientPortal.Models
     public class Recipient
     {
         public int LinkId { get; set; }
-        public string Name { get; set; }
-        public string Role { get; set; }
+        public required string Name { get; set; }
+        public required string Role { get; set; }
         public bool Selected { get; set; } = false;
-
     }
 }
