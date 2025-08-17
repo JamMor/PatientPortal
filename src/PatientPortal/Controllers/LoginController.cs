@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PatientPortal.Interfaces;
 using PatientPortal.Extensions;
+using PatientPortal.DTOs;
 
 namespace PatientPortal.Controllers
 {
@@ -42,14 +43,20 @@ namespace PatientPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _authService.SignInAsync(loginInfo.StaffUsername, loginInfo.LoginPassword);
-
-                if (result.Succeeded)
+                try
                 {
-                    return RedirectToAction("Index");
+                    var loginDTO = loginInfo.ToLoginStaffDTO();
+                    var result = await _authService.SignInAsync(loginDTO.StaffUsername, loginDTO.LoginPassword);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    result.AddErrorToModelState(ModelState);
                 }
-                
-                result.AddErrorToModelState(ModelState);
+                catch
+                {
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the account.");
+                }                
             }
             return View("StaffLogin");
         }

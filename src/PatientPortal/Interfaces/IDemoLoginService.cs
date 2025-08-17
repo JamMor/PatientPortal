@@ -10,6 +10,6 @@ namespace PatientPortal.Interfaces
     {
         List<DemoLoginViewModel> GetAllStaff();
         Task<ExtendedIdentityResult<Staff>> CreateAdmin();
-        Task LoginStaffById(int staffId);
+        Task<bool> LoginStaffById(int staffId);
     }
 }
