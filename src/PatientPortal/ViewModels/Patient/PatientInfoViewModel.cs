@@ -8,7 +8,7 @@ namespace PatientPortal.Models
     {
         public required PatientHeaderInfoView PatientHeader { get; set; }
         public int PatientId { get; set; }
-        public int MessagingLinkId { get; set; }
+        public int? MessagingLinkId { get; set; }
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
         public DateTime DOB { get; set; }

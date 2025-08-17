@@ -17,7 +17,7 @@ namespace PatientPortal.Services
         //COMMANDS
         public void AddStaffToPatientTeam(int patientId, int staffId)
         {
-            PatientStaffConnection oldLink = _context.PatientStaffConnections
+            PatientStaffConnection? oldLink = _context.PatientStaffConnections
                 .FirstOrDefault(link => link.PatientId == patientId && link.StaffId == staffId);
 
             if (oldLink == null)
@@ -34,7 +34,7 @@ namespace PatientPortal.Services
 
         public void RemoveStaffFromPatientTeam(int patientId, int staffId)
         {
-            PatientStaffConnection oldLink = _context.PatientStaffConnections
+            PatientStaffConnection? oldLink = _context.PatientStaffConnections
                 .FirstOrDefault(link => link.PatientId == patientId && link.StaffId == staffId);
 
             if (oldLink != null)

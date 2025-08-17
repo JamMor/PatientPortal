@@ -8,7 +8,7 @@ namespace PatientPortal.Models
     public class PatientHeaderInfoView
     {
         public int CurrentPatientId { get; set; }
-        public int CurrentPatientLinkId { get; set; }
+        public int? CurrentPatientLinkId { get; set; }
         public required string CurrentPatientFirstName { get; set; }
         public required string CurrentPatientLastName { get; set; }
         public required string CurrentPatientSSN { get; set; }
