@@ -9,6 +9,7 @@ using PatientPortal.Models;
 using PatientPortal.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using PatientPortal.Authorization;
+using PatientPortal.DTOs;
 
 namespace PatientPortal.Controllers
 {
@@ -32,23 +33,52 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult TestResultAdd(int patientId)
         {
-            TestResultFormView viewModel = _testResultViewService.ReturnTestResultFormView(patientId);
+            TestResultFormView? viewModel = _testResultViewService.ReturnTestResultFormView(patientId);
+            if(viewModel == null)
+            {
+                return NotFound();
+            }
                 
             return View("TestResultForm", viewModel);
         }
 
         [HttpPost("")]
-        public IActionResult TestResultCreate(int patientId, TestResultFormView formData)
+        public IActionResult TestResultCreate(int patientId, TestResultForm formData)
         {
-            if(ModelState.IsValid)
+            if(!staffId.HasValue)
             {
-                _testResultService.CreateTestResult(patientId, (int)staffId, formData);
-                return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+                return StatusCode(500, "Unable to retrieve staff information. Please ensure you are logged in and try again.");
             }
 
-            formData.Patient = _patientViewService.GetPatientInfoHeader(patientId);
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    var testResultDTO = formData.ToTestResultDTO();
+                    _testResultService.CreateTestResult(patientId, (int)staffId, testResultDTO);
+                    
+                    return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+                }
+                catch
+                {
+                    // Log the exception (not implemented here)
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the test result.");
+                }
+            }
+
+            var patientHeader = _patientViewService.GetPatientInfoHeader(patientId);
+            if (patientHeader == null)
+            {
+                return NotFound();
+            }
+
+            TestResultFormView viewModel = new TestResultFormView()
+            {
+                Patient = patientHeader,
+                TestResultForm = formData
+            };
             
-            return View("TestResultForm", formData);
+            return View("TestResultForm", viewModel);
         }
     
         [HttpPost("{testId}/delete")]

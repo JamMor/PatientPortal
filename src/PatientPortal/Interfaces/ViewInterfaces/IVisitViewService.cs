@@ -7,6 +7,6 @@ namespace PatientPortal.Interfaces
 {
     public interface IVisitViewService : IDisposable
     {
-        VisitFormView ReturnVisitFormView(int patientId);
+        VisitFormView? ReturnVisitFormView(int patientId);
     }
 }

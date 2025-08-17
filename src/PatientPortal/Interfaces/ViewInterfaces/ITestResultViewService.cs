@@ -7,6 +7,6 @@ namespace PatientPortal.Interfaces
 {
     public interface ITestResultViewService : IDisposable
     {
-        TestResultFormView ReturnTestResultFormView(int patientId);
+        TestResultFormView? ReturnTestResultFormView(int patientId);
     }
 }

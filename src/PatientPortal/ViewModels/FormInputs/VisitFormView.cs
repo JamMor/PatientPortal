@@ -9,8 +9,21 @@ namespace PatientPortal.Models
 {
     public class VisitFormView
     {
-        public Visit? Visit { get; set; }
         public required PatientHeaderInfoView Patient { get; set; }
+        public required VisitForm VisitForm { get; set; }
+    }
+
+    public class VisitForm
+    {
+        [Required]
+        [MinLength(5)]
+        public string? Comment { get; set; }
+
+        [Required]
+        [DataType(DataType.Date)]
+        [Display(Name = "Date of Visit")]
+        public DateTime DateOfVisit { get; set; }
+
         public List<HealthIssueCheckbox> HealthIssues { get; set; } = [];
     }
 }

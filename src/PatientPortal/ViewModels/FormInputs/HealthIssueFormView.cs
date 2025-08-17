@@ -10,6 +10,17 @@ namespace PatientPortal.Models
     public class HealthIssueFormView
     {
         public required PatientHeaderInfoView Patient { get; set; }
-        public HealthIssue? HealthIssue { get; set; }
+        public required HealthIssueForm HealthIssueForm { get; set; }
+    }
+
+    public class HealthIssueForm
+    {
+        [Required]
+        [MaxLength(30)]
+        [Display(Name = "Short Description")]
+        public string? ShortDescription { get; set; }
+
+        [Display(Name = "Long Description")]
+        public string? LongDescription { get; set; }
     }
 }

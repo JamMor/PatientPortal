@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
@@ -18,16 +19,17 @@ namespace PatientPortal.Services
             _patientService = patientService;
         }
 
-        public VisitFormView ReturnVisitFormView(int patientId)
+        public VisitFormView? ReturnVisitFormView(int patientId)
         {
-            VisitFormView viewModel = _patientService.GetPatientBasicInfo()
+            VisitFormView? viewModel = _patientService.GetPatientBasicInfo()
                 .Include(p => p.HealthIssues)
                 .Select(p => new VisitFormView()
                 {
                     Patient = new PatientHeaderInfoView()
                     {
                         CurrentPatientId = p.PatientId,
-                        CurrentPatientLinkId = p.MessagingLink.MessagingLinkId,
+                        CurrentPatientLinkId =
+                            p.MessagingLink != null ? p.MessagingLink.MessagingLinkId : null,
                         CurrentPatientFirstName = p.FirstName,
                         CurrentPatientLastName = p.LastName,
                         CurrentPatientSSN = p.Last4SSN,
@@ -35,14 +37,17 @@ namespace PatientPortal.Services
                         CurrentPatientAge = p.Age,
                         CurrentPatientCreatedOn = p.CreatedAt
                     },
-                    HealthIssues = p.HealthIssues
-                        .Select(h => new HealthIssueCheckbox()
-                        {
-                            HealthIssueId = h.HealthIssueId,
-                            ShortDescription = h.ShortDescription,
-                            CreatedAt = h.CreatedAt
-                        })
-                        .ToList()
+                    VisitForm = new VisitForm()
+                    {
+                        HealthIssues = p.HealthIssues
+                            .Select(h => new HealthIssueCheckbox()
+                                {
+                                    HealthIssueId = h.HealthIssueId,
+                                    ShortDescription = h.ShortDescription,
+                                    CreatedAt = h.CreatedAt,
+                                })
+                            .ToList()
+                    },
                 })
                 .FirstOrDefault(p => p.Patient.CurrentPatientId == patientId);
 

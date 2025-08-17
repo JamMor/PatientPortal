@@ -1,12 +1,13 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
-using PatientPortal.Models;
+using PatientPortal.DTOs;
 
 namespace PatientPortal.Interfaces
 {
     public interface IHealthIssueService : IDisposable
     {
-        void CreateHealthIssue(int patientId, HealthIssue healthIssueInfo);
+        void CreateHealthIssue(int patientId, HealthIssueDTO healthIssueInfo);
         void DeleteHealthIssue(int patientId, int healthIssueId);
     }
 }

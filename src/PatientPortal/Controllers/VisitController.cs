@@ -9,6 +9,7 @@ using PatientPortal.Models;
 using PatientPortal.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using PatientPortal.Authorization;
+using PatientPortal.DTOs;
 
 namespace PatientPortal.Controllers
 {
@@ -32,24 +33,53 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult VisitAdd(int patientId)
         {
-            VisitFormView viewModel = _visitViewService.ReturnVisitFormView(patientId);
-            
+            VisitFormView? viewModel = _visitViewService.ReturnVisitFormView(patientId);
+            if(viewModel == null)
+            {
+                return NotFound();
+            }
+
             return View("VisitForm", viewModel);
         }
 
         [HttpPost("")]
-        public IActionResult VisitCreate(int patientId, VisitFormView formData)
+        public IActionResult VisitCreate(int patientId, VisitForm formData)
         {
-            if(ModelState.IsValid)
+            if(!staffId.HasValue)
             {
-                _visitService.CreateVisit(patientId, (int)staffId, formData);
-                
-                return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+                return StatusCode(500, "Unable to retrieve staff information. Please ensure you are logged in and try again.");
             }
             
-            formData.Patient = _patientViewService.GetPatientInfoHeader(patientId);
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    var visitDTO = formData.ToVisitDTO();
+                    _visitService.CreateVisit(patientId, (int)staffId, visitDTO);
+                    
+                    return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+                }
+                catch
+                {
+                    // Log the exception (not implemented here)
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the visit.");
+                }
+                
+            }
+
+            var patientHeader = _patientViewService.GetPatientInfoHeader(patientId);
+            if (patientHeader == null)
+            {
+                return NotFound();
+            }
             
-            return View("VisitForm", formData);
+            VisitFormView viewModel = new VisitFormView()
+            {
+                Patient = patientHeader,
+                VisitForm = formData
+            };
+            
+            return View("VisitForm", viewModel);
         }
         
         [HttpPost("{visitId}/delete")]

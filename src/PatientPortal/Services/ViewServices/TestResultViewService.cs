@@ -18,16 +18,17 @@ namespace PatientPortal.Services
             _patientService = patientService;
         }
 
-        public TestResultFormView ReturnTestResultFormView(int patientId)
+        public TestResultFormView? ReturnTestResultFormView(int patientId)
         {
-            TestResultFormView viewModel = _patientService.GetPatientBasicInfo()
+            TestResultFormView? viewModel = _patientService.GetPatientBasicInfo()
                 .Include(p => p.HealthIssues)
                 .Select(p => new TestResultFormView()
                 {
                     Patient = new PatientHeaderInfoView()
                     {
                         CurrentPatientId = p.PatientId,
-                        CurrentPatientLinkId = p.MessagingLink.MessagingLinkId,
+                        CurrentPatientLinkId = 
+                            p.MessagingLink != null ? p.MessagingLink.MessagingLinkId : null,
                         CurrentPatientFirstName = p.FirstName,
                         CurrentPatientLastName = p.LastName,
                         CurrentPatientSSN = p.Last4SSN,
@@ -35,14 +36,17 @@ namespace PatientPortal.Services
                         CurrentPatientAge = p.Age,
                         CurrentPatientCreatedOn = p.CreatedAt
                     },
-                    HealthIssues = p.HealthIssues
-                        .Select(h => new HealthIssueCheckbox()
-                        {
-                            HealthIssueId = h.HealthIssueId,
-                            ShortDescription = h.ShortDescription,
-                            CreatedAt = h.CreatedAt
-                        })
-                        .ToList()
+                    TestResultForm = new TestResultForm()
+                    {
+                        HealthIssues = p.HealthIssues
+                            .Select(h => new HealthIssueCheckbox()
+                                {
+                                    HealthIssueId = h.HealthIssueId,
+                                    ShortDescription = h.ShortDescription,
+                                    CreatedAt = h.CreatedAt,
+                                })
+                            .ToList()
+                    }
                 })
                 .FirstOrDefault(p => p.Patient.CurrentPatientId == patientId);
 
