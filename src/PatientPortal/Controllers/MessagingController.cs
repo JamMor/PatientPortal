@@ -10,6 +10,7 @@ using PatientPortal.Authorization;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 using PatientPortal.Extensions;
+using PatientPortal.DTOs;
 
 namespace PatientPortal.Controllers
 {
@@ -44,8 +45,13 @@ namespace PatientPortal.Controllers
         {
             paginationSettings.ResultsPerPage = 5;
             
-            bool isUserStaff = User.GetStaffId().HasValue;
             // Check if user can manage patients (staff member)
+            bool isUserStaff = User.GetStaffId().HasValue;
+
+            if(!linkId.HasValue)
+            {
+                return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
+            }
             
             
             //Redirect to appropriate URL's for patient or staff member
@@ -80,7 +86,12 @@ namespace PatientPortal.Controllers
             }
 
             inboxFilters.IsPatientInbox = inbox != InboxType.WithoutPatients;
-            MessageInboxView inboxView = _messagingViewService.ReturnInboxView((int)linkId, inboxFilters, paginationSettings);
+            MessageInboxView? inboxView = _messagingViewService.ReturnInboxView((int)linkId, inboxFilters, paginationSettings);
+
+            if(inboxView == null)
+            {
+                return NotFound();
+            }
 
             return View("Inbox", inboxView);
         }
@@ -88,6 +99,10 @@ namespace PatientPortal.Controllers
         [HttpGet("new")]
         public IActionResult NewConversationForm(int? toLinkId)
         {
+            if(!linkId.HasValue)
+            {
+                return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
+            }
             
             NewConversationFormView newConversationFormViewModel = _messagingViewService.NewConversationForm((int)linkId, toLinkId);
 
@@ -97,10 +112,27 @@ namespace PatientPortal.Controllers
         [HttpPost("new")]
         public IActionResult NewConversation(NewConversationFormView newConversationFormView)
         {
+            if(!linkId.HasValue)
+            {
+                return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
+            }
+
             if(ModelState.IsValid)
             {
-                _messagingService.CreateConversation((int)linkId, newConversationFormView);
-                return RedirectToAction("Inbox");
+                try
+                {
+                    var conversationDTO = newConversationFormView.ToConversationDTO();
+                    var firstMessageDTO = newConversationFormView.ToMessageDTO();
+                    
+                    _messagingService.CreateConversation((int)linkId, conversationDTO, firstMessageDTO);
+                    
+                    return RedirectToAction("Inbox");
+                }
+                catch
+                {
+                    // Log the exception (not implemented here)
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the conversation.");
+                }
             }
 
             return View("NewMessageForm", newConversationFormView);
@@ -110,19 +142,40 @@ namespace PatientPortal.Controllers
         [HttpPost("reply/{conversationId}/new")]
         public IActionResult NewReply(int conversationId, ReplyView newReply)
         {
-            if(ModelState.IsValid)
+            if(!linkId.HasValue)
             {
-                _messagingService.CreateReply((int)linkId, conversationId, newReply);
-
-                return RedirectToAction("Inbox");
+                return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
             }
 
-            return View("Inbox");
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    var newReplyDTO = newReply.ToMessageDTO();
+                    
+                    _messagingService.CreateReply((int)linkId, conversationId, newReplyDTO);
+                    
+                    return RedirectToAction("Inbox");
+                }
+                catch
+                {
+                    // Log the exception (not implemented here)
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the reply.");
+                }
+
+            }
+
+            return View("Inbox", newReply);
         }
 
         [HttpPost("message/read")]
         public IActionResult MarkRead(int messageId)
         {
+            if(!linkId.HasValue)
+            {
+                return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
+            }
+
             bool markedRead = _messagingService.MarkRead((int)linkId, messageId);
 
             if(markedRead)
