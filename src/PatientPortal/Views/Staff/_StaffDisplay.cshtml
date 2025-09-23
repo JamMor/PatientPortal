@@ -1,13 +1,9 @@
 @model StaffManagerView
 
 @{
-var search = new Dictionary<string, string>
-            {
-                {"SearchPatientId", @Model.SearchBar.SearchStaffId.ToString()},
-                {"SearchFirstName", @Model.SearchBar.SearchFirstName},
-                {"SearchLastName", @Model.SearchBar.SearchLastName},
-                {"SearchRole", @Model.SearchBar.SearchRole}
-            };
+    var search = Context.Request.Query
+        .Where(q => q.Key != "CurrentPage")
+        .ToDictionary(q => q.Key, q => q.Value.ToString());
 }
 
 <div class="d-flex">
