@@ -42,7 +42,7 @@
                     <a asp-controller="Staff" asp-action="StaffManager" 
                     asp-all-route-data="search"
                     asp-route-ResultsPerPage="@Model.PaginationSettings.ResultsPerPage"
-                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == @sortField ? Model.PaginationSettings.Reverse() : "desc")'>
+                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == sortField ? Model.PaginationSettings.Reverse() : "desc")'>
                         @sortOption
                     </a>
                 </th>
@@ -55,7 +55,7 @@
     </thead>
     <tbody>
         @{
-            if(@Model.SearchResults.Count == 0)
+            if(Model.SearchResults.Count == 0)
             {
                 <tr>
                     <td colspan="6" class="text-center text-muted">No staff to display.</td>
@@ -64,7 +64,7 @@
         }
         @{
             int i = 1;
-            foreach (StaffResult staffmember in @Model.SearchResults)
+            foreach (StaffResult staffmember in Model.SearchResults)
             {
                 <tr>
                     <td class="text-muted">@(Model.PaginationSettings.ResultsPerPage*(Model.PaginationSettings.CurrentPage - 1) + i)</td>

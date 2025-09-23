@@ -42,7 +42,7 @@
                     <a asp-controller="Patients" asp-action="PatientManager" 
                     asp-all-route-data="search"
                     asp-route-ResultsPerPage="@Model.PaginationSettings.ResultsPerPage"
-                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == @sortField ? Model.PaginationSettings.Reverse() : "desc")'>
+                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == sortField ? Model.PaginationSettings.Reverse() : "desc")'>
                         @sortOption
                     </a>
                 </th>
@@ -54,7 +54,7 @@
     </thead>
     <tbody>
         @{
-            if(@Model.SearchResults.Count == 0)
+            if(Model.SearchResults.Count == 0)
             {
                 <tr>
                     <td colspan="5" class="text-center text-muted">No patients to display.</td>
@@ -63,12 +63,12 @@
         }
         @{
             int i = 1;
-            foreach (PatientResult patient in @Model.SearchResults)
+            foreach (PatientResult patient in Model.SearchResults)
             {
                 <tr>
                     <td class="text-muted">@(Model.PaginationSettings.ResultsPerPage*(Model.PaginationSettings.CurrentPage - 1) + i)</td>
                     <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
-                    <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
+                    <td>@string.Format("{0:MM/dd/yyyy}", patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
                     <td>#@patient.PatientId.ToString("D6")</td>
                     <td>@patient.Last4SSN</td>
                 </tr>

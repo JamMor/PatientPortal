@@ -11,21 +11,21 @@
     </thead>
     <tbody class="accordion" id="conversation-container">
         @{
-            if(@Model.Conversations.Count == 0)
+            if(Model.Conversations.Count == 0)
             {
                 <tr>
                     <td colspan="4" class="text-center text-muted">No conversations to display.</td>
                 </tr>
             }
         }
-        @foreach (InboxConversation conversation in @Model.Conversations)
+        @foreach (InboxConversation conversation in Model.Conversations)
         {
-            string members = @String.Join(", ", conversation.Participating.Select(p => p.Name));
-            <tr data-toggle="collapse" data-target="#conversation-@conversation.ConversationId" class='collapsed @(@conversation.UnreadCount() > 0 ? "bg-light font-weight-bold" : "")'>
+            string members = String.Join(", ", conversation.Participating.Select(p => p.Name));
+            <tr data-toggle="collapse" data-target="#conversation-@conversation.ConversationId" class='collapsed @(conversation.UnreadCount() > 0 ? "bg-light font-weight-bold" : "")'>
                 <td class="text-truncate td-member" data-toggle="tooltip" title="@members">
                     @members
                 </td>
-                @if(@conversation.Subject != null)
+                @if(conversation.Subject != null)
                 {
                     <td>@conversation.Subject</td>
                 }
@@ -41,13 +41,13 @@
                     <div class="m-2 pl-5 collapse shadow-sm" id="conversation-@conversation.ConversationId" data-parent="#conversation-container">
                         @foreach (InboxMessage message in conversation.Messages)
                         {   
-                            <div id="message-@message.MessageId" class='d-flex p-1 @(@message.Unread ? "bg-light font-weight-bold unread" : "")'>
-                                <p class="font-weight-bold text-info">@conversation.Participating.SingleOrDefault(p => p.LinkId == message.SenderId).Name:</p>
+                            <div id="message-@message.MessageId" class='d-flex p-1 @(message.Unread ? "bg-light font-weight-bold unread" : "")'>
+                                <p class="font-weight-bold text-info">@(conversation.Participating.SingleOrDefault(p => p.LinkId == message.SenderId)?.Name ?? "(unknown)"):</p>
                                 <p class="col-8" colspan="2">@message.MessageText</p>
                                 <p class="text-secondary">@message.Sent</p>
                             </div>
                         }
-                            <partial name="_NewReply.cshtml" model="new ReplyView(){ConversationId = @conversation.ConversationId}" />
+                            <partial name="_NewReply.cshtml" model="new ReplyView(){ConversationId = conversation.ConversationId}" />
                     </div>
 
                 </td>
