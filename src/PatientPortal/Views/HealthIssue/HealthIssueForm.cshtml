@@ -5,14 +5,14 @@
 <h3>New Health Issue: </h3>
 <form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@Model.Patient.CurrentPatientId" method="post">
     <div class="form-group">
-        <label class="form-label" asp-for="HealthIssue.ShortDescription"></label>
-        <span class="text-danger" asp-validation-for="HealthIssue.ShortDescription"></span>
-        <input class="form-control" asp-for="HealthIssue.ShortDescription">
+        <label class="form-label" asp-for="HealthIssueForm.ShortDescription"></label>
+        <span class="text-danger" asp-validation-for="HealthIssueForm.ShortDescription"></span>
+        <input class="form-control" asp-for="HealthIssueForm.ShortDescription">
     </div>
     <div class="form-group">
-        <label class="form-label" asp-for="HealthIssue.LongDescription"></label>
-        <span class="text-danger" asp-validation-for="HealthIssue.LongDescription"></span>
-        <textarea class="form-control" asp-for="HealthIssue.LongDescription"></textarea>
+        <label class="form-label" asp-for="HealthIssueForm.LongDescription"></label>
+        <span class="text-danger" asp-validation-for="HealthIssueForm.LongDescription"></span>
+        <textarea class="form-control" asp-for="HealthIssueForm.LongDescription"></textarea>
     </div>
     <div class="form-group">
         <label class="form-label" for="Upload"></label>
