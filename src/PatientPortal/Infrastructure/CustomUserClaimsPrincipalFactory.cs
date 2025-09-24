@@ -28,7 +28,7 @@ namespace PatientPortal.Infrastructure
             // Look up Staff record associated with this Identity user
             var staff = await _context.Staff
                 .Include(s => s.MessagingLink)
-                .FirstOrDefaultAsync(s => s.User.Id == user.Id);
+                .FirstOrDefaultAsync(s => s.User!.Id == user.Id);
 
             if (staff != null)
             {
@@ -38,7 +38,9 @@ namespace PatientPortal.Infrastructure
                 identity.AddClaim(new Claim(ClaimTypes.Role, staff.Role));
                 identity.AddClaim(new Claim("StaffId", staff.StaffId.ToString()));
                 identity.AddClaim(new Claim("IsAdmin", staff.IsAdmin.ToString(), ClaimValueTypes.Boolean));
-                identity.AddClaim(new Claim("MessageLinkId", staff.MessagingLink.MessagingLinkId.ToString()));
+
+                if (staff.MessagingLink != null)
+                    identity.AddClaim(new Claim("MessageLinkId", staff.MessagingLink.MessagingLinkId.ToString()));
             }
 
             return identity;

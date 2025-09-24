@@ -13,7 +13,7 @@ namespace PatientPortal.Extensions
         /// </summary>
         public static int? GetStaffId(this ClaimsPrincipal user)
         {
-            var claim = user?.FindFirst("StaffId")?.Value;
+            var claim = user.FindFirst("StaffId")?.Value;
             return int.TryParse(claim, out var id) ? id : null;
         }
 
@@ -22,7 +22,7 @@ namespace PatientPortal.Extensions
         /// </summary>
         public static int? GetMessageLinkId(this ClaimsPrincipal user)
         {
-            var claim = user?.FindFirst("MessageLinkId")?.Value;
+            var claim = user.FindFirst("MessageLinkId")?.Value;
             return int.TryParse(claim, out var id) ? id : null;
         }
 
@@ -31,8 +31,8 @@ namespace PatientPortal.Extensions
         /// </summary>
         public static string? GetFullName(this ClaimsPrincipal user)
         {
-            var givenName = user?.FindFirst(ClaimTypes.GivenName)?.Value;
-            var surname = user?.FindFirst(ClaimTypes.Surname)?.Value;
+            var givenName = user.FindFirst(ClaimTypes.GivenName)?.Value;
+            var surname = user.FindFirst(ClaimTypes.Surname)?.Value;
             
             if (string.IsNullOrEmpty(givenName) || string.IsNullOrEmpty(surname))
                 return null;
@@ -46,7 +46,7 @@ namespace PatientPortal.Extensions
         /// </summary>
         public static string? GetRole(this ClaimsPrincipal user)
         {
-            return user?.FindFirst(ClaimTypes.Role)?.Value;
+            return user.FindFirst(ClaimTypes.Role)?.Value;
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace PatientPortal.Extensions
         /// </summary>
         public static bool IsAdmin(this ClaimsPrincipal user)
         {
-            var claim = user?.FindFirst("IsAdmin")?.Value;
+            var claim = user.FindFirst("IsAdmin")?.Value;
             return bool.TryParse(claim, out var isAdmin) && isAdmin;
         }
     }
