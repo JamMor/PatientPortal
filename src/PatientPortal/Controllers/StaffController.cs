@@ -20,18 +20,13 @@ namespace PatientPortal.Controllers
     [Route("/provider/staff")]
     public class StaffController : Controller
     {
-        private int? staffId => User.GetStaffId();
-
-        private IStaffService _staffService;
         private IStaffViewService _staffViewService;
         private IStaffRegistrationService _staffRegistrationService;
 
         public StaffController(
-            IStaffService staffService,
             IStaffViewService staffViewService,
             IStaffRegistrationService staffRegistrationService)
         {
-            _staffService = staffService;
             _staffViewService = staffViewService;
             _staffRegistrationService = staffRegistrationService;
         }
