@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Models;
 using PatientPortal.Services;
 
@@ -59,16 +60,10 @@ public class PatientServiceTests : IDisposable
         var patient = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234", "555-1234", "john.doe@email.com");
         AddPatients(patient);
 
-        var patientFormView = new PatientFormView
-        {
-            FirstName = "John",
-            LastName = "Doe",
-            DOB = new DateTime(1990, 1, 1),
-            Last4SSN = "1234"
-        };
+        var patientDTO = new PatientDTO("John", "Doe", new DateTime(1990, 1, 1), "1234", null, null, null);
 
         // Act
-        var result = _patientService.DoesPatientExist(patientFormView);
+        var result = _patientService.DoesPatientExist(patientDTO);
 
         // Assert
         Assert.True(result);
@@ -78,16 +73,10 @@ public class PatientServiceTests : IDisposable
     public void DoesPatientExist_WithNonExistingPatient_ReturnsFalse()
     {
         // Arrange
-        var patientFormView = new PatientFormView
-        {
-            FirstName = "Jane",
-            LastName = "Smith",
-            DOB = new DateTime(1985, 5, 15),
-            Last4SSN = "5678"
-        };
+        var patientDTO = new PatientDTO("Jane", "Smith", new DateTime(1985, 5, 15), "5678", null, null, null);
 
         // Act
-        var result = _patientService.DoesPatientExist(patientFormView);
+        var result = _patientService.DoesPatientExist(patientDTO);
 
         // Assert
         Assert.False(result);
@@ -97,18 +86,13 @@ public class PatientServiceTests : IDisposable
     public void CreatePatient_WithValidData_ReturnsPatientId()
     {
         // Arrange
-        var patientFormView = new PatientFormView
-        {
-            FirstName = "Alice",
-            LastName = "Johnson",
-            DOB = new DateTime(1992, 3, 10),
-            Last4SSN = "9876",
-            PhoneNumber = "555-9876",
-            Email = "alice.johnson@email.com"
-        };
+        var patientDTO = new PatientDTO(
+            "Alice", "Johnson", new DateTime(1992, 3, 10), "9876",
+            "555-9876", "alice.johnson@email.com", null
+        );
 
         // Act
-        var patientId = _patientService.CreatePatient(patientFormView);
+        var patientId = _patientService.CreatePatient(patientDTO);
 
         // Assert
         Assert.True(patientId > 0);
@@ -126,25 +110,14 @@ public class PatientServiceTests : IDisposable
     public void CreatePatient_WithAddress_CreatesPatientWithAddress()
     {
         // Arrange
-        var patientFormView = new PatientFormView
-        {
-            FirstName = "Bob",
-            LastName = "Wilson",
-            DOB = new DateTime(1988, 7, 20),
-            Last4SSN = "4321",
-            PhoneNumber = "555-4321",
-            Email = "bob.wilson@email.com",
-            Address = new AddressFormView
-            {
-                StreetAddress = "123 Main St",
-                City = "Anytown",
-                State = "CA",
-                ZipCode = "12345"
-            }
-        };
+        var patientDTO = new PatientDTO(
+            "Bob", "Wilson", new DateTime(1988, 7, 20), "4321",
+            "555-4321", "bob.wilson@email.com",
+            new AddressDTO("123 Main St", "Anytown", "CA", "12345")
+        );
 
         // Act
-        var patientId = _patientService.CreatePatient(patientFormView);
+        var patientId = _patientService.CreatePatient(patientDTO);
 
         // Assert
         var createdPatient = _context.Patients
@@ -460,16 +433,13 @@ public class PatientServiceTests : IDisposable
         var patient = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234");
         AddPatients(patient);
 
-        var patientFormView = new PatientFormView
-        {
-            FirstName = "John",
-            LastName = "Doe",
-            DOB = new DateTime(1990, 1, 1),
-            Last4SSN = "9999" // Different SSN
-        };
+        var patientDTO = new PatientDTO(
+            "John", "Doe", new DateTime(1990, 1, 1), "9999",
+            null, null, null
+        );
 
         // Act
-        var result = _patientService.DoesPatientExist(patientFormView);
+        var result = _patientService.DoesPatientExist(patientDTO);
 
         // Assert
         Assert.False(result);
@@ -479,17 +449,13 @@ public class PatientServiceTests : IDisposable
     public void CreatePatient_WithNullAddress_CreatesPatientWithoutAddress()
     {
         // Arrange
-        var patientFormView = new PatientFormView
-        {
-            FirstName = "NoAddress",
-            LastName = "Patient",
-            DOB = new DateTime(1990, 1, 1),
-            Last4SSN = "0000",
-            Address = null
-        };
+        var patientDTO = new PatientDTO(
+            "NoAddress", "Patient", new DateTime(1990, 1, 1), "0000",
+            null, null, null
+        );
 
         // Act
-        var patientId = _patientService.CreatePatient(patientFormView);
+        var patientId = _patientService.CreatePatient(patientDTO);
 
         // Assert
         var createdPatient = _context.Patients

@@ -73,6 +73,16 @@ List all options:
 dotnet test -?
 ```
 
+List all tests:
+```sh
+dotnet test -p:TestingPlatformCaptureOutput=false -- --list-tests
+```
+
+> [!TIP]
+> `--list-tests` only works when the Platform Capture Output option is disabled.
+> - [xunit Github issue](https://github.com/xunit/xunit/issues/3092#issuecomment-2556234421)
+> - [Microsoft: Show Complete Platform Output](https://learn.microsoft.com/en-us/dotnet/core/testing/microsoft-testing-platform-integration-dotnet-test#show-complete-platform-output)
+
 ## Example Test
 
 ```csharp
