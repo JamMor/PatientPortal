@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Models;
 using PatientPortal.Services;
 
@@ -55,18 +56,11 @@ public class StaffServiceTests : IDisposable
     public void CreateStaff_WithValidData_ReturnsStaff()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Jane",
-            LastName = "Nurse",
-            StaffUsername = "jnurse",
-            Password = "password123",
-            Role = "Nurse"
-        };
+        var staffDTO = new StaffDTO("Jane", "Nurse", "Nurse");
         var identityUser = new IdentityUser { UserName = "jnurse" };
 
         // Act
-        var createdStaff = _staffService.CreateStaff(staffFormView, identityUser);
+        var createdStaff = _staffService.CreateStaff(staffDTO, identityUser);
 
         // Assert
         Assert.NotNull(createdStaff);
@@ -330,18 +324,11 @@ public class StaffServiceTests : IDisposable
     public void CreateStaff_SetsIsAdminFalse_ByDefault()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "New",
-            LastName = "Staff",
-            StaffUsername = "newstaff",
-            Password = "password",
-            Role = "Doctor"
-        };
+        var staffDTO = new StaffDTO("New", "Staff", "Doctor");
         var identityUser = new IdentityUser { UserName = "newstaff" };
 
         // Act
-        var createdStaff = _staffService.CreateStaff(staffFormView, identityUser);
+        var createdStaff = _staffService.CreateStaff(staffDTO, identityUser);
 
         // Assert
         Assert.NotNull(createdStaff);
@@ -352,18 +339,11 @@ public class StaffServiceTests : IDisposable
     public void CreateStaff_CreatesMessagingLink_Automatically()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Link",
-            LastName = "Test",
-            StaffUsername = "linktest",
-            Password = "password",
-            Role = "Nurse"
-        };
+        var staffDTO = new StaffDTO("Link", "Test", "Nurse");
         var identityUser = new IdentityUser { UserName = "linktest" };
 
         // Act
-        var createdStaff = _staffService.CreateStaff(staffFormView, identityUser);
+        var createdStaff = _staffService.CreateStaff(staffDTO, identityUser);
 
         // Assert
         var savedStaff = _context.Staff

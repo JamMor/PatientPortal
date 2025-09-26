@@ -10,11 +10,11 @@
             <th class="col-3">Medical Team</th>
             <td>
                 <ul class="list-group list-group-flush">
-                    @foreach (StaffInfo staff in @Model.MedicalTeam)
+                    @foreach (StaffInfo staff in Model.MedicalTeam)
                     {
                         <li class="list-group-item pl-0 d-flex">
                             <p class="my-0 mr-auto">@staff.FullName, @staff.Role</p> 
-                            @if(@staff.StaffId == @User.GetStaffId())
+                            @if(staff.StaffId == User.GetStaffId())
                             {
                             <form asp-controller="Patients" asp-action="MedicalTeamLeave" asp-route-patientId="@Model.PatientId">
                                 <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
@@ -22,7 +22,7 @@
                             }
                         </li>
                     }
-                    @if(!@Model.MedicalTeam.Any(staff => staff.StaffId == @User.GetStaffId()))
+                    @if(!Model.MedicalTeam.Any(staff => staff.StaffId == User.GetStaffId()))
                     {
                         <li class="list-group-item text-right">
                             <form asp-controller="Patients" asp-action="MedicalTeamJoin" asp-route-patientId="@Model.PatientId">
@@ -37,7 +37,7 @@
             <th class="col-3">Health Issues</th>
             <td>
                 <ul class="list-group list-group-flush">
-                    @foreach (HealthIssueInfo issue in @Model.HealthIssues)
+                    @foreach (HealthIssueInfo issue in Model.HealthIssues)
                     {
                         <li class="card list-group-item">
                             <h6 class="card-header collapsed text-link" data-toggle="collapse" data-target="#issue-detail-@issue.HealthIssueId" aria-expanded="true" aria-controls="issue-detail-@issue.HealthIssueId">
@@ -69,7 +69,7 @@
             <th class="col-3">Visits</th>
             <td>
                 <ul class="list-group list-group-flush">
-                    @foreach (VisitInfo visit in @Model.Visits)
+                    @foreach (VisitInfo visit in Model.Visits)
                     {
                         <li class="card list-group-item">
                             <h6 class="card-header collapsed text-link" data-toggle="collapse" data-target="#visit-detail-@visit.VisitId" aria-expanded="true" aria-controls="issue-detail-@visit.VisitId">
@@ -99,7 +99,7 @@
             <th class="col-3">Tests</th>
             <td>
                 <ul class="list-group list-group-flush">
-                    @foreach (TestResultInfo test in @Model.TestResults)
+                    @foreach (TestResultInfo test in Model.TestResults)
                     {
                         <li class="card list-group-item">
                             <h6 class="card-header collapsed text-link" data-toggle="collapse" data-target="#test-detail-@test.TestResultId" aria-expanded="true" aria-controls="test-detail-@test.TestResultId">

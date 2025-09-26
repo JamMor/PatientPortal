@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PatientPortal.DTOs;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
@@ -9,16 +10,16 @@ namespace PatientPortal.Interfaces
     {
         //COMMANDS
         
-        void CreateConversation(int linkId, NewConversationFormView newConversationFormView);
-        void CreateReply(int linkId, int conversationId, ReplyView newReply);
+        void CreateConversation(int linkId, ConversationDTO newConversationDTO, MessageDTO firstMessageDTO);
+        void CreateReply(int linkId, int conversationId, MessageDTO newReply);
         bool MarkRead(int linkId, int messageId);
 
         //QUERIES
 
-        MessagingLink GetMessagingLink(int linkId);
+        MessagingLink? GetMessagingLink(int linkId);
         int GetUnreadTotalCount(MessagingLink messagingLink);
         int GetUnreadPatientCount(MessagingLink messagingLink);
-        Recipient GetPatientRecipient(int? toLinkId);
+        Recipient? GetPatientRecipient(int? toLinkId);
         List<Recipient> GetAllOtherStaffAsRecipients(int linkId, int? toLinkId);
         IQueryable<Conversation> GetAllConversationsForInbox(int linkId, ConversationSearch inboxFilters);
 

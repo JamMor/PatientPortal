@@ -1,8 +1,7 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using PatientPortal.Interfaces;
 using PatientPortal.Infrastructure;
+using PatientPortal.Interfaces;
 
 namespace PatientPortal.Services
 {

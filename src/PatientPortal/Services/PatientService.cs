@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
@@ -15,7 +15,7 @@ namespace PatientPortal.Services
         }
 
         //COMMANDS
-        public bool DoesPatientExist(PatientFormView patientInfo)
+        public bool DoesPatientExist(PatientDTO patientInfo)
         {
             return _context.Patients.Any(patient =>
                     patient.Last4SSN == patientInfo.Last4SSN
@@ -24,7 +24,7 @@ namespace PatientPortal.Services
                     && patient.LastName == patientInfo.LastName);
         }
 
-        public int CreatePatient(PatientFormView patientInfo)
+        public int CreatePatient(PatientDTO patientInfo)
         {
             Patient newPatient = new Patient()
             {
@@ -56,7 +56,7 @@ namespace PatientPortal.Services
 
         public void DeletePatient(int patientId)
         {
-            Patient deletedPatient = _context.Patients
+            Patient? deletedPatient = _context.Patients
                 .Include(p => p.MessagingLink)
                 .SingleOrDefault(patient => patient.PatientId == patientId);
             if (deletedPatient != null)

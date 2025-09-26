@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using PatientPortal.Extensions;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
@@ -26,15 +23,21 @@ namespace PatientPortal.Services
             //Adds patient recipient if toLinkId(addressee) is a patient
             if(toLinkId != null)
             {
-                newConversationFormViewModel.PatientRecipient = _messagingService.GetPatientRecipient(toLinkId);
+                var patientRecipient = _messagingService.GetPatientRecipient(toLinkId);
+                if(patientRecipient != null)
+                {
+                    newConversationFormViewModel.PatientRecipient = patientRecipient;
+                }
             }
 
             return newConversationFormViewModel;
         }
 
-        public MessageInboxView ReturnInboxView(int linkId, ConversationSearch inboxFilters, Paginator paginationSettings)
+        public MessageInboxView? ReturnInboxView(int linkId, ConversationSearch inboxFilters, Paginator paginationSettings)
         {
-            MessagingLink messageLink = _messagingService.GetMessagingLink(linkId);
+            MessagingLink? messageLink = _messagingService.GetMessagingLink(linkId);
+            if (messageLink == null) return null;
+
             int unreadTotal = _messagingService.GetUnreadTotalCount(messageLink);
             int unreadPatient = _messagingService.GetUnreadPatientCount(messageLink);
 
@@ -59,10 +62,16 @@ namespace PatientPortal.Services
                         .Select(p => new InboxRecipient()
                         {
                             LinkId = p.MessagingLinkId,
-                            Name = p.MessagingLink.UserType == "Patient" ? 
-                                p.MessagingLink.Patient.FullName() : p.MessagingLink.Staff.FullName(),
-                            Role = p.MessagingLink.UserType == "Patient" ? 
-                                "Patient" : p.MessagingLink.Staff.Role
+                            Name = p.MessagingLink!.PatientId != null 
+                                ? p.MessagingLink.Patient!.FullName() 
+                                : p.MessagingLink.StaffId != null
+                                    ? p.MessagingLink.Staff!.FullName()
+                                    : "Unknown Staff",
+                            Role = p.MessagingLink.PatientId != null 
+                            ? "Patient" 
+                            : p.MessagingLink.StaffId != null
+                                ? p.MessagingLink.Staff!.Role
+                                : "Unknown Role"
                         })
                         .ToList(),
                     Messages = c.Messages

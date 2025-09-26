@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
+using PatientPortal.DTOs;
 using PatientPortal.Infrastructure;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
@@ -42,14 +43,8 @@ public class StaffRegistrationServiceTests : IDisposable
     public async Task RegisterStaffAsync_WithValidData_CreatesUserAndStaff()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "John",
-            LastName = "Doctor",
-            StaffUsername = "jdoctor",
-            Password = "Password123!",
-            Role = "Doctor"
-        };
+        var accountDTO = new AccountDTO("jdoctor", "Password123!");
+        var staffDTO = new StaffDTO("John", "Doctor", "Doctor");
 
         var identityUser = new IdentityUser { UserName = "jdoctor", Id = "user-123" };
         var successResult = new ExtendedIdentityResult<IdentityUser>(
@@ -57,11 +52,11 @@ public class StaffRegistrationServiceTests : IDisposable
             identityUser
         );
 
-        _authService.CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password)
+        _authService.CreateUserAsync(accountDTO.Username, accountDTO.Password)
             .Returns(successResult);
 
         // Act
-        var result = await _registrationService.RegisterStaffAsync(staffFormView);
+        var result = await _registrationService.RegisterStaffAsync(accountDTO, staffDTO);
 
         // Assert
         Assert.True(result.Succeeded);
@@ -78,21 +73,15 @@ public class StaffRegistrationServiceTests : IDisposable
             .Include(s => s.MessagingLink)
             .FirstOrDefaultAsync(s => s.FirstName == "John", cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(savedStaff);
-        await _authService.Received(1).CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password);
+        await _authService.Received(1).CreateUserAsync(accountDTO.Username, accountDTO.Password);
     }
 
     [Fact]
     public async Task RegisterStaffAsync_WithDuplicateUsername_ReturnsFailureWithoutCreatingStaff()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Jane",
-            LastName = "Nurse",
-            StaffUsername = "existinguser",
-            Password = "Password123!",
-            Role = "Nurse"
-        };
+        var accountDTO = new AccountDTO("existinguser", "Password123!");
+        var staffDTO = new StaffDTO("Jane", "Nurse", "Nurse");
 
         var identityError = _errorDescriber.DuplicateUserName("existinguser");
         var failureResult = new ExtendedIdentityResult<IdentityUser>(
@@ -100,11 +89,11 @@ public class StaffRegistrationServiceTests : IDisposable
             null
         );
 
-        _authService.CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password)
+        _authService.CreateUserAsync(accountDTO.Username, accountDTO.Password)
             .Returns(failureResult);
 
         // Act
-        var result = await _registrationService.RegisterStaffAsync(staffFormView);
+        var result = await _registrationService.RegisterStaffAsync(accountDTO, staffDTO);
 
         // Assert
         Assert.False(result.Succeeded);
@@ -114,21 +103,15 @@ public class StaffRegistrationServiceTests : IDisposable
         // Verify no staff was created
         var staffCount = await _context.Staff.CountAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.Equal(0, staffCount);
-        await _authService.Received(1).CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password);
+        await _authService.Received(1).CreateUserAsync(accountDTO.Username, accountDTO.Password);
     }
 
     [Fact]
     public async Task RegisterStaffAsync_WithInvalidPassword_ReturnsFailureWithoutCreatingStaff()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Bob",
-            LastName = "Admin",
-            StaffUsername = "badmin",
-            Password = "weak",
-            Role = "Admin"
-        };
+        var accountDTO = new AccountDTO("badmin", "weak");
+        var staffDTO = new StaffDTO("Bob", "Admin", "Admin");
 
         var identityErrors = new[]
         {
@@ -140,11 +123,11 @@ public class StaffRegistrationServiceTests : IDisposable
             null
         );
 
-        _authService.CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password)
+        _authService.CreateUserAsync(accountDTO.Username, accountDTO.Password)
             .Returns(failureResult);
 
         // Act
-        var result = await _registrationService.RegisterStaffAsync(staffFormView);
+        var result = await _registrationService.RegisterStaffAsync(accountDTO, staffDTO);
 
         // Assert
         Assert.False(result.Succeeded);
@@ -161,14 +144,8 @@ public class StaffRegistrationServiceTests : IDisposable
     public async Task RegisterStaffAsync_SetsIsAdminToFalse()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Alice",
-            LastName = "Therapist",
-            StaffUsername = "atherapist",
-            Password = "Password123!",
-            Role = "Physical Therapist"
-        };
+        var accountDTO = new AccountDTO("atherapist", "Password123!");
+        var staffDTO = new StaffDTO("Alice", "Therapist", "Physical Therapist");
 
         var identityUser = new IdentityUser { UserName = "atherapist" };
         var successResult = new ExtendedIdentityResult<IdentityUser>(
@@ -176,11 +153,11 @@ public class StaffRegistrationServiceTests : IDisposable
             identityUser
         );
 
-        _authService.CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password)
+        _authService.CreateUserAsync(accountDTO.Username, accountDTO.Password)
             .Returns(successResult);
 
         // Act
-        var result = await _registrationService.RegisterStaffAsync(staffFormView);
+        var result = await _registrationService.RegisterStaffAsync(accountDTO, staffDTO);
 
         // Assert
         Assert.True(result.Succeeded);
@@ -191,14 +168,8 @@ public class StaffRegistrationServiceTests : IDisposable
     public async Task RegisterStaffAsync_CreatesMessagingLinkAutomatically()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Charlie",
-            LastName = "Technician",
-            StaffUsername = "ctech",
-            Password = "Password123!",
-            Role = "Lab Technician"
-        };
+        var accountDTO = new AccountDTO("ctech", "Password123!");
+        var staffDTO = new StaffDTO("Charlie", "Technician", "Lab Technician");
 
         var identityUser = new IdentityUser { UserName = "ctech" };
         var successResult = new ExtendedIdentityResult<IdentityUser>(
@@ -206,11 +177,11 @@ public class StaffRegistrationServiceTests : IDisposable
             identityUser
         );
 
-        _authService.CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password)
+        _authService.CreateUserAsync(accountDTO.Username, accountDTO.Password)
             .Returns(successResult);
 
         // Act
-        var result = await _registrationService.RegisterStaffAsync(staffFormView);
+        var result = await _registrationService.RegisterStaffAsync(accountDTO, staffDTO);
 
         // Assert
         Assert.True(result.Succeeded);
@@ -228,14 +199,8 @@ public class StaffRegistrationServiceTests : IDisposable
     public async Task RegisterStaffAsync_LinksStaffToIdentityUser()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Diana",
-            LastName = "Counselor",
-            StaffUsername = "dcounselor",
-            Password = "Password123!",
-            Role = "Counselor"
-        };
+        var accountDTO = new AccountDTO("dcounselor", "Password123!");
+        var staffDTO = new StaffDTO("Diana", "Counselor", "Counselor");
 
         var identityUser = new IdentityUser { UserName = "dcounselor", Id = "user-456" };
         var successResult = new ExtendedIdentityResult<IdentityUser>(
@@ -243,11 +208,11 @@ public class StaffRegistrationServiceTests : IDisposable
             identityUser
         );
 
-        _authService.CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password)
+        _authService.CreateUserAsync(accountDTO.Username, accountDTO.Password)
             .Returns(successResult);
 
         // Act
-        var result = await _registrationService.RegisterStaffAsync(staffFormView);
+        var result = await _registrationService.RegisterStaffAsync(accountDTO, staffDTO);
 
         // Assert
         Assert.True(result.Succeeded);
@@ -260,14 +225,8 @@ public class StaffRegistrationServiceTests : IDisposable
     public async Task RegisterStaffAsync_PopulatesStaffFromFormView()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Edward",
-            LastName = "Specialist",
-            StaffUsername = "especialist",
-            Password = "Password123!",
-            Role = "Specialist"
-        };
+        var accountDTO = new AccountDTO("especialist", "Password123!");
+        var staffDTO = new StaffDTO("Edward", "Specialist", "Specialist");
 
         var identityUser = new IdentityUser { UserName = "especialist" };
         var successResult = new ExtendedIdentityResult<IdentityUser>(
@@ -275,32 +234,26 @@ public class StaffRegistrationServiceTests : IDisposable
             identityUser
         );
 
-        _authService.CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password)
+        _authService.CreateUserAsync(accountDTO.Username, accountDTO.Password)
             .Returns(successResult);
 
         // Act
-        var result = await _registrationService.RegisterStaffAsync(staffFormView);
+        var result = await _registrationService.RegisterStaffAsync(accountDTO, staffDTO);
 
         // Assert
         Assert.True(result.Succeeded);
         var staff = result.Value!;
-        Assert.Equal(staffFormView.FirstName, staff.FirstName);
-        Assert.Equal(staffFormView.LastName, staff.LastName);
-        Assert.Equal(staffFormView.Role, staff.Role);
+        Assert.Equal(staffDTO.FirstName, staff.FirstName);
+        Assert.Equal(staffDTO.LastName, staff.LastName);
+        Assert.Equal(staffDTO.Role, staff.Role);
     }
 
     [Fact]
     public async Task RegisterStaffAsync_ReturnsStaffWithGeneratedId()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Frank",
-            LastName = "Manager",
-            StaffUsername = "fmanager",
-            Password = "Password123!",
-            Role = "Office Manager"
-        };
+        var accountDTO = new AccountDTO("fmanager", "Password123!");
+        var staffDTO = new StaffDTO("Frank", "Manager", "Office Manager");
 
         var identityUser = new IdentityUser { UserName = "fmanager" };
         var successResult = new ExtendedIdentityResult<IdentityUser>(
@@ -308,11 +261,11 @@ public class StaffRegistrationServiceTests : IDisposable
             identityUser
         );
 
-        _authService.CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password)
+        _authService.CreateUserAsync(accountDTO.Username, accountDTO.Password)
             .Returns(successResult);
 
         // Act
-        var result = await _registrationService.RegisterStaffAsync(staffFormView);
+        var result = await _registrationService.RegisterStaffAsync(accountDTO, staffDTO);
 
         // Assert
         Assert.True(result.Succeeded);
@@ -323,14 +276,8 @@ public class StaffRegistrationServiceTests : IDisposable
     public async Task RegisterStaffAsync_WithMultipleErrors_ReturnsAllErrors()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Grace",
-            LastName = "Physician",
-            StaffUsername = "invalid user!",
-            Password = "bad",
-            Role = "Physician"
-        };
+        var accountDTO = new AccountDTO("invalid user!", "bad");
+        var staffDTO = new StaffDTO("Grace", "Physician", "Physician");
 
         var identityErrors = new[]
         {
@@ -343,11 +290,11 @@ public class StaffRegistrationServiceTests : IDisposable
             null
         );
 
-        _authService.CreateUserAsync(staffFormView.StaffUsername, staffFormView.Password)
+        _authService.CreateUserAsync(accountDTO.Username, accountDTO.Password)
             .Returns(failureResult);
 
         // Act
-        var result = await _registrationService.RegisterStaffAsync(staffFormView);
+        var result = await _registrationService.RegisterStaffAsync(accountDTO, staffDTO);
 
         // Assert
         Assert.False(result.Succeeded);

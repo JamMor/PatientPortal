@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.Extensions;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
-using PatientPortal.Extensions;
 
 namespace PatientPortal.Services
 {
@@ -16,7 +14,7 @@ namespace PatientPortal.Services
             _staffService = staffService;
         }
 
-        public StaffInfoViewModel GetStaffInfo(int staffId)
+        public StaffInfoViewModel? GetStaffInfo(int staffId)
         {
             IQueryable<Staff> staffQuery = _staffService.GetStaffbyId(staffId);
             
@@ -24,11 +22,11 @@ namespace PatientPortal.Services
                 .Include(staff => staff.Patients)
                 .Include(staff => staff.MessagingLink);
             
-            StaffInfoViewModel staffInfo = staffQuery
+            StaffInfoViewModel? staffInfo = staffQuery
             .Select(s => new StaffInfoViewModel()
             {
                 StaffId = s.StaffId,
-                MessagingLinkId = s.MessagingLink.MessagingLinkId,
+                MessagingLinkId = s.MessagingLink != null ? s.MessagingLink.MessagingLinkId : null,
                 FirstName = s.FirstName,
                 LastName = s.LastName,
                 Role = s.Role,

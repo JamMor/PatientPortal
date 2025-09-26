@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Models;
 using PatientPortal.Services;
 
@@ -54,14 +55,10 @@ public class HealthIssueServiceTests : IDisposable
     {
         // Arrange
         var patient = CreatePatient();
-        var healthIssue = new HealthIssue
-        {
-            ShortDescription = "Headache",
-            LongDescription = "Recurring headaches for the past week"
-        };
+        var healthIssueDTO = new HealthIssueDTO("Headache", "Recurring headaches for the past week");
 
         // Act
-        _healthIssueService.CreateHealthIssue(patient.PatientId, healthIssue);
+        _healthIssueService.CreateHealthIssue(patient.PatientId, healthIssueDTO);
 
         // Assert
         var savedIssue = _context.HealthIssues.FirstOrDefault();
@@ -76,14 +73,10 @@ public class HealthIssueServiceTests : IDisposable
     {
         // Arrange
         var patient = CreatePatient();
-        var healthIssue = new HealthIssue
-        {
-            ShortDescription = "Back Pain",
-            LongDescription = "Lower back pain"
-        };
+        var healthIssueDTO = new HealthIssueDTO("Back Pain", "Lower back pain");
 
         // Act
-        _healthIssueService.CreateHealthIssue(patient.PatientId, healthIssue);
+        _healthIssueService.CreateHealthIssue(patient.PatientId, healthIssueDTO);
 
         // Assert
         var savedIssue = _context.HealthIssues.FirstOrDefault();
@@ -96,9 +89,9 @@ public class HealthIssueServiceTests : IDisposable
     {
         // Arrange
         var patient = CreatePatient();
-        var issue1 = new HealthIssue { ShortDescription = "Issue 1", LongDescription = "Description 1" };
-        var issue2 = new HealthIssue { ShortDescription = "Issue 2", LongDescription = "Description 2" };
-        var issue3 = new HealthIssue { ShortDescription = "Issue 3", LongDescription = "Description 3" };
+        var issue1 = new HealthIssueDTO("Issue 1", "Description 1");
+        var issue2 = new HealthIssueDTO("Issue 2", "Description 2");
+        var issue3 = new HealthIssueDTO("Issue 3", "Description 3");
 
         // Act
         _healthIssueService.CreateHealthIssue(patient.PatientId, issue1);
@@ -115,14 +108,10 @@ public class HealthIssueServiceTests : IDisposable
     {
         // Arrange
         var patient = CreatePatient();
-        var healthIssue = new HealthIssue
-        {
-            ShortDescription = "Minor Issue"
-            // LongDescription is optional
-        };
+        var healthIssueDTO = new HealthIssueDTO("Minor Issue", null);
 
         // Act
-        _healthIssueService.CreateHealthIssue(patient.PatientId, healthIssue);
+        _healthIssueService.CreateHealthIssue(patient.PatientId, healthIssueDTO);
 
         // Assert
         var savedIssue = _context.HealthIssues.FirstOrDefault();
@@ -135,14 +124,10 @@ public class HealthIssueServiceTests : IDisposable
     {
         // Arrange
         var patient = CreatePatient();
-        var healthIssue = new HealthIssue
-        {
-            ShortDescription = "Test Issue",
-            LongDescription = "Test Description"
-        };
+        var healthIssueDTO = new HealthIssueDTO("Test Issue", "Test Description");
 
         // Act
-        _healthIssueService.CreateHealthIssue(patient.PatientId, healthIssue);
+        _healthIssueService.CreateHealthIssue(patient.PatientId, healthIssueDTO);
 
         // Assert
         var savedIssue = _context.HealthIssues.FirstOrDefault();

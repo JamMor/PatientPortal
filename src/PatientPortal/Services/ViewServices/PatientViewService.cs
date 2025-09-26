@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using PatientPortal.Extensions;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
-using PatientPortal.Extensions;
 
 namespace PatientPortal.Services
 {
@@ -16,14 +13,15 @@ namespace PatientPortal.Services
             _patientService = patientService;
         }
 
-        public PatientHeaderInfoView GetPatientInfoHeader(int patientId)
+        public PatientHeaderInfoView? GetPatientInfoHeader(int patientId)
         {
-            PatientHeaderInfoView header = _patientService
+            PatientHeaderInfoView? header = _patientService
                 .GetPatientBasicInfo()
                 .Select(p => new PatientHeaderInfoView()
                     {
                         CurrentPatientId = p.PatientId,
-                        CurrentPatientLinkId = p.MessagingLink.MessagingLinkId,
+                        CurrentPatientLinkId = 
+                            p.MessagingLink != null ? p.MessagingLink.MessagingLinkId : null,
                         CurrentPatientFirstName = p.FirstName,
                         CurrentPatientLastName = p.LastName,
                         CurrentPatientSSN = p.Last4SSN,
@@ -36,19 +34,25 @@ namespace PatientPortal.Services
                 return header;
         }
 
-        public PatientInfoViewModel GetPatientInfo(int patientId)
+        public PatientInfoViewModel? GetPatientInfo(int patientId)
         {
             IQueryable<Patient> patientQuery = _patientService.GetPatientFullInfo();
 
-            Patient patient = patientQuery
+            Patient? patient = patientQuery
                 .FirstOrDefault(patient => patient.PatientId == patientId);
+
+            if(patient == null)
+            {
+                return null;
+            }
 
             PatientInfoViewModel viewModel = new PatientInfoViewModel()
                     {
                         PatientHeader = new PatientHeaderInfoView()
                         {
                             CurrentPatientId = patient.PatientId,
-                            CurrentPatientLinkId = patient.MessagingLink.MessagingLinkId,
+                            CurrentPatientLinkId = 
+                                patient.MessagingLink != null ? patient.MessagingLink.MessagingLinkId : null,
                             CurrentPatientFirstName = patient.FirstName,
                             CurrentPatientLastName = patient.LastName,
                             CurrentPatientSSN = patient.Last4SSN,
@@ -57,7 +61,7 @@ namespace PatientPortal.Services
                             CurrentPatientCreatedOn  = patient.CreatedAt
                         },
                         PatientId = patient.PatientId,
-                        MessagingLinkId = patient.MessagingLink.MessagingLinkId,
+                        MessagingLinkId = patient.MessagingLink != null ? patient.MessagingLink.MessagingLinkId : null,
                         FirstName = patient.FirstName,
                         LastName = patient.LastName,
                         DOB = patient.DOB,
@@ -67,20 +71,21 @@ namespace PatientPortal.Services
                         CreatedAt = patient.CreatedAt,
                         UpdatedAt = patient.UpdatedAt,
                         Age = patient.Age,
-                        Address = new AddressInfo()
+                        Address = patient.Address != null 
+                        ? new AddressInfo()
                         {
-                            StreetAddress = patient.Address?.StreetAddress,
-                            City = patient.Address?.City,
-                            State = patient.Address?.State,
-                            ZipCode = patient.Address?.ZipCode,
-                        },
+                            StreetAddress = patient.Address.StreetAddress,
+                            City = patient.Address.City,
+                            State = patient.Address.State,
+                            ZipCode = patient.Address.ZipCode,
+                        } : null,
                         MedicalTeam =
                             patient.MedicalTeam
                             .Select(h => new StaffInfo()
                             {
                                 StaffId = h.StaffId,
-                                FullName = h.Staff.FullName(),
-                                Role = h.Staff.Role
+                                FullName = h.Staff?.FullName() ?? "Unknown Staff",
+                                Role = h.Staff?.Role ?? "Unknown Role"
                             })
                             .ToList(),
                         HealthIssues =
@@ -104,7 +109,7 @@ namespace PatientPortal.Services
                                 VisitId = v.VisitId,
                                 Comment = v.Comment,
                                 DateOfVisit = v.DateOfVisit,
-                                CreatedBy = $"{v.Staff.FullName()}, {v.Staff.Role}",
+                                CreatedBy = $"{v.Staff?.FullName() ?? "Unknown Staff"}, {v.Staff?.Role ?? "Unknown Role"}",
                                 CreatedAt = v.CreatedAt,
                                 UpdatedAt = v.UpdatedAt
                             })
@@ -117,7 +122,7 @@ namespace PatientPortal.Services
                                 TestResultId = t.TestResultId,
                                 Type = t.Type,
                                 Comment = t.Comment,
-                                CreatedBy = $"{t.Staff.FullName()}, {t.Staff.Role}",
+                                CreatedBy = $"{t.Staff?.FullName() ?? "Unknown Staff"}, {t.Staff?.Role ?? "Unknown Role"}",
                                 CreatedAt = t.CreatedAt,
                                 UpdatedAt = t.UpdatedAt
                             })

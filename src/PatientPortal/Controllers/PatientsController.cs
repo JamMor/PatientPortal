@@ -1,14 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PatientPortal.Authorization;
+using PatientPortal.DTOs;
+using PatientPortal.Extensions;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
-using PatientPortal.Extensions;
 
 namespace PatientPortal.Controllers
 {
@@ -32,6 +28,11 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult PatientManager(PatientSearch searchBar, Paginator paginationSettings)
         {
+            if(!staffId.HasValue)
+            {
+                return StatusCode(500, "Unable to retrieve staff information. Please ensure you are logged in and try again.");
+            }
+
             PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(searchBar, paginationSettings, (int)staffId);
 
             return View("PatientManager", viewModel);
@@ -48,26 +49,42 @@ namespace PatientPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!_patientService.DoesPatientExist(patientFormView))
+                try
                 {
+                    var patientDTO = patientFormView.ToPatientDTO();
+                    
+                    if (!_patientService.DoesPatientExist(patientDTO))
+                    {
 
-                    int patientId = _patientService.CreatePatient(patientFormView);
+                        int patientId = _patientService.CreatePatient(patientDTO);
 
-                    return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });
+                        return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });
+                    }
+                    else
+                    {
+                        //TODO: Replace with proper ModelState error and display on form
+                        ViewBag.AlreadyExistsError = "A patient already exists with this information.";
+                    }
                 }
-
-                else
+                catch
                 {
-                    ViewBag.AlreadyExistsError = "A patient already exists with this information.";
+                    // Log the exception (not implemented here)
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the visit.");
                 }
+                
+
             }
-            return View("PatientForm");
+            return View("PatientForm", patientFormView);
         }
 
         [HttpGet("{patientId}")]
         public IActionResult PatientInfo(int patientId)
         {
-            PatientInfoViewModel patientInfo = _patientViewService.GetPatientInfo(patientId);
+            PatientInfoViewModel? patientInfo = _patientViewService.GetPatientInfo(patientId);
+            if (patientInfo == null)
+            {
+                return NotFound();
+            }
 
             return View("PatientInfo", patientInfo);
         }
@@ -84,6 +101,11 @@ namespace PatientPortal.Controllers
         [HttpPost("{patientId}/join")]
         public IActionResult MedicalTeamJoin(int patientId)
         {
+            if(!staffId.HasValue)
+            {
+                return StatusCode(500, "Unable to retrieve staff information. Please ensure you are logged in and try again.");
+            }
+            
             _patientStaffConnectionService.AddStaffToPatientTeam(patientId, (int)staffId);
             
             return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });
@@ -91,6 +113,11 @@ namespace PatientPortal.Controllers
         [HttpPost("{patientId}/leave")]
         public IActionResult MedicalTeamLeave(int patientId)
         {
+            if(!staffId.HasValue)
+            {
+                return StatusCode(500, "Unable to retrieve staff information. Please ensure you are logged in and try again.");
+            }
+            
             _patientStaffConnectionService.RemoveStaffFromPatientTeam(patientId, (int)staffId);
 
             return RedirectToAction("PatientInfo", "Patients", new { patientId = patientId });

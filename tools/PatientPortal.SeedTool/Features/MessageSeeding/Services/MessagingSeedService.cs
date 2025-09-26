@@ -30,14 +30,14 @@ public class MessagingSeedService(
         int staffConversationsSeeded = 0;
 
         // Queries for MessagingLinks under thresholds
-        var patientLinksUnderThresholdQuery = _context
-            .MessagingLinks.Where(ml => ml.PatientId != null)
+        var patientLinksUnderThresholdQuery = _context.MessagingLinks
+            .Where(ml => ml.PatientId != null)
             .Where(ml => ml.ParticipatingConversations.Count < ConversationThreshold);
 
-        var staffLinksUnderThresholdQuery = _context
-            .MessagingLinks.Where(ml => ml.StaffId != null)
+        var staffLinksUnderThresholdQuery = _context.MessagingLinks
+            .Where(ml => ml.StaffId != null)
             .Where(ml =>
-                ml.ParticipatingConversations.Count(cp => cp.Conversation.WithPatient == false)
+                ml.ParticipatingConversations.Count(cp => cp.Conversation!.WithPatient == false)
                 < ConversationThreshold
             );
 
@@ -51,21 +51,23 @@ public class MessagingSeedService(
                     CreatedAt = ml.CreatedAt,
                 },
                 ConversationCount = ml.ParticipatingConversations.Count,
-                PotentialCorrespondentInfos = ml.Patient.MedicalTeam
+                PotentialCorrespondentInfos = ml.Patient!.MedicalTeam
+                    .Where(mt => mt.Staff!.MessagingLink != null)
                     .Select(mt => new ParticipantDTO
                     {
-                        MessagingLinkId = mt.Staff.MessagingLink.MessagingLinkId,
-                        CreatedAt = mt.Staff.MessagingLink.CreatedAt,
+                        MessagingLinkId = mt.Staff!.MessagingLink!.MessagingLinkId,
+                        CreatedAt = mt.Staff!.MessagingLink!.CreatedAt,
                     })
                     .ToList()
             })
             .ToListAsync();
 
-        List<ParticipantDTO> allStaffParticipantInfo = await _context
-            .Staff.Select(s => new ParticipantDTO
+        List<ParticipantDTO> allStaffParticipantInfo = await _context.Staff
+            .Where(s => s.MessagingLink != null)
+            .Select(s => new ParticipantDTO
             {
-                MessagingLinkId = s.MessagingLink.MessagingLinkId,
-                CreatedAt = s.MessagingLink.CreatedAt,
+                MessagingLinkId = s.MessagingLink!.MessagingLinkId,
+                CreatedAt = s.MessagingLink!.CreatedAt,
             })
             .ToListAsync();
 
@@ -78,7 +80,7 @@ public class MessagingSeedService(
                     CreatedAt = ml.CreatedAt,
                 },
                 ConversationCount = ml.ParticipatingConversations.Count(cp =>
-                    cp.Conversation.WithPatient == false
+                    cp.Conversation!.WithPatient == false
                 ),
                 PotentialCorrespondentInfos = new List<ParticipantDTO>(),
             })

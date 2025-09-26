@@ -1,15 +1,9 @@
 @model PatientManagerView
 
 @{
-var search = new Dictionary<string, string>
-            {
-                {"SearchPatientId", @Model.SearchBar.SearchPatientId.ToString()},
-                {"SearchFirstName", @Model.SearchBar.SearchFirstName},
-                {"SearchLastName", @Model.SearchBar.SearchLastName},
-                {"SearchBirthdate", @Model.SearchBar.SearchBirthdate.ToString()},
-                {"SearchSSN", @Model.SearchBar.SearchSSN},
-                {"SearchPatientsUnderCare", @Model.SearchBar.SearchPatientsUnderCare.ToString()}
-            };
+    var search = Context.Request.Query
+        .Where(q => q.Key != "CurrentPage")
+        .ToDictionary(q => q.Key, q => q.Value.ToString());
 }
 
 <div class="d-flex">
@@ -48,7 +42,7 @@ var search = new Dictionary<string, string>
                     <a asp-controller="Patients" asp-action="PatientManager" 
                     asp-all-route-data="search"
                     asp-route-ResultsPerPage="@Model.PaginationSettings.ResultsPerPage"
-                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == @sortField ? Model.PaginationSettings.Reverse() : "desc")'>
+                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == sortField ? Model.PaginationSettings.Reverse() : "desc")'>
                         @sortOption
                     </a>
                 </th>
@@ -60,7 +54,7 @@ var search = new Dictionary<string, string>
     </thead>
     <tbody>
         @{
-            if(@Model.SearchResults.Count == 0)
+            if(Model.SearchResults.Count == 0)
             {
                 <tr>
                     <td colspan="5" class="text-center text-muted">No patients to display.</td>
@@ -69,12 +63,12 @@ var search = new Dictionary<string, string>
         }
         @{
             int i = 1;
-            foreach (PatientResult patient in @Model.SearchResults)
+            foreach (PatientResult patient in Model.SearchResults)
             {
                 <tr>
                     <td class="text-muted">@(Model.PaginationSettings.ResultsPerPage*(Model.PaginationSettings.CurrentPage - 1) + i)</td>
                     <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
-                    <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
+                    <td>@string.Format("{0:MM/dd/yyyy}", patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
                     <td>#@patient.PatientId.ToString("D6")</td>
                     <td>@patient.Last4SSN</td>
                 </tr>

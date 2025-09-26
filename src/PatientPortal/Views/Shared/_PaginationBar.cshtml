@@ -1,32 +1,28 @@
 @model Paginator
 
-
 @{
-    @* PaginationBar requires a dictionary of routes for query and sort to be set from ViewData 
-       and passed to it along with a PaginationSettings Model *@
-    string thisController = ViewContext.RouteData.Values["Controller"].ToString();
-    string thisAction = ViewContext.RouteData.Values["Action"].ToString();
-    Dictionary<string, string> queryRoutes = ViewData["queryRoutes"] as  Dictionary<string, string>;
+    var queryRoutes = Context.Request.Query
+        .Where(q => q.Key != "CurrentPage")
+        .ToDictionary(q => q.Key, q => q.Value.ToString());
 }
 
-@if(@Model.TotalPages() > 1)
+@if(Model.TotalPages() > 1)
 {
     <nav aria-label="Result Pages Nav">
         <ul class="pagination justify-content-center">
 
-            @if(@Model.StartPage() > 1)
+            @if(Model.StartPage() > 1)
             {
                 <li class="page-item">
-                    <a class='page-link @(@Model.CurrentPage == @Model.TotalPages() ? "disabled" : "")' 
+                    <a class='page-link @(Model.CurrentPage == Model.TotalPages() ? "disabled" : "")' 
                     data-toggle="tooltip" data-placement="left" title="1"
-                    asp-controller="@thisController" asp-action="@thisAction" 
                     asp-all-route-data="queryRoutes"
                     asp-route-CurrentPage="1">
                         &laquo;
                     </a>
                 </li>
             }
-            @if(@Model.StartPage() > 2)
+            @if(Model.StartPage() > 2)
             {
                 <li class="page-item disabled">
                     <a class="page-link">
@@ -34,27 +30,25 @@
                     </a>
                 </li>
             }
-            <li class='page-item @(@Model.CurrentPage > 1 ? "" : "disabled")'>
-                <a class="page-link" asp-controller="@thisController" asp-action="@thisAction" 
-                asp-all-route-data="queryRoutes"
-                asp-route-CurrentPage="@(@Model.CurrentPage-1)">
+            <li class='page-item @(Model.CurrentPage > 1 ? "" : "disabled")'>
+                <a class="page-link" asp-all-route-data="queryRoutes"
+                asp-route-CurrentPage="@(Model.CurrentPage-1)">
                     Previous
                 </a>
             </li>
             
-            @for(int i = @Model.StartPage(); 
-                i <= @Model.TotalPages() && i < @Model.MaxPageLinksPerPage + @Model.StartPage(); 
+            @for(int i = Model.StartPage(); 
+                i <= Model.TotalPages() && i < Model.MaxPageLinksPerPage + Model.StartPage(); 
                 i++)
             {
-                if(i == @Model.CurrentPage)
+                if(i == Model.CurrentPage)
                 {
                     <li class="page-item font-weight-bold"><span class="page-link disabled">@i</span></li>
                 }
                 else
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-controller="@thisController" asp-action="@thisAction" 
-                        asp-all-route-data="queryRoutes"
+                        <a class="page-link" asp-all-route-data="queryRoutes"
                         asp-route-CurrentPage="@i">
                             @i
                         </a>
@@ -62,15 +56,14 @@
                 }
             }
 
-            <li class='page-item @(@Model.CurrentPage < @Model.TotalPages() ? "" : "disabled")'>
-                <a class="page-link" asp-controller="@thisController" asp-action="@thisAction" 
-                asp-all-route-data="queryRoutes"
-                asp-route-CurrentPage="@(@Model.CurrentPage+1)">
+            <li class='page-item @(Model.CurrentPage < Model.TotalPages() ? "" : "disabled")'>
+                <a class="page-link" asp-all-route-data="queryRoutes"
+                asp-route-CurrentPage="@(Model.CurrentPage+1)">
                     Next
                 </a>
             </li>
 
-            @if(@Model.StartPage() + @Model.MaxPageLinksPerPage < @Model.TotalPages())
+            @if(Model.StartPage() + Model.MaxPageLinksPerPage < Model.TotalPages())
             {
                 <li class="page-item disabled">
                     <a class="page-link">
@@ -78,12 +71,11 @@
                     </a>
                 </li>
             }
-            @if(@Model.StartPage() + @Model.MaxPageLinksPerPage - 1 < @Model.TotalPages())
+            @if(Model.StartPage() + Model.MaxPageLinksPerPage - 1 < Model.TotalPages())
             {
                 <li class="page-item">
-                    <a class='page-link @(@Model.CurrentPage == @Model.TotalPages() ? "disabled" : "")' 
+                    <a class='page-link @(Model.CurrentPage == Model.TotalPages() ? "disabled" : "")' 
                     data-toggle="tooltip" data-placement="right" title="@Model.TotalPages()"
-                    asp-controller="@thisController" asp-action="@thisAction" 
                     asp-all-route-data="queryRoutes"
                     asp-route-CurrentPage="@Model.TotalPages()">
                         &raquo;

@@ -68,14 +68,30 @@ namespace PatientPortal.Services
             return ExtendedIdentityResult<Staff>.Failure(result.IdentityResult);
         }
         
-        public async Task LoginStaffById(int staffId)
+        public async Task<bool> LoginStaffById(int staffId)
         {
-            IdentityUser user = _context.Staff
-                .Where(s => s.StaffId == staffId)
+            IdentityUser? user = _context
+                .Staff.Where(s => s.StaffId == staffId)
                 .Select(s => s.User)
                 .FirstOrDefault();
 
-            await _signInManager.SignInAsync(user, false);
+            if (user != null)
+            {
+                try
+                {
+                    await _signInManager.SignInAsync(user, false);
+                    return true;
+                }
+                catch (System.Exception ex)
+                {
+                    System.Console.WriteLine(
+                        $"An error occurred during demo one click sign-in: {ex.Message}"
+                    );
+                    return false;
+                }
+            }
+
+            return false;
         }
 
         private bool disposedValue;

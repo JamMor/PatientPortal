@@ -1,6 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
@@ -15,15 +14,20 @@ namespace PatientPortal.Services
         }
 
         //COMMANDS
-        public void CreateHealthIssue(int patientId, HealthIssue healthIssueInfo)
+        public void CreateHealthIssue(int patientId, HealthIssueDTO healthIssueInfo)
         {
-            healthIssueInfo.PatientId = patientId;
-            _context.HealthIssues.Add(healthIssueInfo);
+            var healthIssue = new HealthIssue
+            {
+                ShortDescription = healthIssueInfo.ShortDescription,
+                LongDescription = healthIssueInfo.LongDescription,
+                PatientId = patientId
+            };
+            _context.HealthIssues.Add(healthIssue);
             _context.SaveChanges();
         }
         public void DeleteHealthIssue(int patientId, int issueId)
         {
-            HealthIssue deletedHealthIssue = _context.HealthIssues
+            HealthIssue? deletedHealthIssue = _context.HealthIssues
                 .SingleOrDefault(issue => issue.HealthIssueId == issueId);
             if(deletedHealthIssue != null)
             {

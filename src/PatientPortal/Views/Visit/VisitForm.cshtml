@@ -5,25 +5,25 @@
 <h3>New Visit: </h3>
 <form asp-action="VisitCreate" asp-controller="Visit" asp-route-patientId="@Model.Patient.CurrentPatientId" method="post">
     <div class="form-group">
-        <label class="form-label" asp-for="Visit.DateOfVisit"></label>
-        <span class="text-danger" asp-validation-for="Visit.DateOfVisit"></span>
-        <input class="form-control" asp-for="Visit.DateOfVisit">
+        <label class="form-label" asp-for="VisitForm.DateOfVisit"></label>
+        <span class="text-danger" asp-validation-for="VisitForm.DateOfVisit"></span>
+        <input class="form-control" asp-for="VisitForm.DateOfVisit">
     </div>
     <div class="form-group">
-        <label class="form-label" asp-for="Visit.Comment"></label>
-        <span class="text-danger" asp-validation-for="Visit.Comment"></span>
-        <textarea class="form-control" asp-for="Visit.Comment"></textarea>
+        <label class="form-label" asp-for="VisitForm.Comment"></label>
+        <span class="text-danger" asp-validation-for="VisitForm.Comment"></span>
+        <textarea class="form-control" asp-for="VisitForm.Comment"></textarea>
     </div>
     <div class="form-group">
-        @for(int i = 0; i < @Model.HealthIssues.Count; i++)
+        @for(int i = 0; i < Model.VisitForm.HealthIssues.Count; i++)
         {
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" asp-for="HealthIssues[i].Selected">
-            <label class="form-check-label" asp-for="HealthIssues[i].Selected">
-                @Model.HealthIssues[i].ShortDescription
+            <input class="form-check-input" type="checkbox" asp-for="VisitForm.HealthIssues[i].Selected">
+            <label class="form-check-label" asp-for="VisitForm.HealthIssues[i].Selected">
+                @Model.VisitForm.HealthIssues[i].ShortDescription
             </label>
-            <input class="form-check-input" type="hidden" asp-for="@Model.HealthIssues[i].HealthIssueId">
-            <input class="form-check-input" type="hidden" asp-for="@Model.HealthIssues[i].ShortDescription">
+            <input class="form-check-input" type="hidden" asp-for="VisitForm.HealthIssues[i].HealthIssueId">
+            <input class="form-check-input" type="hidden" asp-for="VisitForm.HealthIssues[i].ShortDescription">
         </div>
         }
     </div>

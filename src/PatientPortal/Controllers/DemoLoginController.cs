@@ -1,11 +1,11 @@
 using System;
-using System.Linq;
-using PatientPortal.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using PatientPortal.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PatientPortal.Interfaces;
+using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
 {
@@ -31,10 +31,14 @@ namespace PatientPortal.Controllers
         public async Task<IActionResult> CreateDemoAdmin()
         {
             var result = await _demoLoginService.CreateAdmin();
-            if (result.Succeeded)
+            if (result.Succeeded && result.Value != null)
             {
                 Staff newAdmin = result.Value;
-                await _demoLoginService.LoginStaffById(newAdmin.StaffId);
+                var loginResult = await _demoLoginService.LoginStaffById(newAdmin.StaffId);
+                if (!loginResult)
+                {
+                    Console.WriteLine("Admin user created but failed to log in.");
+                }
             }
             else
             {
@@ -48,7 +52,11 @@ namespace PatientPortal.Controllers
         [HttpPost("/demo/staff")]
         public async Task<IActionResult> LoginDemoStaff(int staffId)
         {
-            await _demoLoginService.LoginStaffById(staffId);
+            var loginResult = await _demoLoginService.LoginStaffById(staffId);
+            if (!loginResult)
+            {
+                Console.WriteLine($"Failed to log in staff with ID {staffId}.");
+            }
 
             return RedirectToAction("Index", "Login");
         }

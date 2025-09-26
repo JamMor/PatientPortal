@@ -113,7 +113,7 @@ public class PatientViewServiceTests : IDisposable
         // Assert
         Assert.NotNull(result);
         Assert.Equal(1, result.CurrentPatientId);
-        Assert.Equal(firstPatient.MessagingLink.MessagingLinkId, result.CurrentPatientLinkId);
+        Assert.Equal(firstPatient.MessagingLink!.MessagingLinkId, result.CurrentPatientLinkId);
         Assert.Equal("John", result.CurrentPatientFirstName);
         Assert.Equal("Doe", result.CurrentPatientLastName);
         Assert.Equal("1234", result.CurrentPatientSSN);
@@ -173,7 +173,7 @@ public class PatientViewServiceTests : IDisposable
         // Assert
         Assert.NotNull(result);
         Assert.Equal(1, result.PatientId);
-        Assert.Equal(patients.First().MessagingLink.MessagingLinkId, result.MessagingLinkId);
+        Assert.Equal(patients.First().MessagingLink!.MessagingLinkId, result.MessagingLinkId);
         Assert.Equal("Alice", result.FirstName);
         Assert.Equal("Johnson", result.LastName);
         Assert.Equal(new DateTime(1992, 3, 10), result.DOB);
@@ -223,11 +223,7 @@ public class PatientViewServiceTests : IDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.NotNull(result.Address);
-        Assert.Null(result.Address.StreetAddress);
-        Assert.Null(result.Address.City);
-        Assert.Null(result.Address.State);
-        Assert.Null(result.Address.ZipCode);
+        Assert.Null(result.Address);
     }
 
     #endregion

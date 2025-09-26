@@ -1,6 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
@@ -15,19 +14,18 @@ namespace PatientPortal.Services
         }
 
         //COMMANDS
-        public void CreateTestResult(int patientId, int staffId, TestResultFormView formData)
+        public void CreateTestResult(int patientId, int staffId, TestResultDTO formData)
         {
             TestResult newTestResult = new TestResult()
             {
-                Type = formData.TestResult.Type,
-                Comment = formData.TestResult.Comment,
+                Type = formData.Type,
+                Comment = formData.Comment,
                 PatientId = patientId,
                 StaffId = staffId,
-                AssociatedHealthIssues = formData.HealthIssues
-                    .Where(h => h.Selected == true)
+                AssociatedHealthIssues = formData.HealthIssueIds
                     .Select(h => new TestHealthIssueAssociation()
                     {
-                        HealthIssueId = h.HealthIssueId
+                        HealthIssueId = h
                     })
                     .ToList()
             };
@@ -37,7 +35,7 @@ namespace PatientPortal.Services
         }
         public void DeleteTestResult(int testResultId)
         {
-            TestResult deletedTestResult = _context.TestResults
+            TestResult? deletedTestResult = _context.TestResults
                 .SingleOrDefault(t => t.TestResultId == testResultId);
             if(deletedTestResult != null)
             {
