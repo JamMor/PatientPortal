@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using PatientPortal.Models;
 using PatientPortal.Shared.Guard;

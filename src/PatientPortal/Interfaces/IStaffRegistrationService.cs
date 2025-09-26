@@ -1,4 +1,3 @@
-#nullable enable
 using System.Threading.Tasks;
 using PatientPortal.Models;
 using PatientPortal.Infrastructure;

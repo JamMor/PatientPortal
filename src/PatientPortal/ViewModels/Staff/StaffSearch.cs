@@ -1,4 +1,3 @@
-#nullable enable
 // Form Input Model
 using System;
 using System.ComponentModel.DataAnnotations;
