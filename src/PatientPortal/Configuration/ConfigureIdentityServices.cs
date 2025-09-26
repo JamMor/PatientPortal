@@ -1,12 +1,12 @@
 
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using PatientPortal.Models;
-using PatientPortal.Infrastructure;
-using PatientPortal.Authorization.Requirements;
-using PatientPortal.Authorization.Handlers;
 using System;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using PatientPortal.Authorization.Handlers;
+using PatientPortal.Authorization.Requirements;
+using PatientPortal.Infrastructure;
+using PatientPortal.Models;
 
 namespace PatientPortal.Configuration
 {

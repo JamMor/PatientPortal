@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
+using PatientPortal.Infrastructure;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
-using PatientPortal.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using PatientPortal.DTOs;
 
 namespace PatientPortal.Services
 {

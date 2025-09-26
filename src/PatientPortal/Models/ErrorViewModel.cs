@@ -1,5 +1,3 @@
-using System;
-
 namespace PatientPortal.Models
 {
     public class ErrorViewModel

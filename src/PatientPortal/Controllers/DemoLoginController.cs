@@ -1,11 +1,11 @@
 using System;
-using System.Linq;
-using PatientPortal.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using PatientPortal.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PatientPortal.Interfaces;
+using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
 {

@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
-using PatientPortal.Models;
 using PatientPortal.DTOs;
+using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
 {

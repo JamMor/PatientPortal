@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using PatientPortal.Extensions;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
-using PatientPortal.Extensions;
 
 namespace PatientPortal.Services
 {

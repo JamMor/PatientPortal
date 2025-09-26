@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
-using PatientPortal.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PatientPortal.Interfaces;
-using PatientPortal.Extensions;
 using PatientPortal.DTOs;
+using PatientPortal.Extensions;
+using PatientPortal.Interfaces;
+using PatientPortal.Models;
 
 namespace PatientPortal.Controllers
 {
