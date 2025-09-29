@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using PatientPortal.Models;
 using PatientPortal.Shared.Guard;
 
@@ -12,8 +14,15 @@ public record AddressDTO(
 
 public static class AddressFormViewAddressExtensions
 {
-    public static AddressDTO ToAddressDTO(this AddressFormView addressFormView)
+    public static AddressDTO? ToAddressDTOOrNull(this AddressFormView? addressFormView)
     {
+        if (addressFormView is null) return null;
+
+        string?[] fields = [addressFormView.StreetAddress, addressFormView.City, addressFormView.State, addressFormView.ZipCode];
+
+        if (fields.All(f => f is null)) return null;
+        if (fields.Any(f => f is null)) throw new ArgumentException("Address must be fully provided or omitted entirely.");
+
         return new AddressDTO(
             Guard.NotNull(addressFormView.StreetAddress, nameof(addressFormView.StreetAddress)),
             Guard.NotNull(addressFormView.City, nameof(addressFormView.City)),

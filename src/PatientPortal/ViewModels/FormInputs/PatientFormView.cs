@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using PatientPortal.Shared.Validation;
 
 namespace PatientPortal.Models
@@ -41,7 +42,7 @@ namespace PatientPortal.Models
         public AddressFormView? Address { get; set; }
     }
 
-    public class AddressFormView
+    public class AddressFormView : IValidatableObject
     {
         [Display(Name = "Street Address")]
         public string? StreetAddress { get; set; }
@@ -52,50 +53,12 @@ namespace PatientPortal.Models
         [DataType(DataType.PostalCode)]
         public string? ZipCode { get; set; }
 
-        //Just to attach validation error to on form
-        [ProperAddress]
-        public string? AddressIncompleteError { get; set; }
-    }
-
-    public class ProperAddressAttribute : ValidationAttribute
-    {
-        protected override ValidationResult? IsValid(
-            object? value,
-            ValidationContext validationContext
-        )
+        System.Collections.Generic.IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
-            var address = validationContext.ObjectInstance as AddressFormView;
-            if (address == null)
-            {
-                // If the object is not AddressFormView, skip validation
-                return ValidationResult.Success;
-            }
+            string?[] fields = [StreetAddress, City, State, ZipCode];
 
-            if (
-                string.IsNullOrEmpty(address.StreetAddress)
-                && string.IsNullOrEmpty(address.City)
-                && string.IsNullOrEmpty(address.State)
-                && string.IsNullOrEmpty(address.ZipCode)
-            )
-            {
-                // No address given
-                return ValidationResult.Success;
-            }
-            else if (
-                !string.IsNullOrEmpty(address.StreetAddress)
-                && !string.IsNullOrEmpty(address.City)
-                && !string.IsNullOrEmpty(address.State)
-                && !string.IsNullOrEmpty(address.ZipCode)
-            )
-            {
-                // Complete address given
-                return ValidationResult.Success;
-            }
-            else
-            {
-                // Address not completely filled out
-                return new ValidationResult("Address must be completely filled out if given.");
-            }
+            if (!fields.All(f => f is null) && fields.Any(f => f is null))
+                yield return new ValidationResult("Address must be completely filled out if given.");
         }
     }
 }

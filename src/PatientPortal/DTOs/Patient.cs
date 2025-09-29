@@ -25,7 +25,7 @@ public static class PatientFormViewPatientExtensions
             Guard.NotNull(patientFormView.Last4SSN, nameof(patientFormView.Last4SSN)),
             patientFormView.PhoneNumber,
             patientFormView.Email,
-            patientFormView.Address?.ToAddressDTO()
+            patientFormView.Address.ToAddressDTOOrNull()
         );
     }
 }
