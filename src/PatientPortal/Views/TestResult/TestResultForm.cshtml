@@ -1,36 +1,33 @@
 @model TestResultForm
 
 @{ int patientId = Convert.ToInt32(ViewContext.RouteData.Values["patientId"]); }
-@await Component.InvokeAsync("PatientInfoHeader", new { patientId = patientId });
+@await Component.InvokeAsync("PatientInfoHeader", new { patientId = patientId })
 
 
 <h3>New Test Result: </h3>
 <form asp-controller="TestResult" asp-action="TestResultCreate" asp-route-patientId="@patientId" method="post">
     <div class="form-group">
-        <label class="form-label" asp-for="TestResultForm.Type"></label>
-        <span class="text-danger" asp-validation-for="TestResultForm.Type"></span>
-        <select class="form-control" asp-for="TestResultForm.Type">
+        <label class="form-label" asp-for="Type"></label>
+        <span class="text-danger" asp-validation-for="Type"></span>
+        <select class="form-control" asp-for="Type">
             <option value="Vitals">Vitals</option>
             <option value="Labwork">Labwork</option>
             <option value="Pathology">Pathology</option>
             <option value="Imaging">Imaging</option>
         </select>
     </div>
-    <div class="form-group">
-        <label class="form-label" asp-for="TestResultForm.Comment"></label>
-        <span class="text-danger" asp-validation-for="TestResultForm.Comment"></span>
-        <textarea class="form-control" asp-for="TestResultForm.Comment"></textarea>
-    </div>
+    <form-field asp-for="Comment" type="textarea"></form-field>
     <div class="form-group">
         @for(int i = 0; i < Model.HealthIssues.Count; i++)
         {
             <partial name="~/Views/Shared/_HealthIssueCheckbox.cshtml" for="HealthIssues[i]" />
         }
     </div>
-    <div class="custom-file my-3">
-        <label class="custom-file-label" for="Upload">Related Documents:</label>
-        <input class="custom-file-input" type="file" name="Upload" id="Upload">
+    <div class="form-group">
+        <label class="form-label" for="Upload">Related Documents</label>
+        <input class="form-control" type="file" name="Upload" id="Upload">
     </div>
+    <div asp-validation-summary="ModelOnly"></div>
     <button class="btn btn-info">Submit Test Result</button>
     <a class="btn btn-outline-danger" asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patientId">Cancel</a>
 </form>

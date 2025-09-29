@@ -3,65 +3,22 @@
 <h3>New Patient: </h3>
 <form class="row" asp-action="PatientCreate" asp-controller="Patients" method="post">
     <div class="col-md-6">
-        <div class="form-group">
-            <label class="form-label" asp-for="FirstName"></label>
-            <span class="text-danger" asp-validation-for="FirstName"></span>
-            <input class="form-control" asp-for="FirstName">
-        </div>
-        <div class="form-group">
-            <label class="form-label" asp-for="LastName"></label>
-            <span class="text-danger" asp-validation-for="LastName"></span>
-            <input class="form-control" asp-for="LastName">
-        </div>
-        <div class="form-group">
-            <label class="form-label" asp-for="DOB"></label>
-            <span class="text-danger" asp-validation-for="DOB"></span>
-            <input class="form-control" asp-for="DOB">
-        </div>
-        <div class="form-group">
-            <label class="form-label" asp-for="Last4SSN"></label>
-            <span class="text-danger" asp-validation-for="Last4SSN"></span>
-            <input class="form-control" asp-for="Last4SSN">
-        </div>
-        @if(ViewBag.AlreadyExistsError != null)
-        {
-            <span class="text-danger">@ViewBag.AlreadyExistsError</span>
-        }
+        <form-field asp-for="FirstName"></form-field>
+        <form-field asp-for="LastName"></form-field>
+        <form-field asp-for="DOB"></form-field>
+        <form-field asp-for="Last4SSN"></form-field>
     </div>
     <div class="col-md-6">
         <h5 class="text-muted">Contact Info (optional)</h5>
-        <div class="form-group">
-            <label class="form-label" asp-for="PhoneNumber"></label>
-            <span class="text-danger" asp-validation-for="PhoneNumber"></span>
-            <input class="form-control" asp-for="PhoneNumber">
-        </div>
-        <div class="form-group">
-            <label class="form-label" asp-for="Email"></label>
-            <span class="text-danger" asp-validation-for="Email"></span>
-            <input class="form-control" asp-for="Email">
-        </div>
+        <form-field asp-for="PhoneNumber"></form-field>
+        <form-field asp-for="Email"></form-field>
         <hr>
-        <div class="form-group">
-            <label class="form-label" asp-for="Address.StreetAddress"></label>
-            <span class="text-danger" asp-validation-for="Address.StreetAddress"></span>
-            <input class="form-control" asp-for="Address.StreetAddress">
-        </div>
-        <div class="form-group">
-            <label class="form-label" asp-for="Address.City"></label>
-            <span class="text-danger" asp-validation-for="Address.City"></span>
-            <input class="form-control" asp-for="Address.City">
-        </div>
-        <div class="form-group">
-            <label class="form-label" asp-for="Address.State"></label>
-            <span class="text-danger" asp-validation-for="Address.State"></span>
-            <input class="form-control" asp-for="Address.State">
-        </div>
-        <div class="form-group">
-            <label class="form-label" asp-for="Address.ZipCode"></label>
-            <span class="text-danger" asp-validation-for="Address.ZipCode"></span>
-            <input class="form-control" asp-for="Address.ZipCode">
-        </div>
-        @* <span class="text-danger" asp-validation-for="Address.AddressIncompleteError"></span> *@
+        <span class="text-danger" asp-validation-for="Address"></span>
+        <form-field asp-for="Address.StreetAddress"></form-field>
+        <form-field asp-for="Address.City"></form-field>
+        <form-field asp-for="Address.State"></form-field>
+        <form-field asp-for="Address.ZipCode"></form-field>
     </div>
+    <div asp-validation-summary="ModelOnly"></div>
     <button class="btn btn-info">Create Patient</button>
 </form>
