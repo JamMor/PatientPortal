@@ -15,39 +15,25 @@ namespace PatientPortal.Services
             _patientService = patientService;
         }
 
-        public TestResultFormView? ReturnTestResultFormView(int patientId)
+        public TestResultForm? ReturnTestResultForm(int patientId)
         {
-            TestResultFormView? viewModel = _patientService.GetPatientBasicInfo()
+            TestResultForm? form = _patientService.GetPatientBasicInfo()
                 .Include(p => p.HealthIssues)
-                .Select(p => new TestResultFormView()
+                .Where(p => p.PatientId == patientId)
+                .Select(p => new TestResultForm()
                 {
-                    Patient = new PatientHeaderInfoView()
-                    {
-                        CurrentPatientId = p.PatientId,
-                        CurrentPatientLinkId = 
-                            p.MessagingLink != null ? p.MessagingLink.MessagingLinkId : null,
-                        CurrentPatientFirstName = p.FirstName,
-                        CurrentPatientLastName = p.LastName,
-                        CurrentPatientSSN = p.Last4SSN,
-                        CurrentPatientDOB = p.DOB,
-                        CurrentPatientAge = p.Age,
-                        CurrentPatientCreatedOn = p.CreatedAt
-                    },
-                    TestResultForm = new TestResultForm()
-                    {
-                        HealthIssues = p.HealthIssues
-                            .Select(h => new HealthIssueCheckbox()
-                                {
-                                    HealthIssueId = h.HealthIssueId,
-                                    ShortDescription = h.ShortDescription,
-                                    CreatedAt = h.CreatedAt,
-                                })
-                            .ToList()
-                    }
+                    HealthIssues = p.HealthIssues
+                        .Select(h => new HealthIssueCheckbox()
+                            {
+                                HealthIssueId = h.HealthIssueId,
+                                ShortDescription = h.ShortDescription,
+                                CreatedAt = h.CreatedAt,
+                            })
+                        .ToList()
                 })
-                .FirstOrDefault(p => p.Patient.CurrentPatientId == patientId);
+                .FirstOrDefault();
 
-            return viewModel;
+            return form;
         }
 
         private bool disposedValue;

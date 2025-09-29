@@ -3,12 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PatientPortal.Models
 {
-    public class HealthIssueFormView
-    {
-        public required PatientHeaderInfoView Patient { get; set; }
-        public required HealthIssueForm HealthIssueForm { get; set; }
-    }
-
     public class HealthIssueForm
     {
         [Required]

@@ -1,9 +1,10 @@
-@model HealthIssueFormView
+@model HealthIssueForm
 
-<partial name="~/Views/Shared/_PatientInfoHeader.cshtml" for="Patient"/>
+@{ int patientId = Convert.ToInt32(ViewContext.RouteData.Values["patientId"]); }
+@await Component.InvokeAsync("PatientInfoHeader", new { patientId = patientId });
 
 <h3>New Health Issue: </h3>
-<form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@Model.Patient.CurrentPatientId" method="post">
+<form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@patientId" method="post">
     <div class="form-group">
         <label class="form-label" asp-for="HealthIssueForm.ShortDescription"></label>
         <span class="text-danger" asp-validation-for="HealthIssueForm.ShortDescription"></span>
@@ -19,5 +20,5 @@
         <input class="form-control"type="file" name="Upload" id="Upload">
     </div>
     <button class="btn btn-info">Add Health Issue</button>
-    <a class="btn btn-outline-danger" asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@Model.Patient.CurrentPatientId">Cancel</a>
+    <a class="btn btn-outline-danger" asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patientId">Cancel</a>
 </form>

@@ -14,12 +14,10 @@ namespace PatientPortal.Controllers
     {
         private int? staffId => User.GetStaffId();
 
-        private IPatientViewService _patientViewService;
         private IVisitService _visitService;
         private IVisitViewService _visitViewService;
-        public VisitController(IPatientViewService patientViewService, IVisitService visitService, IVisitViewService visitViewService)
+        public VisitController(IVisitService visitService, IVisitViewService visitViewService)
         {
-            _patientViewService = patientViewService;
             _visitService = visitService;
             _visitViewService = visitViewService;
         }
@@ -28,13 +26,13 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult VisitAdd(int patientId)
         {
-            VisitFormView? viewModel = _visitViewService.ReturnVisitFormView(patientId);
-            if(viewModel == null)
+            VisitForm? form = _visitViewService.ReturnVisitForm(patientId);
+            if(form == null)
             {
                 return NotFound();
             }
 
-            return View("VisitForm", viewModel);
+            return View("VisitForm", form);
         }
 
         [HttpPost("")]
@@ -59,22 +57,9 @@ namespace PatientPortal.Controllers
                     // Log the exception (not implemented here)
                     ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the visit.");
                 }
-                
             }
 
-            var patientHeader = _patientViewService.GetPatientInfoHeader(patientId);
-            if (patientHeader == null)
-            {
-                return NotFound();
-            }
-            
-            VisitFormView viewModel = new VisitFormView()
-            {
-                Patient = patientHeader,
-                VisitForm = formData
-            };
-            
-            return View("VisitForm", viewModel);
+            return View("VisitForm", formData);
         }
         
         [HttpPost("{visitId}/delete")]
