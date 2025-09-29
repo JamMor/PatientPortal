@@ -26,11 +26,7 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult VisitAdd(int patientId)
         {
-            VisitForm? form = _visitViewService.ReturnVisitForm(patientId);
-            if(form == null)
-            {
-                return NotFound();
-            }
+            VisitForm form = _visitViewService.GetNewVisitForm(patientId);
 
             return View("VisitForm", form);
         }

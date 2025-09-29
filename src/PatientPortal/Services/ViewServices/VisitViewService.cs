@@ -1,5 +1,4 @@
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
@@ -8,30 +7,27 @@ namespace PatientPortal.Services
     public class VisitViewService : IVisitViewService
     {
         private IVisitService _visitService;
-        private IPatientService _patientService;
-        public VisitViewService(IVisitService visitService, IPatientService patientService)
+        private IHealthIssueService _healthIssueService;
+        public VisitViewService(IVisitService visitService, IHealthIssueService healthIssueService)
         {
             _visitService = visitService;
-            _patientService = patientService;
+            _healthIssueService = healthIssueService;
         }
 
-        public VisitForm? ReturnVisitForm(int patientId)
+        public VisitForm GetNewVisitForm(int patientId)
         {
-            VisitForm? form = _patientService.GetPatientBasicInfo()
-                .Include(p => p.HealthIssues)
-                .Where(p => p.PatientId == patientId)
-                .Select(p => new VisitForm()
+            VisitForm form = new VisitForm();
+            var healthIssues = _healthIssueService
+                .GetHealthIssuesByPatientId(patientId)
+                .Select(h => new HealthIssueCheckbox()
                 {
-                    HealthIssues = p.HealthIssues
-                        .Select(h => new HealthIssueCheckbox()
-                            {
-                                HealthIssueId = h.HealthIssueId,
-                                ShortDescription = h.ShortDescription,
-                                CreatedAt = h.CreatedAt,
-                            })
-                        .ToList()
+                    HealthIssueId = h.HealthIssueId,
+                    ShortDescription = h.ShortDescription,
+                    CreatedAt = h.CreatedAt,
                 })
-                .FirstOrDefault();
+                .ToList();
+
+            form.HealthIssues = healthIssues;
 
             return form;
         }
@@ -45,7 +41,7 @@ namespace PatientPortal.Services
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    _patientService.Dispose();
+                    _healthIssueService.Dispose();
                     _visitService.Dispose();
                 }
 

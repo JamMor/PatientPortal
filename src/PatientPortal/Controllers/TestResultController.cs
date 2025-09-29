@@ -26,11 +26,7 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult TestResultAdd(int patientId)
         {
-            TestResultForm? form = _testResultViewService.ReturnTestResultForm(patientId);
-            if(form == null)
-            {
-                return NotFound();
-            }
+            TestResultForm form = _testResultViewService.GetNewTestResultForm(patientId);
                 
             return View("TestResultForm", form);
         }

@@ -36,6 +36,13 @@ namespace PatientPortal.Services
             }
         }
 
+        //QUERIES
+        public IQueryable<HealthIssue> GetHealthIssuesByPatientId(int patientId)
+        {
+            return _context.HealthIssues
+                .Where(issue => issue.PatientId == patientId);
+        }
+
         private bool disposedValue;
 
         protected virtual void Dispose(bool disposing)

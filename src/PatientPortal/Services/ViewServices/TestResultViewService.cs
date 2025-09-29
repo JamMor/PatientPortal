@@ -1,5 +1,4 @@
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
@@ -8,30 +7,27 @@ namespace PatientPortal.Services
     public class TestResultViewService : ITestResultViewService
     {
         private ITestResultService _testResultService;
-        private IPatientService _patientService;
-        public TestResultViewService(ITestResultService testResultService, IPatientService patientService)
+        private IHealthIssueService _healthIssueService;
+        public TestResultViewService(ITestResultService testResultService, IHealthIssueService healthIssueService)
         {
             _testResultService = testResultService;
-            _patientService = patientService;
+            _healthIssueService = healthIssueService;
         }
 
-        public TestResultForm? ReturnTestResultForm(int patientId)
+        public TestResultForm GetNewTestResultForm(int patientId)
         {
-            TestResultForm? form = _patientService.GetPatientBasicInfo()
-                .Include(p => p.HealthIssues)
-                .Where(p => p.PatientId == patientId)
-                .Select(p => new TestResultForm()
+            TestResultForm form = new TestResultForm();
+            var healthIssues = _healthIssueService
+                .GetHealthIssuesByPatientId(patientId)
+                .Select(h => new HealthIssueCheckbox()
                 {
-                    HealthIssues = p.HealthIssues
-                        .Select(h => new HealthIssueCheckbox()
-                            {
-                                HealthIssueId = h.HealthIssueId,
-                                ShortDescription = h.ShortDescription,
-                                CreatedAt = h.CreatedAt,
-                            })
-                        .ToList()
+                    HealthIssueId = h.HealthIssueId,
+                    ShortDescription = h.ShortDescription,
+                    CreatedAt = h.CreatedAt,
                 })
-                .FirstOrDefault();
+                .ToList();
+
+            form.HealthIssues = healthIssues;
 
             return form;
         }
@@ -45,7 +41,7 @@ namespace PatientPortal.Services
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    _patientService.Dispose();
+                    _healthIssueService.Dispose();
                     _testResultService.Dispose();
                 }
 
