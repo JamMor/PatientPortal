@@ -14,7 +14,7 @@ namespace PatientPortal.Models
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Date of Visit")]
-        public DateTime DateOfVisit { get; set; }
+        public DateTime DateOfVisit { get; set; } = DateTime.Today;
 
         public List<HealthIssueCheckbox> HealthIssues { get; set; } = [];
     }
