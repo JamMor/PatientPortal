@@ -5,12 +5,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PatientPortal.Models
 {
-    public class VisitFormView
-    {
-        public required PatientHeaderInfoView Patient { get; set; }
-        public required VisitForm VisitForm { get; set; }
-    }
-
     public class VisitForm
     {
         [Required]

@@ -2,16 +2,8 @@
 
 <h3>New Staffmember: </h3>
 <form asp-action="StaffCreate" asp-controller="Staff" method="post">
-    <div class="form-group">
-        <label class="form-label" asp-for="FirstName"></label>
-        <span class="text-danger" asp-validation-for="FirstName"></span>
-        <input class="form-control" asp-for="FirstName">
-    </div>
-    <div class="form-group">
-        <label class="form-label" asp-for="LastName"></label>
-        <span class="text-danger" asp-validation-for="LastName"></span>
-        <input class="form-control" asp-for="LastName">
-    </div>
+    <form-field asp-for="FirstName"></form-field>
+    <form-field asp-for="LastName"></form-field>
     <div class="form-group">
         <label class="form-label" asp-for="Role"></label>
         <span class="text-danger" asp-validation-for="Role"></span>
@@ -28,21 +20,9 @@
             <option value="Admin">Admin</option>
         </select>
     </div>
-    <div class="form-group">
-        <label class="form-label" asp-for="StaffUsername"></label>
-        <span class="text-danger" asp-validation-for="StaffUsername"></span>
-        <input class="form-control" asp-for="StaffUsername">
-    </div>
-    <div class="form-group">
-        <label class="form-label" asp-for="Password"></label>
-        <span class="text-danger" asp-validation-for="Password"></span>
-        <input class="form-control" asp-for="Password">
-    </div>
-    <div class="form-group">
-        <label class="form-label" asp-for="ConfirmPassword"></label>
-        <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
-        <input class="form-control" asp-for="ConfirmPassword">
-    </div>
+    <form-field asp-for="StaffUsername"></form-field>
+    <form-field asp-for="Password"></form-field>
+    <form-field asp-for="ConfirmPassword"></form-field>
     <div asp-validation-summary="ModelOnly"></div>
     <button class="btn btn-info">Add to Staff</button>
 </form>

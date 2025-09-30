@@ -11,41 +11,27 @@ namespace PatientPortal.Controllers
     [Route("/provider/patients/{patientId}/issue")]
     public class HealthIssueController : Controller
     {
-        private IPatientViewService _patientViewService;
         private IHealthIssueService _healthIssueService;
-        public HealthIssueController(IPatientViewService patientViewService, IHealthIssueService healthIssueService)
+        public HealthIssueController(IHealthIssueService healthIssueService)
         {
-            _patientViewService = patientViewService;
             _healthIssueService = healthIssueService;
         }
 
         //=====================Create HealthIssue===========================
         [HttpGet("")]
-        public IActionResult HealthIssueAdd(int patientId)
+        public IActionResult HealthIssueAdd()
         {
-            var patientHeader = _patientViewService.GetPatientInfoHeader(patientId);
-            if (patientHeader == null)
-            {
-                return NotFound();
-            }
-
-            HealthIssueFormView viewModel = new HealthIssueFormView()
-                {
-                    Patient = patientHeader,
-                    HealthIssueForm = new HealthIssueForm()
-                };
-
-            return View("HealthIssueForm", viewModel);
+            return View("HealthIssueForm", new HealthIssueForm());
         }
         
         [HttpPost("")]
-        public IActionResult HealthIssueCreate(int patientId, HealthIssueFormView formData)
+        public IActionResult HealthIssueCreate(int patientId, HealthIssueForm formData)
         {
             if(ModelState.IsValid)
             {
                 try
                 {
-                    var healthIssueDTO = formData.HealthIssueForm.ToHealthIssueDTO();
+                    var healthIssueDTO = formData.ToHealthIssueDTO();
                     _healthIssueService.CreateHealthIssue(patientId, healthIssueDTO);
                 }
                 catch
@@ -55,13 +41,6 @@ namespace PatientPortal.Controllers
                 }
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
-            
-            var patientHeader = _patientViewService.GetPatientInfoHeader(patientId);
-            if (patientHeader == null)
-            {
-                return NotFound();
-            }
-            formData.Patient = patientHeader;
 
             return View("HealthIssueForm", formData);
         }

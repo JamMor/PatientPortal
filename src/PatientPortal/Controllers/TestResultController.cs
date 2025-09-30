@@ -14,12 +14,10 @@ namespace PatientPortal.Controllers
     {
         private int? staffId => User.GetStaffId();
 
-        private IPatientViewService _patientViewService;
         private ITestResultService _testResultService;
         private ITestResultViewService _testResultViewService;
-        public TestResultController(IPatientViewService patientViewService, ITestResultService testResultService, ITestResultViewService testResultViewService)
+        public TestResultController(ITestResultService testResultService, ITestResultViewService testResultViewService)
         {
-            _patientViewService = patientViewService;
             _testResultService = testResultService;
             _testResultViewService = testResultViewService;
         }
@@ -28,13 +26,9 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult TestResultAdd(int patientId)
         {
-            TestResultFormView? viewModel = _testResultViewService.ReturnTestResultFormView(patientId);
-            if(viewModel == null)
-            {
-                return NotFound();
-            }
+            TestResultForm form = _testResultViewService.GetNewTestResultForm(patientId);
                 
-            return View("TestResultForm", viewModel);
+            return View("TestResultForm", form);
         }
 
         [HttpPost("")]
@@ -61,19 +55,7 @@ namespace PatientPortal.Controllers
                 }
             }
 
-            var patientHeader = _patientViewService.GetPatientInfoHeader(patientId);
-            if (patientHeader == null)
-            {
-                return NotFound();
-            }
-
-            TestResultFormView viewModel = new TestResultFormView()
-            {
-                Patient = patientHeader,
-                TestResultForm = formData
-            };
-            
-            return View("TestResultForm", viewModel);
+            return View("TestResultForm", formData);
         }
     
         [HttpPost("{testId}/delete")]

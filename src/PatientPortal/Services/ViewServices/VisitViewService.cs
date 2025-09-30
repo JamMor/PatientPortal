@@ -1,5 +1,4 @@
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
@@ -8,46 +7,29 @@ namespace PatientPortal.Services
     public class VisitViewService : IVisitViewService
     {
         private IVisitService _visitService;
-        private IPatientService _patientService;
-        public VisitViewService(IVisitService visitService, IPatientService patientService)
+        private IHealthIssueService _healthIssueService;
+        public VisitViewService(IVisitService visitService, IHealthIssueService healthIssueService)
         {
             _visitService = visitService;
-            _patientService = patientService;
+            _healthIssueService = healthIssueService;
         }
 
-        public VisitFormView? ReturnVisitFormView(int patientId)
+        public VisitForm GetNewVisitForm(int patientId)
         {
-            VisitFormView? viewModel = _patientService.GetPatientBasicInfo()
-                .Include(p => p.HealthIssues)
-                .Select(p => new VisitFormView()
+            VisitForm form = new VisitForm();
+            var healthIssues = _healthIssueService
+                .GetHealthIssuesByPatientId(patientId)
+                .Select(h => new HealthIssueCheckbox()
                 {
-                    Patient = new PatientHeaderInfoView()
-                    {
-                        CurrentPatientId = p.PatientId,
-                        CurrentPatientLinkId =
-                            p.MessagingLink != null ? p.MessagingLink.MessagingLinkId : null,
-                        CurrentPatientFirstName = p.FirstName,
-                        CurrentPatientLastName = p.LastName,
-                        CurrentPatientSSN = p.Last4SSN,
-                        CurrentPatientDOB = p.DOB,
-                        CurrentPatientAge = p.Age,
-                        CurrentPatientCreatedOn = p.CreatedAt
-                    },
-                    VisitForm = new VisitForm()
-                    {
-                        HealthIssues = p.HealthIssues
-                            .Select(h => new HealthIssueCheckbox()
-                                {
-                                    HealthIssueId = h.HealthIssueId,
-                                    ShortDescription = h.ShortDescription,
-                                    CreatedAt = h.CreatedAt,
-                                })
-                            .ToList()
-                    },
+                    HealthIssueId = h.HealthIssueId,
+                    ShortDescription = h.ShortDescription,
+                    CreatedAt = h.CreatedAt,
                 })
-                .FirstOrDefault(p => p.Patient.CurrentPatientId == patientId);
+                .ToList();
 
-            return viewModel;
+            form.HealthIssues = healthIssues;
+
+            return form;
         }
 
         private bool disposedValue;
@@ -59,7 +41,7 @@ namespace PatientPortal.Services
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    _patientService.Dispose();
+                    _healthIssueService.Dispose();
                     _visitService.Dispose();
                 }
 

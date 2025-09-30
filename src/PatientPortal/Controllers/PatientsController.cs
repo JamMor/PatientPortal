@@ -62,8 +62,7 @@ namespace PatientPortal.Controllers
                     }
                     else
                     {
-                        //TODO: Replace with proper ModelState error and display on form
-                        ViewBag.AlreadyExistsError = "A patient already exists with this information.";
+                        ModelState.AddModelError(string.Empty, "A patient already exists with this information.");
                     }
                 }
                 catch
@@ -71,8 +70,6 @@ namespace PatientPortal.Controllers
                     // Log the exception (not implemented here)
                     ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the visit.");
                 }
-                
-
             }
             return View("PatientForm", patientFormView);
         }
