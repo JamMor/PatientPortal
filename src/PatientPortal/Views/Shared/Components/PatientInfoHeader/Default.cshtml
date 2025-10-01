@@ -3,18 +3,22 @@
 <div class="container p-3 pb-4 mb-2 shadow bg-light sticky-header">
     <hr>
     <div class="row">
-        <a asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.CurrentPatientLinkId" class="btn btn-outline-primary btn-sm extend ml-auto mr-2"><i class="far fa-file-alt"></i><span>&nbsp; Message Patient</span></a>
+        <div class="col d-flex justify-content-end">
+            <a asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.CurrentPatientLinkId" class="btn btn-outline-primary btn-sm extend ms-auto me-2">
+                <i class="far fa-file-alt"></i><span>&nbsp; Message Patient</span>
+            </a>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-6">
-            <h6><span class="font-weight-bold no-wrap">Name: </span> <a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@Model.CurrentPatientId">@Model.CurrentPatientFullNameReverse</a></h6>
-            <h6><span class="font-weight-bold no-wrap">Birthdate: </span> @string.Format("{0:MM/dd/yyyy}", Model.CurrentPatientDOB)</h6>
-            <h6><span class="font-weight-bold no-wrap">Age: </span> @Model.CurrentPatientAge</h6>
+            <h6><span class="fw-bold no-wrap">Name: </span> <a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@Model.CurrentPatientId">@Model.CurrentPatientFullNameReverse</a></h6>
+            <h6><span class="fw-bold no-wrap">Birthdate: </span> @string.Format("{0:MM/dd/yyyy}", Model.CurrentPatientDOB)</h6>
+            <h6><span class="fw-bold no-wrap">Age: </span> @Model.CurrentPatientAge</h6>
         </div>
         <div class="col-md-6">
-            <h6><span class="font-weight-bold no-wrap">Patient ID: </span> #@Model.CurrentPatientId.ToString("D6")</h6>
-            <h6><span class="font-weight-bold no-wrap">SSN: </span> <span class="text-muted">XXX-XX-</span>@Model.CurrentPatientSSN</h6>
-            <h6><span class="font-weight-bold no-wrap">Patient since: </span> @string.Format("{0:MM/dd/yyyy}", Model.CurrentPatientCreatedOn)</h6>
+            <h6><span class="fw-bold no-wrap">Patient ID: </span> #@Model.CurrentPatientId.ToString("D6")</h6>
+            <h6><span class="fw-bold no-wrap">SSN: </span> <span class="text-muted">XXX-XX-</span>@Model.CurrentPatientSSN</h6>
+            <h6><span class="fw-bold no-wrap">Patient since: </span> @string.Format("{0:MM/dd/yyyy}", Model.CurrentPatientCreatedOn)</h6>
         </div>
     </div>
     <hr>

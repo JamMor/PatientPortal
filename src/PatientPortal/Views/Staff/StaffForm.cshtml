@@ -4,7 +4,7 @@
 <form asp-action="StaffCreate" asp-controller="Staff" method="post">
     <form-field asp-for="FirstName"></form-field>
     <form-field asp-for="LastName"></form-field>
-    <div class="form-group">
+    <div class="mb-3">
         <label class="form-label" asp-for="Role"></label>
         <span class="text-danger" asp-validation-for="Role"></span>
         <select class="form-control" asp-for="Role">

@@ -1,7 +1,7 @@
 @model StaffInfoViewModel
 
 <div class="d-flex mt-3">
-    <a asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.MessagingLinkId" class="btn btn-outline-primary btn-sm extend ml-auto mr-2"><i class="far fa-file-alt"></i><span>&nbsp; Message Staffmember</span></a>
+    <a asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.MessagingLinkId" class="btn btn-outline-primary btn-sm extend ms-auto me-2"><i class="far fa-file-alt"></i><span>&nbsp; Message Staffmember</span></a>
 </div>
 <table class="table">
     <tbody>
@@ -27,6 +27,6 @@
         </tr>
     </tbody>
 </table>
-<form class="text-right" asp-controller="Staff" asp-action="StaffDelete" asp-route-staffId="@Model.StaffId">
+<form class="text-end" asp-controller="Staff" asp-action="StaffDelete" asp-route-staffId="@Model.StaffId">
     <button class="btn btn-sm btn-outline-danger" href="#">Delete Staff</button>
 </form>

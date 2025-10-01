@@ -7,7 +7,7 @@
 <form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@patientId" method="post">
     <form-field asp-for="ShortDescription"></form-field>
     <form-field asp-for="LongDescription" type="textarea"></form-field>
-    <div class="form-group">
+    <div class="mb-3">
         <label class="form-label" for="Upload">Related Documents</label>
         <input class="form-control" type="file" name="Upload" id="Upload">
     </div>

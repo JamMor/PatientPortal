@@ -21,8 +21,8 @@
         @foreach (InboxConversation conversation in Model.Conversations)
         {
             string members = String.Join(", ", conversation.Participating.Select(p => p.Name));
-            <tr data-toggle="collapse" data-target="#conversation-@conversation.ConversationId" class='collapsed @(conversation.UnreadCount() > 0 ? "bg-light font-weight-bold" : "")'>
-                <td class="text-truncate td-member" data-toggle="tooltip" title="@members">
+            <tr data-bs-toggle="collapse" data-bs-target="#conversation-@conversation.ConversationId" class='collapsed @(conversation.UnreadCount() > 0 ? "bg-light fw-bold" : "")'>
+                <td class="text-truncate td-member" data-bs-toggle="tooltip" title="@members">
                     @members
                 </td>
                 @if(conversation.Subject != null)
@@ -38,11 +38,11 @@
             </tr>
             <tr>
                 <td colspan="4" class="p-0">
-                    <div class="m-2 pl-5 collapse shadow-sm" id="conversation-@conversation.ConversationId" data-parent="#conversation-container">
+                    <div class="m-2 ps-5 collapse shadow-sm" id="conversation-@conversation.ConversationId" data-bs-parent="#conversation-container">
                         @foreach (InboxMessage message in conversation.Messages)
                         {   
-                            <div id="message-@message.MessageId" class='d-flex p-1 @(message.Unread ? "bg-light font-weight-bold unread" : "")'>
-                                <p class="font-weight-bold text-info">@(conversation.Participating.SingleOrDefault(p => p.LinkId == message.SenderId)?.Name ?? "(unknown)"):</p>
+                            <div id="message-@message.MessageId" class='d-flex p-1 @(message.Unread ? "bg-light fw-bold unread" : "")'>
+                                <p class="fw-bold text-info">@(conversation.Participating.SingleOrDefault(p => p.LinkId == message.SenderId)?.Name ?? "(unknown)"):</p>
                                 <p class="col-8" colspan="2">@message.MessageText</p>
                                 <p class="text-secondary">@message.Sent</p>
                             </div>
@@ -66,7 +66,7 @@
                     data: {"messageId" : $messageId},
                     success: function(data) {
                         console.log(data);
-                        $("#message-" + $messageId).removeClass('font-weight-bold unread');
+                        $("#message-" + $messageId).removeClass('fw-bold unread');
                         console.log(`Message Id ${data.messageId} marked unread.`);
                     }
                 });

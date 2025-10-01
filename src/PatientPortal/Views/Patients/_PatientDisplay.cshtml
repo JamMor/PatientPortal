@@ -7,9 +7,9 @@
 }
 
 <div class="d-flex">
-    <h4 class="my-0 mr-auto">Patients <span class="badge badge-secondary">@Model.PaginationSettings.ResultsCount</span>:</h4>
+    <h4 class="my-0 me-auto">Patients <span class="badge bg-secondary">@Model.PaginationSettings.ResultsCount</span>:</h4>
     <div class="dropdown">
-        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             Results per page...
         </button>
         <div class="dropdown-menu">
@@ -68,7 +68,7 @@
                 <tr>
                     <td class="text-muted">@(Model.PaginationSettings.ResultsPerPage*(Model.PaginationSettings.CurrentPage - 1) + i)</td>
                     <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
-                    <td>@string.Format("{0:MM/dd/yyyy}", patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
+                    <td>@string.Format("{0:MM/dd/yyyy}", patient.DOB) <span class="ms-1 text-muted">(@patient.Age)</span></td>
                     <td>#@patient.PatientId.ToString("D6")</td>
                     <td>@patient.Last4SSN</td>
                 </tr>
