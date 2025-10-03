@@ -20,43 +20,43 @@
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="https://kit.fontawesome.com/bb93b9a982.js" crossorigin="anonymous"></script>
 </head>
-<body class="bg-light overflow-hidden">
+<body class="hue-brand and-faint-bright on-bg overflow-hidden">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
-            <div class="container">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm hue-brand on-bg hover-lighten shadow" data-bs-theme="dark">
+            <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <a class="navbar-brand text-nowrap" asp-area="" asp-controller="Home" asp-action="Index">PatientPortal</a>
+                <a class="navbar-brand hue-primary on-text text-nowrap" asp-area="" asp-controller="Home" asp-action="Index">PatientPortal</a>
                 @if(isAuthenticated)
                 {
                     <div class="order-0 order-sm-last">
-                        <a asp-controller="Messaging" asp-action="Inbox"><i class="fas fa-envelope fa-2x"></i></a>
+                        <a asp-controller="Messaging" asp-action="Inbox"><i class="fas fa-envelope fa-2x hue-primary and-darkened on-text"></i></a>
                     </div>
                 }
                 <div class="navbar-collapse collapse d-sm-inline-flex">
                     @if(isAuthenticated)
                     {
-                        <h6 class="p-2 text-dark">Welcome, @User.GetFullName()!</h6>
+                        <h6 class="p-2 hue-primary and-dimmed on-text">Welcome, @User.GetFullName()!</h6>
                     }
                     <ul class="navbar-nav flex-grow-1 order-sm-first">
                         <li class="nav-item border-start border-end border-muted">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         @if(isAuthenticated)
                         {
                             @if(canManageStaff)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Staff"
+                                    <a class="nav-link" asp-area="" asp-controller="Staff"
                                         asp-action="StaffManager">Staff</a>
                                 </li>
                             }
                             @if(canManagePatients)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Patients"
+                                    <a class="nav-link" asp-area="" asp-controller="Patients"
                                         asp-action="PatientManager">Patients</a>
                                 </li>
                             }
@@ -64,34 +64,37 @@
                         @if(!isAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                             </li>
                         }
                     </ul>
                      @if(isAuthenticated)
                     {
                         <form class="p-2" asp-controller="Login" asp-action="Logout">
-                            <button class="btn btn-secondary btn-sm">Logout</button>
+                            <button class="btn btn-sm hue-secondary and-desaturated hover-lighten on-btn text-dark">Logout</button>
                         </form>
                     }
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container main-container p-0 bg-white box-shadow">
+    <div class="container main-container p-0 bg-white shadow">
         <main class="px-3 pb-3" role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-white mt-1">
-        <div class="container">
-            &copy; 2021 - 2026 - PatientPortal 
-            - <a asp-area="" asp-controller="Home" asp-action="About">About</a> 
-            - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="footer position-fixed bottom-0 container-fluid hue-brand and-faint-light on-bg">
+        <div class="text-light text-nowrap d-flex gap-2">
+            <span>&copy; 2021 - 2026</span>
+            <span class="hue-primary and-darkened on-text">PatientPortal</span>
+            <div class="d-flex mx-2 gap-3">
+                <a class="text-light text-decoration-underline link-offset-2 link-underline-light link-underline-opacity-0 link-underline-opacity-75-hover" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                <a class="text-light text-decoration-underline link-offset-2 link-underline-light link-underline-opacity-0 link-underline-opacity-75-hover" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
         </div>
     </footer>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

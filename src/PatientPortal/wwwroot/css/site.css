@@ -89,31 +89,18 @@ for details on configuring this project to bundle and minify static web assets. 
 
 /* #endregion Color Classes */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+/*  Navbar links on hover  */
+:is(.hover-lighten, .hover-darken) .nav-link:is(:hover, :focus) {
+  background-color: var(--hover-color);
+  border-radius: 0.25rem;
 }
 
-/* Provide sufficient contrast against white background */
+/* Links */
 a, .text-link {
-  color: #0366d6;
+  color: oklch(from var(--color-secondary) calc(l * 0.7) 0.1 h);
+  text-decoration: none;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
 html {
   font-size: 14px;
 }
@@ -121,22 +108,6 @@ html {
   html {
     font-size: 16px;
   }
-}
-
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
 }
 
 /* Sticky footer styles
@@ -151,10 +122,6 @@ body {
   padding-bottom: 60px;
 }
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
 
@@ -164,7 +131,6 @@ body {
 
 body {
   height: 100vh;
-  /* background-color: #4a81be; */
 }
 
 .main-container {
