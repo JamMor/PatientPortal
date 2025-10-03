@@ -1,6 +1,94 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+/* #region Color Vars */
+:root {
+  --main-color: oklch(62.852% 0.25707 29.148);
+  --color-blue: oklch(37% 0.127 262);
+  --color-cyan: oklch(100% 0.4 195);
+  --color-violet: oklch(74% 0.245 324);
+  --color-yellow: oklch(84% 0.172 84);
+  
+  --color-brand: var(--color-blue);
+  --color-secondary: var(--color-cyan);
+  --color-tertiary: var(--color-violet);
+  --color-quaternary: var(--color-yellow);
+}
+/* #endregion Color Vars */
+
+/* #region Color Classes */
+.hue-brand, .hue-primary, .hue-secondary, .hue-warning,
+.hue-royal-blue, .hue-cyan, .hue-violet, .hue-yellow {
+  --output-color: initial;
+}
+.hue-brand, .hue-royal-blue {
+  --main-color: var(--color-brand);
+}
+.hue-primary, .hue-success, .hue-cyan {
+  --main-color: var(--color-secondary);
+}
+.hue-secondary, .hue-info, .hue-violet {
+  --main-color: var(--color-tertiary);
+}
+.hue-warning, .hue-yellow {
+  --main-color: var(--color-quaternary);
+}
+
+/* Color Modifier Classes */
+.and-dimmed, .and-darkened, .and-desaturated, .and-faint-light, .and-faint-bright {
+  --input-color: var(--output-color, var(--main-color));
+}
+.and-dimmed {
+  --output-color: oklch(from var(--main-color) calc(l * 0.77) 0.2 h);
+}
+.and-darkened {
+  --output-color: oklch(from var(--main-color) calc(l * 0.5) 0.3 h);
+}
+.and-desaturated {
+  --output-color: oklch(from var(--main-color) calc(l * 0.9) 0.15 h);
+}
+.and-faint-light {
+  --output-color: oklch(from var(--main-color) 80% 0.03 h);
+}
+.and-faint-bright {
+  --output-color: oklch(from var(--main-color) 97% 0.03 h);
+}
+
+/* Color Target Property Classes */
+.on-bg {
+  background-color: var(--output-color, var(--main-color));
+}
+.on-text {
+  color: var(--output-color, var(--main-color));
+}
+.on-border {
+  border-color: var(--output-color, var(--main-color));
+}
+.on-btn {
+  --button-color: var(--output-color, var(--main-color));
+  --bs-btn-font-weight: 600;
+  --bs-btn-color: var(--bs-black);
+  --bs-btn-bg: var(--button-color);
+  --bs-btn-border-color: var(--button-color);
+  --bs-btn-hover-color: var(--bs-black);
+  --bs-btn-hover-bg: var(--hover-color);
+  --bs-btn-hover-border-color: var(--hover-color);
+  --bs-btn-focus-shadow-rgb: var(--hover-color);
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  --bs-btn-active-bg: var(--hover-color);
+  --bs-btn-active-border-color: var(--hover-color);
+}
+
+/* Hover Modifier Classes */
+.hover-lighten {
+  --hover-color: oklch(from var(--output-color, var(--main-color)) calc(l * 1.2) calc(c * 1.2) h);
+}
+.hover-darken {
+  --hover-color: oklch(from var(--output-color, var(--main-color)) calc(l * 0.8) calc(c * 1.2) h);
+}
+
+/* #endregion Color Classes */
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
