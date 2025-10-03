@@ -194,46 +194,18 @@ main {
   z-index: 2;
 }
 
-/* ===== Demo Login Styles ===== */
-.demo-login-card {
-  border-color: #dee2e6;
-  background-color: #fdfdfd;
-}
-
-.demo-login-header {
-  background-color: #f8f9fa;
-  border-bottom-color: #dee2e6;
-}
+/* #region Demo Login Styles */
 
 .demo-login-label {
-  color: #6c757d;
-  font-weight: 600;
-  text-transform: uppercase;
   font-size: 0.7rem;
   letter-spacing: 0.05em;
 }
 
 .demo-login-buttons {
-  display: flex;
-  flex-wrap: wrap;
   max-height: 110px;
   overflow-y: auto;
-  /* Firefox */
   scrollbar-width: thin;
-  scrollbar-color: #1b6ec2 #e9ecef;
+  scrollbar-color: var(--main-color) oklch(from var(--main-color) 97% 0.03 h);
 }
 
-/* Chrome, Edge, and Safari */
-.demo-login-buttons::-webkit-scrollbar {
-  width: 6px;
-}
-
-.demo-login-buttons::-webkit-scrollbar-track {
-  background: #e9ecef;
-  border-radius: 6px;
-}
-
-.demo-login-buttons::-webkit-scrollbar-thumb {
-  background-color: #1b6ec2;
-  border-radius: 6px;
-}
+/* #endregion Demo Login Styles */

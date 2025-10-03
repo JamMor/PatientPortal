@@ -1,9 +1,9 @@
 @model IEnumerable<DemoLoginViewModel>
 
-<div id="demo-login-container" class="card demo-login-card">
-    <div class="card-header demo-login-header py-2">
+<div id="demo-login-container" class="card">
+    <div class="card-header py-2">
         <span class="badge bg-secondary me-2">DEMO</span>
-        <small class="fw-bold">Quick Login</small>
+        <span class="fw-bold small">Quick Login</span>
     </div>
     <div class="card-body px-3 py-3">
         @if(Model != null && Model.Any())
@@ -11,8 +11,8 @@
         <form id="demo-login-options" asp-controller="DemoLogin" asp-action="LoginDemoStaff">
             <div class="text-danger" asp-validation-summary="ModelOnly"></div>
             <div class="mb-3">
-                <small class="demo-login-label d-block mb-2">Full Administrative Privileges</small>
-                <div class="demo-login-buttons">
+                <span class="demo-login-label small text-secondary text-uppercase fw-semibold d-block mb-2">Full Administrative Privileges</span>
+                <div class="demo-login-buttons d-flex flex-wrap">
                     @foreach(var staff in Model.Where(s => s.IsDemoStaffAdmin))
                     {
                         <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm btn-primary me-1 mb-1'>
@@ -22,8 +22,8 @@
                 </div>
             </div>
             <div>
-                <small class="demo-login-label d-block mb-2">Patient Admin Privileges Only</small>
-                <div class="demo-login-buttons">
+                <span class="demo-login-label small text-secondary text-uppercase fw-semibold d-block mb-2">Patient Admin Privileges Only</span>
+                <div class="demo-login-buttons d-flex flex-wrap">
                     @foreach(var staff in Model.Where(s => !s.IsDemoStaffAdmin))
                     {
                         <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm btn-warning me-1 mb-1'>
