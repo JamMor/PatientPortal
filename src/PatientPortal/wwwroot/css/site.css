@@ -187,13 +187,6 @@ main {
   overflow-y: auto;
 }
 
-/* Sticky patient header info */
-.sticky-header{
-  position: sticky;
-  top:0;
-  z-index: 2;
-}
-
 /* #region Demo Login Styles */
 
 .demo-login-label {
