@@ -2,35 +2,32 @@
 
 <h3 class="my-3">New Message: </h3>
 <form asp-controller="Messaging" asp-action="NewConversation" method="post">
-    <label class="form-label">To:</label>
-    <div class="d-flex mb-3">
-        <div class="dropdown">
-            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">Send To</button>
-            <div class="dropdown-menu vert-scroll">
-                @if(Model.PatientRecipient != null)
-                {
-                    <div class="dropdown-item form-check">
-                        <input class="form-check-input" type="checkbox" checked="checked" id="PatientRecipient_Id" disabled>
-                        <label class="form-check-label" asp-for="PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
-                        <input class="form-check-input" type="hidden" asp-for="PatientRecipient.LinkId">
-                        <input class="form-check-input" type="hidden" asp-for="PatientRecipient.Name">
-                        <input class="form-check-input" type="hidden" asp-for="PatientRecipient.Role">
-                    </div>
-                    <hr>
-                }
-                @for(int i = 0; i < Model.Recipients.Count; i++)
-                {
-                <div class="dropdown-item form-check">
-                    <input class="form-check-input" type="checkbox" asp-for="Recipients[i].Selected">
-                    <label class="form-check-label" asp-for="Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
-                    <input class="form-check-input" type="hidden" asp-for="Recipients[i].LinkId">
-                    <input class="form-check-input" type="hidden" asp-for="Recipients[i].Name">
-                    <input class="form-check-input" type="hidden" asp-for="Recipients[i].Role">
-                </div>
-                }
-            </div>
-        </div>
-        <div class="w-100" id="selected-recipients"></div>
+    <div class="input-group mb-3">
+        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">Send To</button>
+        <ul class="dropdown-menu ps-3 vert-scroll">
+            @if(Model.PatientRecipient != null)
+            {
+                <li class="dropdown-item form-check">
+                    <input class="form-check-input" type="checkbox" checked="checked" id="PatientRecipient_Id" disabled>
+                    <label class="form-check-label" asp-for="PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
+                    <input class="form-check-input" type="hidden" asp-for="PatientRecipient.LinkId">
+                    <input class="form-check-input" type="hidden" asp-for="PatientRecipient.Name">
+                    <input class="form-check-input" type="hidden" asp-for="PatientRecipient.Role">
+                </li>
+                <li><hr class="dropdown-divider"></li>
+            }
+            @for(int i = 0; i < Model.Recipients.Count; i++)
+            {
+            <li class="dropdown-item form-check">
+                <input class="form-check-input" type="checkbox" asp-for="Recipients[i].Selected">
+                <label class="form-check-label" asp-for="Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
+                <input class="form-check-input" type="hidden" asp-for="Recipients[i].LinkId">
+                <input class="form-check-input" type="hidden" asp-for="Recipients[i].Name">
+                <input class="form-check-input" type="hidden" asp-for="Recipients[i].Role">
+            </li>
+            }
+        </ul>
+        <input id="selected-recipients" type="text" class="form-control" placeholder="Recipients..." readonly>
     </div>
     <input class="form-check-input" type="hidden" asp-for="WithPatient">
     <div class="mb-3">
@@ -59,7 +56,7 @@
         //Replace names of all currently selected on call
         function displayNames(chosen) {
             let currentUsers = chosen.filter( x => x != null).join(";  ");
-            $("#selected-recipients").text(currentUsers);
+            $("#selected-recipients").val(currentUsers);
             return;
         };
 

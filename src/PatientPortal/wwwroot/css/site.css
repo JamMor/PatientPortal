@@ -146,15 +146,6 @@ main {
   overflow-x: hidden;
 }
 
-/* Make recipient box look like form */
-#selected-recipients {
-  font-size: 0.8rem;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  margin-left:0.5rem;
-  padding: 0.375rem 0.75rem;
-}
-
 .td-member {
   max-width: 150px !important;
 }
@@ -183,7 +174,7 @@ main {
 
 /* Scrolling for dropdown */
 .vert-scroll{
-  max-height: 500px;
+  max-height: 70vh;
   overflow-y: auto;
 }
 
