@@ -28,11 +28,11 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <a class="navbar-brand hue-primary on-text text-nowrap" asp-area="" asp-controller="Home" asp-action="Index">PatientPortal</a>
+                <a class="navbar-brand hue-primary on-text text-nowrap hover-darken fw-bold" asp-area="" asp-controller="Home" asp-action="Index">PatientPortal</a>
                 @if(isAuthenticated)
                 {
                     <div class="order-0 order-sm-last">
-                        <a asp-controller="Messaging" asp-action="Inbox"><i class="fas fa-envelope fa-2x hue-primary and-darkened on-text"></i></a>
+                        <a asp-controller="Messaging" asp-action="Inbox"><i id ="inbox-icon" class="fas fa-envelope fa-2x hue-primary and-dimmed on-text"></i></a>
                     </div>
                 }
                 <div class="navbar-collapse collapse d-sm-inline-flex">
@@ -41,7 +41,7 @@
                         <h6 class="p-2 hue-primary and-dimmed on-text">Welcome, @User.GetFullName()!</h6>
                     }
                     <ul class="navbar-nav flex-grow-1 order-sm-first">
-                        <li class="nav-item border-start border-end border-muted">
+                        <li class="nav-item border-muted">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         @if(isAuthenticated)
@@ -74,7 +74,7 @@
                      @if(isAuthenticated)
                     {
                         <form class="p-2" asp-controller="Login" asp-action="Logout">
-                            <button class="btn btn-sm hue-secondary and-desaturated hover-lighten on-btn text-dark">Logout</button>
+                            <button class="btn btn-sm hue-secondary hover-lighten on-btn fw-semibold text-dark">Logout</button>
                         </form>
                     }
                 </div>

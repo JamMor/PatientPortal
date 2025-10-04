@@ -3,55 +3,50 @@ for details on configuring this project to bundle and minify static web assets. 
 
 /* #region Color Vars */
 :root {
-  --main-color: oklch(62.852% 0.25707 29.148);
+  --main-color: currentColor;
   --color-blue: oklch(37% 0.127 262);
   --color-cyan: oklch(100% 0.4 195);
   --color-violet: oklch(74% 0.245 324);
   --color-yellow: oklch(84% 0.172 84);
+  --color-gray-light: oklch(70% 0 0);
   
   --color-brand: var(--color-blue);
-  --color-secondary: var(--color-cyan);
-  --color-tertiary: var(--color-violet);
-  --color-quaternary: var(--color-yellow);
+  --color-primary: var(--color-cyan);
+  --color-secondary: var(--color-gray-light);
+  --color-tertiary: var(--color-yellow);
 }
 /* #endregion Color Vars */
 
 /* #region Color Classes */
 .hue-brand, .hue-primary, .hue-secondary, .hue-warning,
-.hue-royal-blue, .hue-cyan, .hue-violet, .hue-yellow {
+.hue-royal-blue, .hue-cyan, .hue-gray, .hue-yellow {
   --output-color: initial;
 }
 .hue-brand, .hue-royal-blue {
   --main-color: var(--color-brand);
 }
 .hue-primary, .hue-success, .hue-cyan {
+  --main-color: var(--color-primary);
+}
+.hue-secondary, .hue-info, .hue-gray {
   --main-color: var(--color-secondary);
 }
-.hue-secondary, .hue-info, .hue-violet {
-  --main-color: var(--color-tertiary);
-}
 .hue-warning, .hue-yellow {
-  --main-color: var(--color-quaternary);
+  --main-color: var(--color-tertiary);
 }
 
 /* Color Modifier Classes */
-.and-dimmed, .and-darkened, .and-desaturated, .and-faint-light, .and-faint-bright {
-  --input-color: var(--output-color, var(--main-color));
-}
 .and-dimmed {
-  --output-color: oklch(from var(--main-color) calc(l * 0.77) 0.2 h);
+  --output-color: oklch(from var(--main-color) calc(l * 0.77) calc(c * 0.5) h);
 }
 .and-darkened {
-  --output-color: oklch(from var(--main-color) calc(l * 0.5) 0.3 h);
-}
-.and-desaturated {
-  --output-color: oklch(from var(--main-color) calc(l * 0.9) 0.15 h);
+  --output-color: oklch(from var(--main-color) calc(l * 0.5) calc(c * 0.3) h);
 }
 .and-faint-light {
-  --output-color: oklch(from var(--main-color) 80% 0.03 h);
+  --output-color: oklch(from var(--main-color) 80% calc(c * 0.12) h);
 }
 .and-faint-bright {
-  --output-color: oklch(from var(--main-color) 97% 0.03 h);
+  --output-color: oklch(from var(--main-color) 97% calc(c * 0.12) h);
 }
 
 /* Color Target Property Classes */
@@ -65,11 +60,10 @@ for details on configuring this project to bundle and minify static web assets. 
   border-color: var(--output-color, var(--main-color));
 }
 .on-btn {
-  --button-color: var(--output-color, var(--main-color));
-  --bs-btn-font-weight: 600;
+  --hue-button-color: var(--output-color, var(--main-color));
   --bs-btn-color: var(--bs-black);
-  --bs-btn-bg: var(--button-color);
-  --bs-btn-border-color: var(--button-color);
+  --bs-btn-bg: var(--hue-button-color);
+  --bs-btn-border-color: var(--hue-button-color);
   --bs-btn-hover-color: var(--bs-black);
   --bs-btn-hover-bg: var(--hover-color);
   --bs-btn-hover-border-color: var(--hover-color);
@@ -84,7 +78,7 @@ for details on configuring this project to bundle and minify static web assets. 
   --hover-color: oklch(from var(--output-color, var(--main-color)) calc(l * 1.2) calc(c * 1.2) h);
 }
 .hover-darken {
-  --hover-color: oklch(from var(--output-color, var(--main-color)) calc(l * 0.8) calc(c * 1.2) h);
+  --hover-color: oklch(from var(--output-color, var(--main-color)) calc(l * 0.7) calc(c * 1.2) h);
 }
 
 /* #endregion Color Classes */
@@ -94,11 +88,27 @@ for details on configuring this project to bundle and minify static web assets. 
   background-color: var(--hover-color);
   border-radius: 0.25rem;
 }
+.navbar-brand:hover, .navbar-brand:focus {
+  color: var(--hover-color)
+}
+#inbox-icon {
+  filter:grayscale(1);
+  opacity: 0.75;
+  transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+#inbox-icon:hover {
+  filter: grayscale(0);
+  opacity: 1;
+}
 
 /* Links */
 a, .text-link {
-  color: oklch(from var(--color-secondary) calc(l * 0.7) 0.1 h);
+  color: oklch(from var(--color-primary) calc(l * 0.7) 0.1 h);
   text-decoration: none;
+}
+li.nav-item:first-child .nav-link {
+  color: oklch(from var(--color-primary) calc(l * 0.9) 0 h)
+
 }
 
 html {
