@@ -2,8 +2,8 @@
 
 <div id="demo-login-container" class="card">
     <div class="card-header py-2">
-        <span class="badge bg-secondary me-2">DEMO</span>
-        <span class="fw-bold small">Quick Login</span>
+        <span class="badge me-2 hue-secondary on-bg text-dark">DEMO</span>
+        <span class="fw-bold text-secondary small">Quick Login</span>
     </div>
     <div class="card-body px-3 py-3">
         @if(Model != null && Model.Any())
@@ -15,7 +15,7 @@
                 <div class="demo-login-buttons d-flex flex-wrap">
                     @foreach(var staff in Model.Where(s => s.IsDemoStaffAdmin))
                     {
-                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm btn-primary me-1 mb-1'>
+                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm me-1 mb-1 hue-primary and-dimmed hover-lighten on-btn'>
                             @staff.DemoStaffName
                         </button>
                     }
@@ -26,7 +26,7 @@
                 <div class="demo-login-buttons d-flex flex-wrap">
                     @foreach(var staff in Model.Where(s => !s.IsDemoStaffAdmin))
                     {
-                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm btn-warning me-1 mb-1'>
+                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm me-1 mb-1 hue-secondary hover-lighten on-btn'>
                             @staff.DemoStaffName
                         </button>
                     }
@@ -37,7 +37,7 @@
         else
         {
         <form class='d-flex' method='post' action='/demo/create'>
-            <button class='mx-1 btn btn-sm btn-warning'>Create Picard</button>
+            <button class='btn btn-sm mx-1 hue-warning hover-lighten on-btn'>Create Picard</button>
         </form>
         }
     </div>
