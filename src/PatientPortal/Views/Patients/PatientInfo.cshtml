@@ -17,7 +17,7 @@
                             @if(staff.StaffId == User.GetStaffId())
                             {
                             <form asp-controller="Patients" asp-action="MedicalTeamLeave" asp-route-patientId="@Model.PatientId">
-                                <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
+                                <button class="btn btn-sm hue-secondary on-btn-outline" href="#">Remove</button>
                             </form>
                             }
                         </li>
@@ -26,7 +26,7 @@
                     {
                         <li class="list-group-item text-end">
                             <form asp-controller="Patients" asp-action="MedicalTeamJoin" asp-route-patientId="@Model.PatientId">
-                                <button class="btn btn-sm btn-outline-success" href="#">Join</button>
+                                <button class="btn btn-sm hue-primary and-dimmed on-btn-outline" href="#">Join</button>
                             </form>
                         </li>
                     }                    
@@ -61,7 +61,7 @@
                             </div>
                         </li>
                     }
-                    <li class="list-group-item text-end"><a class ="btn btn-sm btn-outline-success" asp-controller="HealthIssue" asp-action="HealthIssueAdd" asp-route-patientId="@Model.PatientId">Add Health Issue</a></li>
+                    <li class="list-group-item text-end"><a class ="btn btn-sm hue-primary and-dimmed on-btn-outline" asp-controller="HealthIssue" asp-action="HealthIssueAdd" asp-route-patientId="@Model.PatientId">Add Health Issue</a></li>
                 </ul>
             </td>
         </tr>
@@ -91,7 +91,7 @@
                             </div>
                         </li>
                     }
-                    <li class="list-group-item text-end"><a class ="btn btn-sm btn-outline-success" asp-controller="Visit" asp-action="VisitAdd" asp-route-patientId="@Model.PatientId">Add Visit</a></li>
+                    <li class="list-group-item text-end"><a class ="btn btn-sm hue-primary and-dimmed on-btn-outline" asp-controller="Visit" asp-action="VisitAdd" asp-route-patientId="@Model.PatientId">Add Visit</a></li>
                 </ul>
             </td>
         </tr>
@@ -121,7 +121,7 @@
                             </div>
                         </li>
                     }
-                    <li class="list-group-item text-end"><a class ="btn btn-sm btn-outline-success" asp-controller="TestResult" asp-action="TestResultAdd" asp-route-patientId="@Model.PatientId">Add Test</a></li>
+                    <li class="list-group-item text-end"><a class ="btn btn-sm hue-primary and-dimmed on-btn-outline" asp-controller="TestResult" asp-action="TestResultAdd" asp-route-patientId="@Model.PatientId">Add Test</a></li>
                 </ul>
             </td>
         </tr>

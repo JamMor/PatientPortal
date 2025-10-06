@@ -7,9 +7,9 @@
 }
 
 <div class="d-flex">
-    <h4 class="my-0 me-auto">Patients <span class="badge bg-secondary">@Model.PaginationSettings.ResultsCount</span>:</h4>
+    <h4 class="my-0 me-auto">Patients <span class="badge hue-primary and-dimmed on-bg text-dark">@Model.PaginationSettings.ResultsCount</span>:</h4>
     <div class="dropdown">
-        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-sm dropdown-toggle hue-secondary on-btn-outline" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             Results per page...
         </button>
         <div class="dropdown-menu">
@@ -26,9 +26,9 @@
             }
         </div>
     </div>
-    <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-outline-primary btn-sm extend">+<span>  Add Patient</span></a>
+    <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-sm extend hue-primary and-dimmed on-btn-outline">+<span>  Add Patient</span></a>
 </div>
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th class="align-middle text-muted">#</th>

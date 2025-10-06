@@ -1,10 +1,10 @@
 @model PatientPortal.Models.PatientHeaderInfoView
 
-<div class="container p-3 pb-4 mb-2 shadow bg-light sticky-top">
+<div class="container p-3 pb-4 mb-2 shadow hue-brand and-faint-bright on-bg sticky-top">
     <hr>
     <div class="row">
         <div class="col d-flex justify-content-end">
-            <a asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.CurrentPatientLinkId" class="btn btn-outline-primary btn-sm extend ms-auto me-2">
+            <a asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.CurrentPatientLinkId" class="btn btn-sm hue-primary and-dimmed on-btn-outline extend ms-auto me-2">
                 <i class="far fa-file-alt"></i><span>&nbsp; Message Patient</span>
             </a>
         </div>
