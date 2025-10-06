@@ -2,10 +2,10 @@
 @* TODO: Change patient/staff routes to use hardcoded InboxTypes *@
 
 <div class="d-flex mt-3">
-    <h4 class="my-0 me-auto">Messages <span class="badge rounded-pill bg-secondary">@Model.UnreadTotal</span>:</h4>
+    <h4 class="my-0 me-auto">Messages <span class='badge hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>@Model.UnreadTotal</span>:</h4>
 
     <div class="dropdown">
-        <button class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">+</button>
+        <button class="btn btn-sm dropdown-toggle hue-primary and-dimmed on-btn-outline" data-bs-toggle="dropdown">+</button>
         <div class="dropdown-menu">
             <a href="#" class="dropdown-item disabled">New Message to Patient</a>
             <a asp-controller="Messaging" asp-action="NewConversationForm" class="dropdown-item">New Message to Staff</a>
@@ -23,10 +23,10 @@
         </form>
     </li>
     <li class="nav-item">
-        <a class='nav-link @(Model.InboxFilters.IsPatientInbox ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="patient">Patient <span class="badge rounded-pill bg-secondary">@Model.UnreadPatient</span></a>
+        <a class='nav-link @(Model.InboxFilters.IsPatientInbox ? "active hue-primary and-dimmed on-text fw-semibold" : "text-secondary")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="patient">Patient <span class='badge @(Model.InboxFilters.IsPatientInbox ? "hue-primary" : "hue-secondary") @(Model.UnreadPatient > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>@Model.UnreadPatient</span></a>
     </li>
     <li class="nav-item">
-        <a class='nav-link @(!Model.InboxFilters.IsPatientInbox ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="staff">Staff <span class="badge rounded-pill bg-secondary">@Model.UnreadStaff</span></a>
+        <a class='nav-link @(!Model.InboxFilters.IsPatientInbox ? "active hue-primary and-dimmed on-text fw-semibold" : "text-secondary")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="staff">Staff <span class='badge @(!Model.InboxFilters.IsPatientInbox ? "hue-primary" : "hue-secondary") @(Model.UnreadStaff > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>@Model.UnreadStaff</span></a>
     </li>
 </ul>
 <partial name="_Conversations.cshtml" />

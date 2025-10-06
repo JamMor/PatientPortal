@@ -118,6 +118,9 @@ a, .text-link, .page-link {
   color: oklch(from var(--color-primary) calc(l * 0.7) 0.1 h);
   text-decoration: none;
 }
+.nav-item .nav-link.active {
+  color: unset;
+}
 li.nav-item:first-child .nav-link {
   color: oklch(from var(--color-primary) calc(l * 0.9) 0 h)
 
@@ -170,6 +173,9 @@ main {
 
 .td-member {
   max-width: 150px !important;
+}
+td {
+  --bs-table-bg: transparent;
 }
 
 /* Collapse Indicator */
