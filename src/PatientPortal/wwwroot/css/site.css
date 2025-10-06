@@ -72,6 +72,18 @@ for details on configuring this project to bundle and minify static web assets. 
   --bs-btn-active-bg: var(--hover-color);
   --bs-btn-active-border-color: var(--hover-color);
 }
+.on-btn-outline {
+  --hue-button-color: var(--output-color, var(--main-color));
+  --bs-btn-color: var(--hue-button-color);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--hue-button-color);
+  --bs-btn-hover-color: var(--bs-black);
+  --bs-btn-hover-bg: var(--hover-color, var(--hue-button-color));
+  --bs-btn-hover-border-color: var(--hover-color, var(--hue-button-color));
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  --bs-btn-active-bg: var(--hover-color, var(--hue-button-color));
+  --bs-btn-active-border-color: var(--hover-color, var(--hue-button-color));
+}
 
 /* Hover Modifier Classes */
 .hover-lighten {
