@@ -1,33 +1,25 @@
 @model PatientManagerView
 
-<form class="mt-3" asp-controller="Patients" asp-action="PatientManager" method="get" >
-    <div class="row justify-content-around align-items-center flex-wrap">
-        <div class="mb-3 col-auto">
-            <label class="form-label" asp-for="SearchBar.SearchPatientId"></label>
-            <input class="form-control" asp-for="SearchBar.SearchPatientId">
-            <span class="text-danger" asp-validation-for="SearchBar.SearchPatientId"></span>
+<form class="mt-3" asp-controller="Patients" asp-action="PatientManager" method="get">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 gx-3">
+        <div class="col">
+            <form-field asp-for="SearchBar.SearchPatientId"></form-field>
         </div>
-        <div class="mb-3 col-auto">
-            <label class="form-label" asp-for="SearchBar.SearchFirstName"></label>
-            <input class="form-control" asp-for="SearchBar.SearchFirstName">
-            <span class="text-danger" asp-validation-for="SearchBar.SearchFirstName"></span>
+        <div class="col">
+            <form-field asp-for="SearchBar.SearchFirstName"></form-field>
         </div>
-        <div class="mb-3 col-auto">
-            <label class="form-label" asp-for="SearchBar.SearchLastName"></label>
-            <input class="form-control" asp-for="SearchBar.SearchLastName">
-            <span class="text-danger" asp-validation-for="SearchBar.SearchLastName"></span>
+        <div class="col">
+            <form-field asp-for="SearchBar.SearchLastName"></form-field>
         </div>
-        <div class="mb-3 col-auto">
-            <label class="form-label" asp-for="SearchBar.SearchBirthdate"></label>
-            <input class="form-control" asp-for="SearchBar.SearchBirthdate">
-            <span class="text-danger" asp-validation-for="SearchBar.SearchBirthdate"></span>
+        <div class="col">
+            <form-field asp-for="SearchBar.SearchBirthdate"></form-field>
         </div>
-        <div class="mb-3 col-auto">
-            <label class="form-label" asp-for="SearchBar.SearchSSN"></label>
-            <input class="form-control" asp-for="SearchBar.SearchSSN">
-            <span class="text-danger" asp-validation-for="SearchBar.SearchSSN"></span>
+        <div class="col">
+            <form-field asp-for="SearchBar.SearchSSN"></form-field>
         </div>
-        <div class="form-check col-auto">
+    </div>
+    <div class="mb-3 d-flex justify-content-center">
+        <div class="form-check">
             <input class="form-check-input" type="checkbox" asp-for="SearchBar.SearchPatientsUnderCare">
             <label class="form-check-label" asp-for="SearchBar.SearchPatientsUnderCare"></label>
         </div>
