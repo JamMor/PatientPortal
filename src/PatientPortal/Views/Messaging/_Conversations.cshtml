@@ -4,13 +4,13 @@
 <table class="table">
     <thead>
         <tr>
-            <th class="col-2">Members</th>
-            <th class="col-auto">Subject</th>
-            <th class="col-1">Start Date</th>
-            <th class="col-1">Latest Message Date</th>
+            <th>Members</th>
+            <th>Subject</th>
+            <th class="d-none d-sm-table-cell">Start Date</th>
+            <th>Latest<span class="d-none d-sm-inline"> Message Date</span></th>
         </tr>
     </thead>
-    <tbody class="accordion" id="conversation-container">
+    <tbody class="accordion table-group-divider" id="conversation-container">
         @{
             if(Model.Conversations.Count == 0)
             {
@@ -21,14 +21,24 @@
         }
         @foreach (InboxConversation conversation in Model.Conversations)
         {
-            string members = String.Join(", ", conversation.Participating.Select(p => p.Name));
+            var currentUserId = User.GetMessageLinkId();
+            var otherMembers = conversation.Participating.Where(p => p.LinkId != currentUserId).ToList();
+            var primaryMember = otherMembers.FirstOrDefault();
+            int otherMembersCount = otherMembers.Count - 1;
+            var otherMembersNames = String.Join(", ", otherMembers.Select(m => m.Name));
             string conversationRowClasses = conversation.UnreadCount() > 0
                 ? "hue-brand and-faint-bright on-bg fw-bold"
                 : "";
 
             <tr data-bs-toggle="collapse" data-bs-target="#conversation-@conversation.ConversationId" class="collapsed @conversationRowClasses">
-                <td class="text-truncate td-member" data-bs-toggle="tooltip" title="@members">
-                    @members
+                <td data-bs-toggle="tooltip" title="@otherMembersNames">
+                    <div class="d-flex align-items-center gap-1">
+                        <span class="text-truncate">@primaryMember?.Name</span>
+                        @if (otherMembersCount > 0)
+                        {
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis flex-shrink-0 ms-auto">+@otherMembersCount</span>
+                        }
+                    </div>
                 </td>
                 @if(conversation.Subject != null)
                 {
@@ -38,12 +48,18 @@
                 {
                     <td><span class='text-muted'><em>(no subject)</em></span></td>
                 }
-                <td class="small">@conversation.DateCreated</td>
-                <td class="small">@conversation.DateLastMessage</td>
+                <td class="small d-none d-sm-table-cell">
+                    <span class="text-nowrap">@conversation.DateCreated.ToString("M/d/yyyy")</span>
+                    <span class="text-nowrap">@conversation.DateCreated.ToString("h:mm:ss\u00a0tt")</span>
+                </td>
+                <td class="small">
+                    <span class="text-nowrap">@conversation.DateLastMessage.ToString("M/d/yyyy")</span>
+                    <span class="text-nowrap">@conversation.DateLastMessage.ToString("h:mm:ss\u00a0tt")</span>
+                </td>
             </tr>
             <tr>
                 <td colspan="4" class="p-0">
-                    <div class="m-2 ps-5 collapse shadow-sm" id="conversation-@conversation.ConversationId" data-bs-parent="#conversation-container">
+                    <div class="m-2 ps-2 ps-sm-5 collapse shadow-sm" id="conversation-@conversation.ConversationId" data-bs-parent="#conversation-container">
                         @foreach (InboxMessage message in conversation.Messages)
                         {
                             string messageClasses = message.Unread
@@ -55,10 +71,12 @@
                             string senderName = conversation.Participating
                                 .SingleOrDefault(p => p.LinkId == message.SenderId)?.Name ?? "(unknown)";
 
-                            <div id="message-@message.MessageId" class="d-flex p-1 unread @messageClasses">
-                                <p class="fw-bold @senderClasses">@senderName:</p>
-                                <p class="col-8 ms-1" colspan="2">@message.MessageText</p>
-                                <p class="text-secondary small">@message.Sent</p>
+                            <div id="message-@message.MessageId" class="py-1 unread @messageClasses">
+                                <div class="d-flex align-items-baseline gap-2">
+                                    <span class="fw-bold @senderClasses">@senderName:</span>
+                                    <span class="text-secondary small ms-auto">@message.Sent</span>
+                                </div>
+                                <p class="mb-0 ms-1">@message.MessageText</p>
                             </div>
                         }
                             <partial name="_NewReply.cshtml" model="new ReplyView(){ConversationId = conversation.ConversationId}" />

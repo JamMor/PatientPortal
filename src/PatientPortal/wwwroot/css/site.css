@@ -167,9 +167,6 @@ body {
   overflow-x: hidden;
 }
 
-.td-member {
-  max-width: 150px !important;
-}
 td {
   --bs-table-bg: transparent;
 }
