@@ -257,6 +257,7 @@ public class PatientViewServiceTests : IDisposable
         Assert.Equal(searchQuery, result.SearchBar);
         Assert.Equal(paginationSettings, result.PaginationSettings);
         Assert.Equal(2, result.PaginationSettings.ResultsCount);
+        Assert.Equal(2, result.ResultsCount);
         Assert.NotNull(result.SearchResults);
         Assert.Equal(2, result.SearchResults.Count());
 
