@@ -1,6 +1,15 @@
 @model MessageInboxView
 @* TODO: Change patient/staff routes to use hardcoded InboxTypes *@
 
+@{
+    string activeInbox = Model.InboxFilters.IsPatientInbox ? "patient" : "staff";
+    var inboxTabs = new[]
+    {
+        new { Label = "Patient", Route = "patient", IsActive = Model.InboxFilters.IsPatientInbox, UnreadCount = Model.UnreadPatient },
+        new { Label = "Staff", Route = "staff", IsActive = !Model.InboxFilters.IsPatientInbox, UnreadCount = Model.UnreadStaff },
+    };
+}
+
 <div class="d-flex mt-3">
     <h4 class="my-0 me-auto">Messages <span class='badge hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>@Model.UnreadTotal</span>:</h4>
 
@@ -15,30 +24,33 @@
 
 <ul class="nav nav-tabs align-items-center justify-content-end">
     <li class="nav-item me-auto">
-        <form id="unread-select" method="get" asp-controller="Messaging" asp-action="Inbox" asp-route-inbox='@(Model.InboxFilters.IsPatientInbox ? "patient" : "staff")'>
+        <form id="unread-select" method="get" asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="@activeInbox">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" asp-for="InboxFilters.OnlyUnread">
                 <label class="form-check-label" asp-for="InboxFilters.OnlyUnread"></label>
             </div>
         </form>
     </li>
-    <li class="nav-item">
-        <a class='nav-link @(Model.InboxFilters.IsPatientInbox ? "active hue-primary and-dimmed on-text fw-semibold" : "text-secondary")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="patient">Patient <span class='badge @(Model.InboxFilters.IsPatientInbox ? "hue-primary" : "hue-secondary") @(Model.UnreadPatient > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>@Model.UnreadPatient</span></a>
-    </li>
-    <li class="nav-item">
-        <a class='nav-link @(!Model.InboxFilters.IsPatientInbox ? "active hue-primary and-dimmed on-text fw-semibold" : "text-secondary")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="staff">Staff <span class='badge @(!Model.InboxFilters.IsPatientInbox ? "hue-primary" : "hue-secondary") @(Model.UnreadStaff > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>@Model.UnreadStaff</span></a>
-    </li>
+    @foreach (var tab in inboxTabs)
+    {
+        string linkClasses = tab.IsActive
+            ? "active hue-primary and-dimmed on-text fw-semibold"
+            : "text-secondary";
+        string activeTabColorClass = tab.IsActive ? "hue-primary" : "hue-secondary";
+        string hasUnreadsModifierClass = tab.UnreadCount > 0 ? "and-dimmed" : "and-faint-light";
+        string badgeClasses = $"{activeTabColorClass} {hasUnreadsModifierClass} on-bg text-dark";
+
+        <li class="nav-item">
+            <a class="nav-link @linkClasses" asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="@tab.Route">
+                @tab.Label <span class="badge @badgeClasses">@tab.UnreadCount</span>
+            </a>
+        </li>
+    }
 </ul>
+
 <partial name="_Conversations.cshtml" />
 
-@{
-    ViewData["queryRoutes"] = new Dictionary<string, string>()
-    {
-        {"inbox", Model.InboxFilters.IsPatientInbox ? "patient" : "staff"},
-        {"OnlyUnread", Model.InboxFilters.OnlyUnread.ToString()}
-    };
-}
-<partial name="~/Views/Shared/_PaginationBar.cshtml" for="PaginationSettings" view-data="ViewData" />
+<partial name="~/Views/Shared/_PaginationBar.cshtml" for="PaginationSettings" />
 
 <script>
     $(document).ready(function() {
