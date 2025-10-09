@@ -21,22 +21,17 @@
         }
         @foreach (InboxConversation conversation in Model.Conversations)
         {
-            var currentUserId = User.GetMessageLinkId();
-            var otherMembers = conversation.Participating.Where(p => p.LinkId != currentUserId).ToList();
-            var primaryMember = otherMembers.FirstOrDefault();
-            int otherMembersCount = otherMembers.Count - 1;
-            var otherMembersNames = String.Join(", ", otherMembers.Select(m => m.Name));
             string conversationRowClasses = conversation.UnreadCount() > 0
                 ? "hue-brand and-faint-bright on-bg fw-bold"
                 : "";
 
             <tr data-bs-toggle="collapse" data-bs-target="#conversation-@conversation.ConversationId" class="collapsed @conversationRowClasses">
-                <td data-bs-toggle="tooltip" title="@otherMembersNames">
+                <td data-bs-toggle="tooltip" title="@conversation.RecipientNameString">
                     <div class="d-flex align-items-center gap-1">
-                        <span class="text-truncate">@primaryMember?.Name</span>
-                        @if (otherMembersCount > 0)
+                        <span class="text-truncate">@conversation.PrimaryRecipient?.Name</span>
+                        @if (conversation.OtherRecipientsCount > 0)
                         {
-                            <span class="badge bg-secondary-subtle text-secondary-emphasis flex-shrink-0 ms-auto">+@otherMembersCount</span>
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis flex-shrink-0 ms-auto">+@conversation.OtherRecipientsCount</span>
                         }
                     </div>
                 </td>
@@ -68,8 +63,7 @@
                             string senderClasses = message.SenderId == User.GetMessageLinkId()
                                 ? "hue-primary and-dimmed on-text"
                                 : "hue-secondary and-dimmed on-text";
-                            string senderName = conversation.Participating
-                                .SingleOrDefault(p => p.LinkId == message.SenderId)?.Name ?? "(unknown)";
+                            string senderName = conversation.GetSenderName(message.SenderId);
 
                             <div id="message-@message.MessageId" class="py-1 unread @messageClasses">
                                 <div class="d-flex align-items-baseline gap-2">
