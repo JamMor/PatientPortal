@@ -34,7 +34,7 @@
     @foreach (var tab in inboxTabs)
     {
         string linkClasses = tab.IsActive
-            ? "active hue-primary and-dimmed on-text fw-semibold"
+            ? "active fw-semibold"
             : "text-secondary";
         string activeTabColorClass = tab.IsActive ? "hue-primary" : "hue-secondary";
         string hasUnreadsModifierClass = tab.UnreadCount > 0 ? "and-dimmed" : "and-faint-light";

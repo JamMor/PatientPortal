@@ -7,6 +7,7 @@
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
     var canManageStaff = isAuthenticated && (await AuthorizationService.AuthorizeAsync(User, PolicyNames.ManageStaff)).Succeeded;
     var canManagePatients = isAuthenticated && (await AuthorizationService.AuthorizeAsync(User, PolicyNames.ManagePatients)).Succeeded;
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
 }
 
 <!DOCTYPE html>
@@ -22,7 +23,7 @@
 </head>
 <body class="hue-brand and-faint-bright on-bg overflow-hidden">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm hue-brand on-bg hover-lighten shadow" data-bs-theme="dark">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm hue-brand on-bg shadow" data-bs-theme="dark">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -51,14 +52,14 @@
                             @if(canManageStaff)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Staff"
+                                    <a class="nav-link @(currentController == "Staff" ? "active" : "")" asp-area="" asp-controller="Staff"
                                         asp-action="StaffManager">Staff</a>
                                 </li>
                             }
                             @if(canManagePatients)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Patients"
+                                    <a class="nav-link @(currentController == "Patients" ? "active" : "")" asp-area="" asp-controller="Patients"
                                         asp-action="PatientManager">Patients</a>
                                 </li>
                             }
