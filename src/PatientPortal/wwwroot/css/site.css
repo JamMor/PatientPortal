@@ -184,18 +184,25 @@ td {
 }
 
 /* Extendable Buttons */
-.extend > span {
-  max-width: 0px;
+.extend {
   display: inline-flex;
+  align-items: center;
+}
+.extend > span.extend-shrinkable {
+  max-width: 0px;
   white-space: nowrap;
   transition: max-width 0.5s, padding-right 0.45s; /* Transition width and padding to avoid "popping" */
   overflow: hidden;
+  padding-left:0;
 }
-
-.extend:hover > span, .extend:focus > span {
+.extend:is(:hover, :focus) > span.extend-shrinkable {
   max-width: 150px; /* how far the text can expand, adjust based on content */
+  padding-left: 0.5em;;
 }
-
+.new-message-icon {
+  stroke:currentColor;
+  stroke-width: 0.5;
+}
 
 /* Scrolling for dropdown */
 .vert-scroll{
