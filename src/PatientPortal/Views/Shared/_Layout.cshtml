@@ -32,7 +32,9 @@
                 @if(isAuthenticated)
                 {
                     <div class="order-0 order-sm-last">
-                        <a asp-controller="Messaging" asp-action="Inbox"><i id ="inbox-icon" class="fas fa-envelope fa-2x hue-primary and-dimmed on-text"></i></a>
+                        <a class="d-flex" asp-controller="Messaging" asp-action="Inbox">
+                            <partial name="~/Views/Shared/_InboxIcon.cshtml" />
+                        </a>
                     </div>
                 }
                 <div class="navbar-collapse collapse d-sm-inline-flex">
