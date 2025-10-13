@@ -172,10 +172,12 @@ td {
 }
 
 /* Collapse Indicator */
-.card-header i {
+.card-header span.toggle-icon svg {
+  stroke: currentColor;
+  stroke-width: 1;
   transition: .3s transform ease-in-out;
 }
-.card-header.collapsed i {
+.card-header.collapsed span.toggle-icon svg {
   transform: rotate(-90deg);
 }
 
