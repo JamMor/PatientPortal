@@ -181,6 +181,18 @@ td {
   --bs-table-bg: transparent;
 }
 
+button.member-count-badge:hover {
+  background-color:  var(--output-color, var(--main-color)) !important;
+}
+.member-list-popover {
+  --hue-popover-color: oklch(from var(--color-primary) calc(l * 0.77) calc(c * 0.5) h);
+  --bs-popover-border-color: var(--hue-popover-color);
+  --bs-popover-header-bg: var(--hue-popover-color);
+  --bs-popover-header-color: var(--bs-black);
+  --bs-popover-body-padding-x: 1rem;
+  --bs-popover-body-padding-y: .5rem;
+}
+
 /* Collapse Indicator */
 .card-header span.toggle-icon svg {
   stroke: currentColor;

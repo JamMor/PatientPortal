@@ -25,13 +25,24 @@
                 ? "hue-brand and-faint-bright on-bg fw-bold"
                 : "";
 
-            <tr data-bs-toggle="collapse" data-bs-target="#conversation-@conversation.ConversationId" class="collapsed @conversationRowClasses">
-                <td data-bs-toggle="tooltip" title="@conversation.RecipientNameString">
+            <tr data-bs-target="#conversation-@conversation.ConversationId" class="collapsed @conversationRowClasses">
+                <td>
                     <div class="d-flex align-items-center gap-1">
                         <span class="text-truncate">@conversation.PrimaryRecipient?.Name</span>
-                        @if (conversation.OtherRecipientsCount > 0)
+                        @if (conversation.OtherRecipientsCount - 1 > 0)
                         {
-                            <span class="badge bg-secondary-subtle text-secondary-emphasis flex-shrink-0 ms-auto">+@conversation.OtherRecipientsCount</span>
+                            <button type="button"
+                                    class="member-count-badge badge border-0 hue-primary and-dimmed bg-secondary-subtle text-secondary-emphasis flex-shrink-0 ms-auto"
+                                    data-bs-toggle="popover"
+                                    data-bs-trigger="click"
+                                    data-bs-container="body"
+                                    data-bs-custom-class="member-list-popover"
+                                    title="@conversation.RecipientNameString"
+                                    data-bs-title="Participants:"
+                                    data-bs-content="@conversation.RecipientNameString"
+                                    aria-label="Show all @(conversation.OtherRecipientsCount) participants">
+                                +@(conversation.OtherRecipientsCount - 1)
+                            </button>
                         }
                     </div>
                 </td>
@@ -54,7 +65,7 @@
             </tr>
             <tr>
                 <td colspan="4" class="p-0">
-                    <div class="m-2 ps-2 ps-sm-5 collapse shadow-sm" id="conversation-@conversation.ConversationId" data-bs-parent="#conversation-container">
+                    <div class="m-2 ps-2 ps-sm-5 pe-1 pe-sm-2 pb-2 collapse shadow-sm" id="conversation-@conversation.ConversationId" data-bs-parent="#conversation-container">
                         @foreach (InboxMessage message in conversation.Messages)
                         {
                             string messageClasses = message.Unread
@@ -84,6 +95,11 @@
 
 <script type="text/javascript">
         $(document).ready(function() {
+            $('#conversation-container tr[data-bs-target]').on('click', function(e) {
+                if (!$(e.target).closest('.member-count-badge').length) {
+                    bootstrap.Collapse.getOrCreateInstance(document.querySelector($(this).data('bs-target'))).toggle();
+                }
+            });
              $('.unread').click(function () {
                 var $messageId = $(this).attr('id').split("-")[1];
                 console.log($messageId);
@@ -96,6 +112,16 @@
                         console.log(`Message Id ${data.messageId} marked unread.`);
                     }
                 });
+            });
+
+
+            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+            const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.member-count-badge').length) {
+                    popoverList.forEach(p => p.hide());
+                }
             });
         });
 </script>

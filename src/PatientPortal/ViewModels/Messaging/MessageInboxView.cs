@@ -35,7 +35,7 @@ namespace PatientPortal.Models
 
         // Count of all recipients beyond the primary, for the overflow badge.
         public int OtherRecipientsCount =>
-            StaffRecipients.Count(p => p.LinkId != UserLinkId) + UnknownRecipients.Count;
+            StaffRecipients.Count(p => p.LinkId != UserLinkId) + UnknownRecipients.Count + (PatientRecipient != null ? 1 : 0);
 
         // All recipient names ordered for the tooltip (patient first, then other staff, then unknowns).
         public string RecipientNameString
