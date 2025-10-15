@@ -124,12 +124,15 @@ nav a.nav-link:is(:hover, :focus, .active) {
   width: 2em;
   height: 2em;
   fill: var(--color-gray-light);
-  opacity: 0.75;
+  opacity: 0.6;
   transition: fill 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 #inbox-icon:hover svg {
   fill: currentColor;
   opacity: 1;
+}
+#inbox-icon.has-unread svg {
+  fill: currentColor;
 }
 
 nav .nav-tab .nav-link.active {

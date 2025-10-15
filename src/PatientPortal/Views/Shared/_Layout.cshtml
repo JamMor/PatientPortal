@@ -32,9 +32,7 @@
                 @if(isAuthenticated)
                 {
                     <div class="order-0 order-sm-last">
-                        <a class="d-flex" asp-controller="Messaging" asp-action="Inbox">
-                            <partial name="~/Views/Shared/_InboxIcon.cshtml" />
-                        </a>
+                        @await Component.InvokeAsync("InboxIcon")
                     </div>
                 }
                 <div class="navbar-collapse collapse d-sm-inline-flex">
