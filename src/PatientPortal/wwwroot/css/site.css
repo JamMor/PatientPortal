@@ -1,31 +1,144 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+/* #region Color Vars */
+:root {
+  --main-color: currentColor;
+  --color-blue: oklch(37% 0.127 262);
+  --color-cyan: oklch(100% 0.4 195);
+  --color-violet: oklch(74% 0.245 324);
+  --color-yellow: oklch(84% 0.172 84);
+  --color-gray-light: oklch(70% 0 0);
+  
+  --color-brand: var(--color-blue);
+  --color-primary: var(--color-cyan);
+  --color-secondary: var(--color-gray-light);
+  --color-tertiary: var(--color-yellow);
+}
+/* #endregion Color Vars */
+
+/* #region Color Classes */
+.hue-brand, .hue-primary, .hue-secondary, .hue-warning,
+.hue-royal-blue, .hue-cyan, .hue-gray, .hue-yellow {
+  --output-color: initial;
+}
+.hue-brand, .hue-royal-blue {
+  --main-color: var(--color-brand);
+}
+.hue-primary, .hue-success, .hue-cyan {
+  --main-color: var(--color-primary);
+}
+.hue-secondary, .hue-info, .hue-gray {
+  --main-color: var(--color-secondary);
+}
+.hue-warning, .hue-yellow {
+  --main-color: var(--color-tertiary);
 }
 
-/* Provide sufficient contrast against white background */
-a, .text-link {
-  color: #0366d6;
+/* Color Modifier Classes */
+.and-dimmed {
+  --output-color: oklch(from var(--main-color) calc(l * 0.77) calc(c * 0.5) h);
+}
+.and-darkened {
+  --output-color: oklch(from var(--main-color) calc(l * 0.5) calc(c * 0.3) h);
+}
+.and-faint-light {
+  --output-color: oklch(from var(--main-color) 80% calc(c * 0.12) h);
+}
+.and-faint-bright {
+  --output-color: oklch(from var(--main-color) 97% calc(c * 0.12) h);
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+/* Color Target Property Classes */
+.on-bg {
+  background-color: var(--output-color, var(--main-color));
+}
+.on-text {
+  color: var(--output-color, var(--main-color));
+}
+.on-border {
+  border-color: var(--output-color, var(--main-color));
+}
+.on-btn {
+  --hue-button-color: var(--output-color, var(--main-color));
+  --bs-btn-color: var(--bs-black);
+  --bs-btn-bg: var(--hue-button-color);
+  --bs-btn-border-color: var(--hue-button-color);
+  --bs-btn-hover-color: var(--bs-black);
+  --bs-btn-hover-bg: var(--hover-color);
+  --bs-btn-hover-border-color: var(--hover-color);
+  --bs-btn-focus-shadow-rgb: var(--hover-color);
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  --bs-btn-active-bg: var(--hover-color);
+  --bs-btn-active-border-color: var(--hover-color);
+}
+.on-btn-outline {
+  --hue-button-color: var(--output-color, var(--main-color));
+  --bs-btn-color: var(--hue-button-color);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--hue-button-color);
+  --bs-btn-hover-color: var(--bs-black);
+  --bs-btn-hover-bg: var(--hover-color, var(--hue-button-color));
+  --bs-btn-hover-border-color: var(--hover-color, var(--hue-button-color));
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  --bs-btn-active-bg: var(--hover-color, var(--hue-button-color));
+  --bs-btn-active-border-color: var(--hover-color, var(--hue-button-color));
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+/* Hover Modifier Classes */
+.hover-lighten {
+  --hover-color: oklch(from var(--output-color, var(--main-color)) calc(l * 1.2) calc(c * 1.2) h);
+}
+.hover-darken {
+  --hover-color: oklch(from var(--output-color, var(--main-color)) calc(l * 0.7) calc(c * 1.2) h);
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
+/* #endregion Color Classes */
+
+/* Links */
+a, .text-link, .page-link {
+  color: oklch(from var(--color-primary) calc(l * 0.7) 0.1 h);
+  text-decoration: none;
+}
+
+/*  Navbar links  */
+.navbar-brand:is(:hover, :focus) {
+  color: var(--hover-color)
+}
+nav li.nav-item:first-child .nav-link {
+  color: oklch(from var(--color-primary) calc(l * 0.9) 0 h)
+}
+nav a.nav-link {
+  text-decoration: underline;
+  text-underline-offset: 0.5em;
+  text-decoration-thickness: 2px;
+  text-decoration-color: transparent;
+}
+nav a.nav-link:is(:hover, :focus, .active) {
+  text-decoration-color: currentColor;
+  transition: text-decoration-color 0.3s ease-in-out;
+}
+
+/* Inbox Icon Link */
+#inbox-icon svg {
+  width: 2em;
+  height: 2em;
+  fill: var(--color-gray-light);
+  opacity: 0.6;
+  transition: fill 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+#inbox-icon:hover svg {
+  fill: currentColor;
+  opacity: 1;
+}
+#inbox-icon.has-unread svg {
+  fill: currentColor;
+}
+
+nav .nav-tab .nav-link.active {
+  color: unset;
+}
+
 html {
   font-size: 14px;
 }
@@ -33,22 +146,6 @@ html {
   html {
     font-size: 16px;
   }
-}
-
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
 }
 
 /* Sticky footer styles
@@ -63,10 +160,6 @@ body {
   padding-bottom: 60px;
 }
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
 
@@ -76,110 +169,82 @@ body {
 
 body {
   height: 100vh;
-  /* background-color: #4a81be; */
+  display: flex;
+  flex-direction: column;
 }
 
 .main-container {
   box-sizing: border-box;
-  height: calc(100% - 60px);
-  max-height: calc(100% - 60px);
-}
-
-main {
-  height:100%;
-  max-height: 100%;
+  flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-/* Make recipient box look like form */
-#selected-recipients {
-  font-size: 0.8rem;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  margin-left:0.5rem;
-  padding: 0.375rem 0.75rem;
+td {
+  --bs-table-bg: transparent;
 }
 
-.td-member {
-  max-width: 150px !important;
+button.member-count-badge:hover {
+  background-color:  var(--output-color, var(--main-color)) !important;
+}
+.member-list-popover {
+  --hue-popover-color: oklch(from var(--color-primary) calc(l * 0.77) calc(c * 0.5) h);
+  --bs-popover-border-color: var(--hue-popover-color);
+  --bs-popover-header-bg: var(--hue-popover-color);
+  --bs-popover-header-color: var(--bs-black);
+  --bs-popover-body-padding-x: 1rem;
+  --bs-popover-body-padding-y: .5rem;
 }
 
 /* Collapse Indicator */
-.card-header i {
+.card-header span.toggle-icon svg {
+  stroke: currentColor;
+  stroke-width: 1;
   transition: .3s transform ease-in-out;
 }
-.card-header.collapsed i {
+.card-header.collapsed span.toggle-icon svg {
   transform: rotate(-90deg);
 }
 
 /* Extendable Buttons */
-.extend > span {
-  max-width: 0px;
+.extend {
   display: inline-flex;
+  align-items: center;
+}
+.extend > span.extend-shrinkable {
+  max-width: 0px;
   white-space: nowrap;
   transition: max-width 0.5s, padding-right 0.45s; /* Transition width and padding to avoid "popping" */
   overflow: hidden;
+  padding-left:0;
 }
-
-.extend:hover > span, .extend:focus > span {
+.extend:is(:hover, :focus) > span.extend-shrinkable {
   max-width: 150px; /* how far the text can expand, adjust based on content */
+  padding-left: 0.5em;;
 }
-
+.new-message-icon {
+  stroke:currentColor;
+  stroke-width: 0.5;
+}
 
 /* Scrolling for dropdown */
 .vert-scroll{
-  max-height: 500px;
+  max-height: 70vh;
   overflow-y: auto;
 }
 
-/* Sticky patient header info */
-.sticky-header{
-  position: sticky;
-  top:0;
-  z-index: 2;
-}
-
-/* ===== Demo Login Styles ===== */
-.demo-login-card {
-  border-color: #dee2e6;
-  background-color: #fdfdfd;
-}
-
-.demo-login-header {
-  background-color: #f8f9fa;
-  border-bottom-color: #dee2e6;
-}
+/* #region Demo Login Styles */
 
 .demo-login-label {
-  color: #6c757d;
-  font-weight: 600;
-  text-transform: uppercase;
   font-size: 0.7rem;
   letter-spacing: 0.05em;
 }
 
 .demo-login-buttons {
-  display: flex;
-  flex-wrap: wrap;
   max-height: 110px;
   overflow-y: auto;
-  /* Firefox */
   scrollbar-width: thin;
-  scrollbar-color: #1b6ec2 #e9ecef;
+  scrollbar-color: var(--main-color) oklch(from var(--main-color) 97% 0.03 h);
 }
 
-/* Chrome, Edge, and Safari */
-.demo-login-buttons::-webkit-scrollbar {
-  width: 6px;
-}
-
-.demo-login-buttons::-webkit-scrollbar-track {
-  background: #e9ecef;
-  border-radius: 6px;
-}
-
-.demo-login-buttons::-webkit-scrollbar-thumb {
-  background-color: #1b6ec2;
-  border-radius: 6px;
-}
+/* #endregion Demo Login Styles */

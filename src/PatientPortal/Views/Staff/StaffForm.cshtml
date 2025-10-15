@@ -4,7 +4,7 @@
 <form asp-action="StaffCreate" asp-controller="Staff" method="post">
     <form-field asp-for="FirstName"></form-field>
     <form-field asp-for="LastName"></form-field>
-    <div class="form-group">
+    <div class="mb-3">
         <label class="form-label" asp-for="Role"></label>
         <span class="text-danger" asp-validation-for="Role"></span>
         <select class="form-control" asp-for="Role">
@@ -24,5 +24,5 @@
     <form-field asp-for="Password"></form-field>
     <form-field asp-for="ConfirmPassword"></form-field>
     <div asp-validation-summary="ModelOnly"></div>
-    <button class="btn btn-info">Add to Staff</button>
+    <button class="btn hue-primary and-dimmed hover-lighten on-btn">Add to Staff</button>
 </form>

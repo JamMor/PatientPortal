@@ -1,15 +1,22 @@
 @model PatientManagerView
 
 @{
-    var search = Context.Request.Query
+    var queryRoutes = Context.Request.Query
         .Where(q => q.Key != "CurrentPage")
         .ToDictionary(q => q.Key, q => q.Value.ToString());
+
+    var sortableTableColumns = new[]
+    {
+        (Label: "Last Name",  Field: "LastName"),
+        (Label: "DOB",        Field: "DOB"),
+        (Label: "Patient Id", Field: "PatientId")
+    };
 }
 
 <div class="d-flex">
-    <h4 class="my-0 mr-auto">Patients <span class="badge badge-secondary">@Model.PaginationSettings.ResultsCount</span>:</h4>
+    <h4 class="my-0 me-auto">Patients <span class="badge hue-primary and-dimmed on-bg text-dark">@Model.ResultsCount</span>:</h4>
     <div class="dropdown">
-        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-sm dropdown-toggle hue-secondary on-btn-outline" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             Results per page...
         </button>
         <div class="dropdown-menu">
@@ -18,36 +25,31 @@
                 {
                     <a  class="dropdown-item" 
                     asp-controller="Patients" asp-action="PatientManager" 
-                    asp-all-route-data="search"
-                    asp-route-SortOrder="@Model.PaginationSettings.SortOrder" 
+                    asp-all-route-data="queryRoutes"
                     asp-route-ResultsPerPage="@option"
                     >@option</a>
                 }
             }
         </div>
     </div>
-    <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-outline-primary btn-sm extend">+<span>  Add Patient</span></a>
+    <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-sm extend hue-primary and-dimmed on-btn-outline">
+        +
+        <span class="extend-shrinkable">Add Patient</span></a>
 </div>
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th class="align-middle text-muted">#</th>
-            @* Already selected sort column link is changed to reverse direction *@
-            @{
-                string[] sortOptions = {"Last Name", "DOB", "Patient Id"};
-                foreach(string sortOption in sortOptions)
-                {
-                string sortField = sortOption.Replace(" ", "");
+            @* Sortable column links — active column reverses direction, new column defaults to descending *@
+            @foreach (var col in sortableTableColumns)
+            {
                 <th>
-                    <a asp-controller="Patients" asp-action="PatientManager" 
-                    asp-all-route-data="search"
-                    asp-route-ResultsPerPage="@Model.PaginationSettings.ResultsPerPage"
-                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == sortField ? Model.PaginationSettings.Reverse() : "desc")'>
-                        @sortOption
+                    <a asp-controller="Patients" asp-action="PatientManager"
+                    asp-all-route-data="queryRoutes"
+                    asp-route-SortOrder="@Model.PaginationSettings.GetToggledSortOrder(col.Field)">
+                        @col.Label
                     </a>
                 </th>
-
-                }
             }
             <th class="align-middle">SSN</th>
         </tr>
@@ -66,9 +68,9 @@
             foreach (PatientResult patient in Model.SearchResults)
             {
                 <tr>
-                    <td class="text-muted">@(Model.PaginationSettings.ResultsPerPage*(Model.PaginationSettings.CurrentPage - 1) + i)</td>
+                    <td class="text-muted">@Model.PaginationSettings.RowNumber(i)</td>
                     <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
-                    <td>@string.Format("{0:MM/dd/yyyy}", patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
+                    <td>@string.Format("{0:MM/dd/yyyy}", patient.DOB) <span class="ms-1 text-muted">(@patient.Age)</span></td>
                     <td>#@patient.PatientId.ToString("D6")</td>
                     <td>@patient.Last4SSN</td>
                 </tr>

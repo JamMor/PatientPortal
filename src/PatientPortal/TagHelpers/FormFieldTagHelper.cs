@@ -11,7 +11,7 @@ namespace PatientPortal.TagHelpers;
 /// <c>type</c> attribute.
 /// 
 /// <example>
-///     <div class="form-group">
+///     <div class="mb-3">
 ///         <label class="form-label" asp-for="LastName"></label>
 ///         <span class="text-danger" asp-validation-for="LastName"></span>
 ///         <input class="form-control" asp-for="LastName">
@@ -45,7 +45,7 @@ public class FormFieldTagHelper : TagHelper
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
         output.TagName = "div";
-        output.Attributes.SetAttribute("class", "form-group");
+        output.Attributes.SetAttribute("class", "mb-3");
         output.TagMode = TagMode.StartTagAndEndTag;
 
         var label = _generator.GenerateLabel(

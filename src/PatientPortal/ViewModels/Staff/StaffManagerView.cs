@@ -11,6 +11,8 @@ namespace PatientPortal.Models
 
         public required Paginator PaginationSettings { get; set; }
 
+        public int ResultsCount => PaginationSettings.ResultsCount;
+
         public List<StaffResult> SearchResults { get; set; } = [];
     }
 

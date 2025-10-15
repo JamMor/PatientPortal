@@ -2,13 +2,9 @@
 
 <form asp-controller="Messaging" asp-action="NewReply" asp-route-conversationId="@Model.ConversationId" method="post">
     <div class="input-group">
-        <div class="input-group-prepend">
-            <label class="form-label input-group-text" asp-for="MessageText"></label>
-        </div>
+        <label class="input-group-text" asp-for="MessageText"></label>
         <input class="form-control" asp-for="MessageText" placeholder="Message...">
-        <div class="input-group-append">
-            <button class="btn btn-info">Send</button>
-        </div>
+        <button class="btn hue-primary and-dimmed hover-lighten on-btn">Send</button>
     </div>
 </form>
 <span class="text-danger" asp-validation-for="MessageText"></span>

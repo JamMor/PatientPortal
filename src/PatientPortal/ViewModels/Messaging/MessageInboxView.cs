@@ -21,10 +21,43 @@ namespace PatientPortal.Models
     {
         public int ConversationId { get; set; }
         public string? Subject { get; set; }
-        public List<InboxRecipient> Participating { get; set; } = [];
+        public int UserLinkId { get; set; }
+        public List<InboxRecipient> StaffRecipients { get; set; } = [];
+        public InboxRecipient? PatientRecipient { get; set; }
+        public List<InboxRecipient> UnknownRecipients { get; set; } = [];
         public List<InboxMessage> Messages { get; set; } = [];
         public DateTime DateCreated { get; set; }
         public DateTime DateLastMessage { get; set; }
+
+        // The primary display recipient: patient takes priority, otherwise first non-viewer staff member.
+        public InboxRecipient? PrimaryRecipient =>
+            PatientRecipient ?? StaffRecipients.FirstOrDefault(p => p.LinkId != UserLinkId);
+
+        // Count of all recipients beyond the primary, for the overflow badge.
+        public int OtherRecipientsCount =>
+            StaffRecipients.Count(p => p.LinkId != UserLinkId) + UnknownRecipients.Count + (PatientRecipient != null ? 1 : 0);
+
+        // All recipient names ordered for the tooltip (patient first, then other staff, then unknowns).
+        public string RecipientNameString
+        {
+            get
+            {
+                var names = StaffRecipients
+                    .Where(p => p.LinkId != UserLinkId)
+                    .Select(p => p.Name)
+                    .ToList();
+                names.AddRange(UnknownRecipients.Select(r => r.Name));
+                if (PatientRecipient != null) names.Insert(0, PatientRecipient.Name);
+                return string.Join(", ", names);
+            }
+        }
+
+        public string GetSenderName(int senderId)
+        {
+            IEnumerable<InboxRecipient> all = StaffRecipients.Concat(UnknownRecipients);
+            if (PatientRecipient != null) all = all.Append(PatientRecipient);
+            return all.FirstOrDefault(p => p.LinkId == senderId)?.Name ?? "(unknown)";
+        }
 
         public int UnreadCount()
         {

@@ -10,5 +10,6 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.Mysql" Version="8.0.3" />
+    <Watch Include="**\*.cshtml" />
   </ItemGroup>
 </Project>

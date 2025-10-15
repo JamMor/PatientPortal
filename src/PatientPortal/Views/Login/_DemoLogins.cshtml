@@ -1,9 +1,9 @@
 @model IEnumerable<DemoLoginViewModel>
 
-<div id="demo-login-container" class="card demo-login-card">
-    <div class="card-header demo-login-header py-2">
-        <span class="badge badge-secondary mr-2">DEMO</span>
-        <small class="font-weight-bold">Quick Login</small>
+<div id="demo-login-container" class="card">
+    <div class="card-header py-2">
+        <span class="badge me-2 hue-secondary on-bg text-dark">DEMO</span>
+        <span class="fw-bold text-secondary small">Quick Login</span>
     </div>
     <div class="card-body px-3 py-3">
         @if(Model != null && Model.Any())
@@ -11,22 +11,22 @@
         <form id="demo-login-options" asp-controller="DemoLogin" asp-action="LoginDemoStaff">
             <div class="text-danger" asp-validation-summary="ModelOnly"></div>
             <div class="mb-3">
-                <small class="demo-login-label d-block mb-2">Full Administrative Privileges</small>
-                <div class="demo-login-buttons">
+                <span class="demo-login-label small text-secondary text-uppercase fw-semibold d-block mb-2">Full Administrative Privileges</span>
+                <div class="demo-login-buttons d-flex flex-wrap">
                     @foreach(var staff in Model.Where(s => s.IsDemoStaffAdmin))
                     {
-                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm btn-primary mr-1 mb-1'>
+                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm me-1 mb-1 hue-primary and-dimmed hover-lighten on-btn'>
                             @staff.DemoStaffName
                         </button>
                     }
                 </div>
             </div>
             <div>
-                <small class="demo-login-label d-block mb-2">Patient Admin Privileges Only</small>
-                <div class="demo-login-buttons">
+                <span class="demo-login-label small text-secondary text-uppercase fw-semibold d-block mb-2">Patient Admin Privileges Only</span>
+                <div class="demo-login-buttons d-flex flex-wrap">
                     @foreach(var staff in Model.Where(s => !s.IsDemoStaffAdmin))
                     {
-                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm btn-warning mr-1 mb-1'>
+                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm me-1 mb-1 hue-secondary hover-lighten on-btn'>
                             @staff.DemoStaffName
                         </button>
                     }
@@ -37,7 +37,7 @@
         else
         {
         <form class='d-flex' method='post' action='/demo/create'>
-            <button class='mx-1 btn btn-sm btn-warning'>Create Picard</button>
+            <button class='btn btn-sm mx-1 hue-warning hover-lighten on-btn'>Create Picard</button>
         </form>
         }
     </div>

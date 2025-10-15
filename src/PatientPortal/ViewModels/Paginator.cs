@@ -4,6 +4,8 @@ namespace PatientPortal.Models
 {
     public class Paginator
     {
+        // Pagination
+
         public int ResultsCount { get; set; }
         public int CurrentPage { get; set; } = 1;
 
@@ -34,6 +36,11 @@ namespace PatientPortal.Models
             }
         }
 
+        public int RowNumber(int i) =>
+            ResultsPerPage * (CurrentPage - 1) + i;
+            
+        // Sort Ordering
+
         public string SortOrder { get; set; } = "LastName_asc";
         public string SortColumn()
         {
@@ -48,5 +55,8 @@ namespace PatientPortal.Models
         {
             return SortDirection() == "desc" ? "asc" : "desc";
         }
+
+        public string GetToggledSortOrder(string field) =>
+            field == SortColumn() ? $"{field}_{Reverse()}" : $"{field}_desc";
     }
 }

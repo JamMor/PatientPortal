@@ -58,20 +58,38 @@ namespace PatientPortal.Services
                 {
                     ConversationId = c.ConversationId,
                     Subject = c.Subject,
-                    Participating = c.ConversationParticipants
+                    UserLinkId = linkId,
+                    StaffRecipients = c.ConversationParticipants
+                        .Where(p => p.MessagingLink!.StaffId != null)
                         .Select(p => new InboxRecipient()
                         {
                             LinkId = p.MessagingLinkId,
-                            Name = p.MessagingLink!.PatientId != null 
-                                ? p.MessagingLink.Patient!.FullName() 
-                                : p.MessagingLink.StaffId != null
+                            Name = p.MessagingLink!.StaffId != null
                                     ? p.MessagingLink.Staff!.FullName()
                                     : "Unknown Staff",
-                            Role = p.MessagingLink.PatientId != null 
-                            ? "Patient" 
-                            : p.MessagingLink.StaffId != null
+                            Role = p.MessagingLink.StaffId != null
                                 ? p.MessagingLink.Staff!.Role
                                 : "Unknown Role"
+                        })
+                        .ToList(),
+                    PatientRecipient = c.ConversationParticipants
+                        .Where(p => p.MessagingLink!.PatientId != null)
+                        .Select(p => new InboxRecipient()
+                        {
+                            LinkId = p.MessagingLinkId,
+                            Name = p.MessagingLink!.PatientId != null
+                                ? p.MessagingLink.Patient!.FullName()
+                                : "Unknown Patient",
+                            Role = "Patient"
+                        })
+                        .FirstOrDefault(),
+                    UnknownRecipients = c.ConversationParticipants
+                        .Where(p => p.MessagingLink!.PatientId == null && p.MessagingLink.StaffId == null)
+                        .Select(p => new InboxRecipient()
+                        {
+                            LinkId = p.MessagingLinkId,
+                            Name = "Unknown Recipient",
+                            Role = "Unknown Role"
                         })
                         .ToList(),
                     Messages = c.Messages

@@ -15,7 +15,7 @@
             {
                 <li class="page-item">
                     <a class='page-link @(Model.CurrentPage == Model.TotalPages() ? "disabled" : "")' 
-                    data-toggle="tooltip" data-placement="left" title="1"
+                    data-bs-toggle="tooltip" data-bs-placement="left" title="1"
                     asp-all-route-data="queryRoutes"
                     asp-route-CurrentPage="1">
                         &laquo;
@@ -43,7 +43,7 @@
             {
                 if(i == Model.CurrentPage)
                 {
-                    <li class="page-item font-weight-bold"><span class="page-link disabled">@i</span></li>
+                    <li class="page-item fw-bold"><span class="page-link disabled">@i</span></li>
                 }
                 else
                 {
@@ -75,7 +75,7 @@
             {
                 <li class="page-item">
                     <a class='page-link @(Model.CurrentPage == Model.TotalPages() ? "disabled" : "")' 
-                    data-toggle="tooltip" data-placement="right" title="@Model.TotalPages()"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="@Model.TotalPages()"
                     asp-all-route-data="queryRoutes"
                     asp-route-CurrentPage="@Model.TotalPages()">
                         &raquo;
