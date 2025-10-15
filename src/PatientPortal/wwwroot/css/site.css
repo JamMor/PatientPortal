@@ -139,6 +139,24 @@ nav .nav-tab .nav-link.active {
   color: unset;
 }
 
+/* Sort Indicators */
+.sort-invert { --sort-dir: 180deg; }
+
+.sort-caret svg {
+  transform: rotate(var(--sort-dir, 0deg));
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+  opacity: 0.2;
+}
+
+th a.sort-active .sort-caret svg,
+th a:not(.sort-active):hover .sort-caret svg {
+  opacity: 1;
+}
+
+th a.sort-active:hover .sort-caret svg {
+  transform: rotate(calc(180deg - var(--sort-dir)));
+}
+
 html {
   font-size: 14px;
 }

@@ -43,16 +43,22 @@
             @* Sortable column links — active column reverses direction, new column defaults to descending *@
             @foreach (var col in sortableTableColumns)
             {
+                var isActive = col.Field == Model.PaginationSettings.SortColumn();
+                var isAsc = isActive && Model.PaginationSettings.SortDirection() == "asc";
                 <th>
-                    <a asp-controller="Staff" asp-action="StaffManager"
-                    asp-all-route-data="queryRoutes"
-                    asp-route-SortOrder="@Model.PaginationSettings.GetToggledSortOrder(col.Field)">
-                        @col.Label
+                    <a class="@(isActive ? "sort-active" : "")"
+                        asp-controller="Staff" asp-action="StaffManager"
+                        asp-all-route-data="queryRoutes"
+                        asp-route-SortOrder="@Model.PaginationSettings.GetToggledSortOrder(col.Field)">
+                        <span class="d-flex text-nowrap gap-1 @(isAsc ? "sort-invert" : "")">
+                            @col.Label 
+                            <partial name="_CaretDownIcon" />
+                        </span>
                     </a>
                 </th>
             }
             <th class="align-middle">Patients</th>
-            <th class="align-middle">Registered</th>
+            <th class="align-middle d-none d-sm-table-cell">Registered</th>
         </tr>
     </thead>
     <tbody>
@@ -74,7 +80,10 @@
                     <td>@staffmember.Role</td>
                     <td>#@staffmember.StaffId.ToString("D5")</td>
                     <td>@staffmember.PatientCount</td>
-                    <td>@staffmember.CreatedAt</td>
+                    <td class="small d-none d-sm-table-cell">
+                        <span class="text-nowrap">@staffmember.CreatedAt.ToString("M/d/yyyy")</span>
+                        <span class="text-nowrap">@staffmember.CreatedAt.ToString("h:mm:ss\u00a0tt")</span>
+                    </td>
                 </tr>
                 i++;
             }
