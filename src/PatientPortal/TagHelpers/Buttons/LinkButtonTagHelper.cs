@@ -36,6 +36,23 @@ public abstract class LinkButtonTagHelperBase(IHtmlGenerator generator)
 }
 
 /// <summary>
+/// Renders a link styled like a primary button with the project's styling.
+/// <br/>
+/// <example>
+/// Example:
+/// <code>
+/// &lt;link-button-primary outline asp-controller="Patient" asp-action="Create"&gt;Input New Patient&lt;/link-button-primary&gt;
+/// </code>
+/// </example>
+/// </summary>
+[HtmlTargetElement("link-button-primary")]
+public class PrimaryLinkButtonTagHelper(IHtmlGenerator generator)
+    : LinkButtonTagHelperBase(generator)
+{
+    public override ButtonVariant Variant => ButtonVariant.Primary;
+}
+
+/// <summary>
 /// Renders a link styled like a secondary button with the project's styling.
 /// <br/>
 /// <example>

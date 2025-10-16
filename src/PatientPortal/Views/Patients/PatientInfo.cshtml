@@ -61,7 +61,11 @@
                             </div>
                         </li>
                     }
-                    <li class="list-group-item text-end"><a class ="btn btn-sm hue-primary and-dimmed on-btn-outline" asp-controller="HealthIssue" asp-action="HealthIssueAdd" asp-route-patientId="@Model.PatientId">Add Health Issue</a></li>
+                    <li class="list-group-item text-end">
+                        <link-button-primary small outline asp-controller="HealthIssue" asp-action="HealthIssueAdd" asp-route-patientId="@Model.PatientId">
+                            Add Health Issue
+                        </link-button-primary>
+                    </li>
                 </ul>
             </td>
         </tr>
@@ -91,7 +95,11 @@
                             </div>
                         </li>
                     }
-                    <li class="list-group-item text-end"><a class ="btn btn-sm hue-primary and-dimmed on-btn-outline" asp-controller="Visit" asp-action="VisitAdd" asp-route-patientId="@Model.PatientId">Add Visit</a></li>
+                    <li class="list-group-item text-end">
+                        <link-button-primary small outline asp-controller="Visit" asp-action="VisitAdd" asp-route-patientId="@Model.PatientId">
+                            Add Visit
+                        </link-button-primary>
+                    </li>
                 </ul>
             </td>
         </tr>
@@ -121,7 +129,11 @@
                             </div>
                         </li>
                     }
-                    <li class="list-group-item text-end"><a class ="btn btn-sm hue-primary and-dimmed on-btn-outline" asp-controller="TestResult" asp-action="TestResultAdd" asp-route-patientId="@Model.PatientId">Add Test</a></li>
+                    <li class="list-group-item text-end">
+                        <link-button-primary small outline asp-controller="TestResult" asp-action="TestResultAdd" asp-route-patientId="@Model.PatientId">
+                            Add Test
+                        </link-button-primary>
+                    </li>
                 </ul>
             </td>
         </tr>

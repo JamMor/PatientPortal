@@ -28,6 +28,6 @@
     <input type="hidden" name="ResultsPerPage" value="@Model.PaginationSettings.ResultsPerPage">
     <div class="text-center">
         <button-primary type="submit" class="m-1">Search</button-primary>
-        <a class="btn m-1 hue-secondary on-btn-outline" asp-controller="Patients" asp-action="PatientManager">Clear</a>
+        <link-button-secondary outline class="m-1" asp-controller="Patients" asp-action="PatientManager">Clear</link-button-secondary>
     </div>
 </form>
