@@ -16,9 +16,9 @@
 <div class="d-flex">
     <h4 class="my-0 me-auto">Staff <span class="badge hue-primary and-dimmed on-bg text-dark">@Model.ResultsCount</span>:</h4>
     <div class="dropdown">
-        <button class="btn btn-sm dropdown-toggle hue-secondary on-btn-outline" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        <button-secondary small outline class="dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             Results per page...
-        </button>
+        </button-secondary>
         <div class="dropdown-menu">
             @{int[] options = {5,10,20,50,100};
                 foreach(int option in options)

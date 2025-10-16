@@ -3,7 +3,7 @@
 <h3 class="my-3">New Message: </h3>
 <form asp-controller="Messaging" asp-action="NewConversation" method="post">
     <div class="input-group mb-3">
-        <button class="btn btn-sm dropdown-toggle hue-secondary on-btn-outline" data-bs-toggle="dropdown">Send To</button>
+        <button-secondary small outline class="dropdown-toggle" data-bs-toggle="dropdown">Send To</button-secondary>
         <ul class="dropdown-menu ps-3 vert-scroll">
             @if(Model.PatientRecipient != null)
             {
@@ -40,7 +40,7 @@
         <span class="text-danger" asp-validation-for="MessageText"></span>
         <textarea class="form-control" asp-for="MessageText"></textarea>
     </div>
-    <button class="btn hue-primary and-dimmed hover-lighten on-btn">Send Message</button>
+    <button-primary type="submit">Send Message</button-primary>
 </form>
 
 <script>

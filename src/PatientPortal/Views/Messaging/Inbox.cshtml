@@ -14,7 +14,7 @@
     <h4 class="my-0 me-auto">Messages <span class='badge hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>@Model.UnreadTotal</span>:</h4>
 
     <div class="dropdown">
-        <button class="btn btn-sm dropdown-toggle hue-primary and-dimmed on-btn-outline" data-bs-toggle="dropdown">+</button>
+        <button-primary small outline class="dropdown-toggle" data-bs-toggle="dropdown">+</button-primary>
         <div class="dropdown-menu">
             <a href="#" class="dropdown-item disabled">New Message to Patient</a>
             <a asp-controller="Messaging" asp-action="NewConversationForm" class="dropdown-item">New Message to Staff</a>

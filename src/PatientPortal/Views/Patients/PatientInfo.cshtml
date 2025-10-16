@@ -17,7 +17,7 @@
                             @if(staff.StaffId == User.GetStaffId())
                             {
                             <form asp-controller="Patients" asp-action="MedicalTeamLeave" asp-route-patientId="@Model.PatientId">
-                                <button class="btn btn-sm hue-secondary on-btn-outline" href="#">Remove</button>
+                                <button-secondary small outline type="submit">Remove</button-secondary>
                             </form>
                             }
                         </li>
@@ -26,7 +26,7 @@
                     {
                         <li class="list-group-item text-end">
                             <form asp-controller="Patients" asp-action="MedicalTeamJoin" asp-route-patientId="@Model.PatientId">
-                                <button class="btn btn-sm hue-primary and-dimmed on-btn-outline" href="#">Join</button>
+                                <button-primary small outline type="submit">Join</button-primary>
                             </form>
                         </li>
                     }                    
@@ -55,7 +55,7 @@
                                 <div class="card-footer d-flex align-items-center">
                                     <span>First Reported: @issue.CreatedAt</span>
                                     <form class="ms-auto" asp-controller="HealthIssue" asp-action="IssueDelete" asp-route-patientId="@Model.PatientId" asp-route-issueId="@issue.HealthIssueId">
-                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                        <button-danger small outline type="submit">Delete</button-danger>
                                     </form>
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                                 <div class="card-footer d-flex align-items-center">
                                     <p class="mb-0">@visit.CreatedBy</p>
                                     <form class="ms-auto" asp-controller="Visit" asp-action="VisitDelete" asp-route-patientId="@Model.PatientId" asp-route-visitId="@visit.VisitId">
-                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                        <button-danger small outline type="submit">Delete</button-danger>
                                     </form>
                                 </div>
                             </div>
@@ -115,7 +115,7 @@
                                 <div class="card-footer d-flex align-items-center">
                                     <p class="mb-0">@test.CreatedBy</p>
                                     <form class="ms-auto" asp-controller="TestResult" asp-action="TestResultDelete" asp-route-patientId="@Model.PatientId" asp-route-testId="@test.TestResultId">
-                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                        <button-danger small outline type="submit">Delete</button-danger>
                                     </form>
                                 </div>
                             </div>
@@ -137,5 +137,5 @@
     </tbody>
 </table>
 <form class="text-end" asp-controller="Patients" asp-action="PatientDelete" asp-route-patientId="@Model.PatientId">
-    <button class="btn btn-sm btn-outline-danger" href="#">Delete Patient</button>
+    <button-danger small outline type="submit">Delete Patient</button-danger>
 </form>

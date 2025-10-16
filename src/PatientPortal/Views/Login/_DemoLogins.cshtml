@@ -12,23 +12,23 @@
             <div class="text-danger" asp-validation-summary="ModelOnly"></div>
             <div class="mb-3">
                 <span class="demo-login-label small text-secondary text-uppercase fw-semibold d-block mb-2">Full Administrative Privileges</span>
-                <div class="demo-login-buttons d-flex flex-wrap">
+                <div class="demo-login-buttons d-flex flex-wrap gap-1">
                     @foreach(var staff in Model.Where(s => s.IsDemoStaffAdmin))
                     {
-                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm me-1 mb-1 hue-primary and-dimmed hover-lighten on-btn'>
+                        <button-primary small type="submit" name="staffId" value="@staff.DemoStaffId">
                             @staff.DemoStaffName
-                        </button>
+                        </button-primary>
                     }
                 </div>
             </div>
             <div>
                 <span class="demo-login-label small text-secondary text-uppercase fw-semibold d-block mb-2">Patient Admin Privileges Only</span>
-                <div class="demo-login-buttons d-flex flex-wrap">
+                <div class="demo-login-buttons d-flex flex-wrap gap-1">
                     @foreach(var staff in Model.Where(s => !s.IsDemoStaffAdmin))
                     {
-                        <button name='staffId' value='@staff.DemoStaffId' class='btn btn-sm me-1 mb-1 hue-secondary hover-lighten on-btn'>
+                        <button-secondary small name='staffId' value='@staff.DemoStaffId'>
                             @staff.DemoStaffName
-                        </button>
+                        </button-secondary>
                     }
                 </div>
             </div>
@@ -36,8 +36,10 @@
         }
         else
         {
-        <form class='d-flex' method='post' action='/demo/create'>
-            <button class='btn btn-sm mx-1 hue-warning hover-lighten on-btn'>Create Picard</button>
+        <form class='d-flex' asp-controller='DemoLogin' asp-action='CreateDemoAdmin'>
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <span class='me-2'>No demo accounts found.</span>
+            <button-warning small class='mx-1'>Create Picard</button-warning>
         </form>
         }
     </div>
