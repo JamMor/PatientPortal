@@ -26,13 +26,13 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult TestResultAdd(int patientId)
         {
-            TestResultForm form = _testResultViewService.GetNewTestResultForm(patientId);
+            TestResultFormView form = _testResultViewService.GetNewTestResultForm(patientId);
                 
             return View("TestResultForm", form);
         }
 
         [HttpPost("")]
-        public IActionResult TestResultCreate(int patientId, TestResultForm formData)
+        public IActionResult TestResultCreate(int patientId, TestResultFormInput formData)
         {
             if(!staffId.HasValue)
             {
@@ -55,7 +55,8 @@ namespace PatientPortal.Controllers
                 }
             }
 
-            return View("TestResultForm", formData);
+            var form = _testResultViewService.GetNewTestResultForm(patientId).ApplyInput(formData);
+            return View("TestResultForm", form);
         }
     
         [HttpPost("{testId}/delete")]

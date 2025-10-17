@@ -14,16 +14,15 @@ namespace PatientPortal.Services
             _healthIssueService = healthIssueService;
         }
 
-        public TestResultForm GetNewTestResultForm(int patientId)
+        public TestResultFormView GetNewTestResultForm(int patientId)
         {
-            TestResultForm form = new TestResultForm();
+            TestResultFormView form = new TestResultFormView();
             var healthIssues = _healthIssueService
                 .GetHealthIssuesByPatientId(patientId)
                 .Select(h => new HealthIssueCheckbox()
                 {
                     HealthIssueId = h.HealthIssueId,
                     ShortDescription = h.ShortDescription,
-                    CreatedAt = h.CreatedAt,
                 })
                 .ToList();
 

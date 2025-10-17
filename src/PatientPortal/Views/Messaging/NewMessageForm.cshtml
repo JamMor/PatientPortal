@@ -11,8 +11,6 @@
                     <input class="form-check-input" type="checkbox" checked="checked" id="PatientRecipient_Id" disabled>
                     <label class="form-check-label" asp-for="PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
                     <input class="form-check-input" type="hidden" asp-for="PatientRecipient.LinkId">
-                    <input class="form-check-input" type="hidden" asp-for="PatientRecipient.Name">
-                    <input class="form-check-input" type="hidden" asp-for="PatientRecipient.Role">
                 </li>
                 <li><hr class="dropdown-divider"></li>
             }
@@ -22,8 +20,6 @@
                 <input class="form-check-input" type="checkbox" asp-for="Recipients[i].Selected">
                 <label class="form-check-label" asp-for="Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
                 <input class="form-check-input" type="hidden" asp-for="Recipients[i].LinkId">
-                <input class="form-check-input" type="hidden" asp-for="Recipients[i].Name">
-                <input class="form-check-input" type="hidden" asp-for="Recipients[i].Role">
             </li>
             }
         </ul>

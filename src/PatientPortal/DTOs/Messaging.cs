@@ -15,31 +15,31 @@ public record MessageDTO(
     string MessageText
 );
 
-public static class NewConversationFormViewExtensions
+public static class NewConversationFormInputExtensions
 {
-    public static ConversationDTO ToConversationDTO(this NewConversationFormView form)
+    public static ConversationDTO ToConversationDTO(this NewConversationFormInput input)
     {
-        var recipientIds = form.Recipients
+        var recipientIds = input.Recipients
             .Where(r => r.Selected)
             .Select(r => r.LinkId)
             .ToList();
 
-        if (form.PatientRecipient != null)
+        if (input.PatientRecipient != null)
         {
-            recipientIds.Add(form.PatientRecipient.LinkId);
+            recipientIds.Add(input.PatientRecipient.LinkId);
         }
 
         return new ConversationDTO(
-            form.Subject,
-            form.WithPatient,
+            input.Subject,
+            input.WithPatient,
             recipientIds
         );
     }
 
-    public static MessageDTO ToMessageDTO(this NewConversationFormView form)
+    public static MessageDTO ToMessageDTO(this NewConversationFormInput input)
     {
         return new MessageDTO(
-            Guard.NotNull(form.MessageText, nameof(form.MessageText))
+            Guard.NotNull(input.MessageText, nameof(input.MessageText))
         );
     }
 }

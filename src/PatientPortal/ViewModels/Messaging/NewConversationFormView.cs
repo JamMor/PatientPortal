@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace PatientPortal.Models
 {
@@ -37,5 +38,28 @@ namespace PatientPortal.Models
         public required string Name { get; set; }
         public required string Role { get; set; }
         public bool Selected { get; set; } = false;
+    }
+
+    public static class NewConversationFormViewExtensions
+    {
+        public static NewConversationFormView ApplyInput(this NewConversationFormView form, NewConversationFormInput input)
+        {
+            form.Subject = input.Subject;
+            form.MessageText = input.MessageText;
+            foreach (var recipient in form.Recipients)
+            {
+                var selection = input.Recipients
+                    .FirstOrDefault(r => r.LinkId == recipient.LinkId);
+                if (selection != null)
+                {
+                    recipient.Selected = selection.Selected;
+                }
+            }
+            if (form.PatientRecipient != null && input.PatientRecipient != null)
+            {
+                form.PatientRecipient.Selected = input.PatientRecipient.Selected;
+            }
+            return form;
+        }
     }
 }

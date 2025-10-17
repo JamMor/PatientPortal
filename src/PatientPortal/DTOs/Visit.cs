@@ -14,16 +14,16 @@ public record VisitDTO(
 
 public static class VisitFormDTOExtensions
 {
-    public static VisitDTO ToVisitDTO(this VisitForm visitForm)
+    public static VisitDTO ToVisitDTO(this VisitFormInput input)
     {
-        var healthIssueIds = visitForm.HealthIssues
+        var healthIssueIds = input.HealthIssues
             .Where(h => h.Selected)
             .Select(h => h.HealthIssueId)
             .ToList();
             
         return new VisitDTO(
-            Guard.NotNull(visitForm.Comment, nameof(visitForm.Comment)),
-            visitForm.DateOfVisit,
+            Guard.NotNull(input.Comment, nameof(input.Comment)),
+            input.DateOfVisit,
             healthIssueIds
         );
     }

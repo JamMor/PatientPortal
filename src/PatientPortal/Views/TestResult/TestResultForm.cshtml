@@ -1,4 +1,4 @@
-@model TestResultForm
+@model TestResultFormView
 
 @{ int patientId = Convert.ToInt32(ViewContext.RouteData.Values["patientId"]); }
 @await Component.InvokeAsync("PatientInfoHeader", new { patientId = patientId })

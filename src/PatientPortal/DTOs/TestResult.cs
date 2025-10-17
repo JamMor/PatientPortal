@@ -13,16 +13,16 @@ public record TestResultDTO(
 
 public static class TestResultFormDTOExtensions
 {
-    public static TestResultDTO ToTestResultDTO(this TestResultForm testResultForm)
+    public static TestResultDTO ToTestResultDTO(this TestResultFormInput input)
     {
-        var healthIssueIds = testResultForm.HealthIssues
+        var healthIssueIds = input.HealthIssues
             .Where(h => h.Selected)
             .Select(h => h.HealthIssueId)
             .ToList();
 
         return new TestResultDTO(
-            Guard.NotNull(testResultForm.Type, nameof(testResultForm.Type)),
-            Guard.NotNull(testResultForm.Comment, nameof(testResultForm.Comment)),
+            Guard.NotNull(input.Type, nameof(input.Type)),
+            Guard.NotNull(input.Comment, nameof(input.Comment)),
             healthIssueIds
         );
     }

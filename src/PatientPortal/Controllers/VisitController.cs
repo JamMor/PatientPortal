@@ -26,13 +26,13 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult VisitAdd(int patientId)
         {
-            VisitForm form = _visitViewService.GetNewVisitForm(patientId);
+            VisitFormView form = _visitViewService.GetNewVisitForm(patientId);
 
             return View("VisitForm", form);
         }
 
         [HttpPost("")]
-        public IActionResult VisitCreate(int patientId, VisitForm formData)
+        public IActionResult VisitCreate(int patientId, VisitFormInput formData)
         {
             if(!staffId.HasValue)
             {
@@ -55,7 +55,8 @@ namespace PatientPortal.Controllers
                 }
             }
 
-            return View("VisitForm", formData);
+            var form = _visitViewService.GetNewVisitForm(patientId).ApplyInput(formData);
+            return View("VisitForm", form);
         }
         
         [HttpPost("{visitId}/delete")]

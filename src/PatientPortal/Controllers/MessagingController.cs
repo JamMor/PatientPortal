@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -105,7 +106,7 @@ namespace PatientPortal.Controllers
         }
         
         [HttpPost("new")]
-        public IActionResult NewConversation(NewConversationFormView newConversationFormView)
+        public IActionResult NewConversation(NewConversationFormInput newConversationFormInput)
         {
             if(!linkId.HasValue)
             {
@@ -116,8 +117,8 @@ namespace PatientPortal.Controllers
             {
                 try
                 {
-                    var conversationDTO = newConversationFormView.ToConversationDTO();
-                    var firstMessageDTO = newConversationFormView.ToMessageDTO();
+                    var conversationDTO = newConversationFormInput.ToConversationDTO();
+                    var firstMessageDTO = newConversationFormInput.ToMessageDTO();
                     
                     _messagingService.CreateConversation((int)linkId, conversationDTO, firstMessageDTO);
                     
@@ -130,7 +131,8 @@ namespace PatientPortal.Controllers
                 }
             }
 
-            return View("NewMessageForm", newConversationFormView);
+            var form = _messagingViewService.NewConversationForm((int)linkId, null).ApplyInput(newConversationFormInput);
+            return View("NewMessageForm", form);
 
         }
 
