@@ -10,9 +10,16 @@
     };
 }
 
-<div class="d-flex mt-3">
-    <h4 class="my-0 me-auto">Messages <span class='badge hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>@Model.UnreadTotal</span>:</h4>
-
+<div class="d-flex align-items-center mt-3">
+    <h4 class="my-0 me-auto">
+        <span>
+            Messages
+            <span class='badge hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>
+                @Model.UnreadTotal
+            </span>
+            :
+        </span>
+    </h4>
     <div class="dropdown">
         <button-primary small outline class="dropdown-toggle" data-bs-toggle="dropdown">+</button-primary>
         <div class="dropdown-menu">
