@@ -8,7 +8,7 @@ namespace PatientPortal.Tests.Unit.Services;
 // TODO: Add tests for empty result sets and null returns from IStaffService methods.
 // TODO: Add validation tests for pagination boundaries (page out of range, zero/negative page sizes).
 // TODO: Add tests for sorting fallback/default behavior in ReturnStaffManagerView.
-public class StaffViewServiceTests : IDisposable
+public class StaffViewServiceTests
 {
     private readonly IStaffService _mockStaffService;
     private readonly StaffViewService _staffViewService;
@@ -155,8 +155,4 @@ public class StaffViewServiceTests : IDisposable
 
     #endregion
 
-    public void Dispose()
-    {
-        _staffViewService?.Dispose();
-    }
 }

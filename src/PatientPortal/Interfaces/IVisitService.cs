@@ -1,9 +1,8 @@
-using System;
 using PatientPortal.DTOs;
 
 namespace PatientPortal.Interfaces
 {
-    public interface IVisitService : IDisposable
+    public interface IVisitService
     {
 
         void CreateVisit(int patientId, int staffId, VisitDTO formData);

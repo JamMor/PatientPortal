@@ -7,7 +7,7 @@ namespace PatientPortal.Tests.Unit.Services;
 
 // TODO: Add tests for pagination boundaries and ordering (OrderByDescending DateLastMessage).
 // TODO: Add tests for UnknownRecipients (linked to neither Staff nor Patient) once that flow is finalised.
-public class MessagingViewServiceTests : IDisposable
+public class MessagingViewServiceTests
 {
     private readonly IMessagingService _mockMessagingService;
     private readonly MessagingViewService _messagingViewService;
@@ -319,5 +319,4 @@ public class MessagingViewServiceTests : IDisposable
 
     #endregion
 
-    public void Dispose() => _messagingViewService.Dispose();
 }

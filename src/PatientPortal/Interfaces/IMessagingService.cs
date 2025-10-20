@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using PatientPortal.DTOs;
@@ -6,7 +5,7 @@ using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
 {
-    public interface IMessagingService : IDisposable
+    public interface IMessagingService
     {
         //COMMANDS
         

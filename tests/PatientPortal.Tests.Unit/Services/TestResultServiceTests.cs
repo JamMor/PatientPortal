@@ -298,7 +298,6 @@ public class TestResultServiceTests : IDisposable
 
     public void Dispose()
     {
-        _testResultService?.Dispose();
         _context?.Dispose();
     }
 }

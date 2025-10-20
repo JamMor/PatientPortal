@@ -1,11 +1,10 @@
-using System;
 using System.Linq;
 using PatientPortal.DTOs;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
 {
-    public interface IPatientService : IDisposable
+    public interface IPatientService
     {
         bool DoesPatientExist(PatientDTO patientInfo);
         int CreatePatient(PatientDTO patientInfo);

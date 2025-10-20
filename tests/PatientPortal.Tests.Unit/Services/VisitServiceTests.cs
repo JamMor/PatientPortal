@@ -325,7 +325,6 @@ public class VisitServiceTests : IDisposable
 
     public void Dispose()
     {
-        _visitService?.Dispose();
         _context?.Dispose();
     }
 }

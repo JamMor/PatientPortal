@@ -8,7 +8,7 @@ namespace PatientPortal.Tests.Unit.Services;
 // TODO: Add tests for empty result sets and null returns from IPatientService methods.
 // TODO: Add validation tests for pagination boundaries (page out of range, zero/negative page sizes).
 // TODO: Add tests for sorting fallback/default behavior in ReturnPatientManagerView.
-public class PatientViewServiceTests : IDisposable
+public class PatientViewServiceTests
 {
     private readonly IPatientService _mockPatientService;
     private readonly PatientViewService _patientViewService;
@@ -270,8 +270,4 @@ public class PatientViewServiceTests : IDisposable
 
     #endregion
 
-    public void Dispose()
-    {
-        _patientViewService?.Dispose();
-    }
 }

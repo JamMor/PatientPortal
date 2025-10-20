@@ -1,9 +1,8 @@
-using System;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
 {
-    public interface IPatientViewService : IDisposable
+    public interface IPatientViewService
     {
         PatientHeaderInfoView? GetPatientInfoHeader(int patientId);
         PatientInfoViewModel? GetPatientInfo(int patientId);

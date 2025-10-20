@@ -367,7 +367,6 @@ public class StaffServiceTests : IDisposable
 
     public void Dispose()
     {
-        _staffService?.Dispose();
         _context?.Dispose();
     }
 }

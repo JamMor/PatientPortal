@@ -217,7 +217,6 @@ public class HealthIssueServiceTests : IDisposable
 
     public void Dispose()
     {
-        _healthIssueService?.Dispose();
         _context?.Dispose();
     }
 }

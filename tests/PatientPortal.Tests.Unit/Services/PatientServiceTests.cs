@@ -489,7 +489,6 @@ public class PatientServiceTests : IDisposable
 
     public void Dispose()
     {
-        _patientService?.Dispose();
         _context?.Dispose();
     }
 }

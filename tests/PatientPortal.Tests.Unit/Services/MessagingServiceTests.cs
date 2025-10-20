@@ -684,7 +684,6 @@ public class MessagingServiceTests : IDisposable
 
     public void Dispose()
     {
-        _messagingService?.Dispose();
         _context?.Dispose();
     }
 }
