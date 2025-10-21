@@ -140,14 +140,14 @@ nav .nav-tab .nav-link.active {
 }
 
 /* Sort Indicators */
-.sort-invert { --sort-dir: 180deg; }
-
 .sort-caret svg {
   --sort-dir: 0deg;
   transform: rotate(var(--sort-dir));
   transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
   opacity: 0.2;
 }
+
+.sort-invert .sort-caret svg { --sort-dir: 180deg; }
 
 th a.sort-active .sort-caret svg,
 th a:not(.sort-active):hover .sort-caret svg {
