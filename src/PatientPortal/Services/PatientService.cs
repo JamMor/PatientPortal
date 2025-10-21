@@ -9,6 +9,7 @@ namespace PatientPortal.Services
     public class PatientService : IPatientService
     {
         private PatientPortalContext _context;
+
         public PatientService(PatientPortalContext context)
         {
             _context = context;
@@ -18,10 +19,11 @@ namespace PatientPortal.Services
         public bool DoesPatientExist(PatientDTO patientInfo)
         {
             return _context.Patients.Any(patient =>
-                    patient.Last4SSN == patientInfo.Last4SSN
-                    && patient.DOB == patientInfo.DOB
-                    && patient.FirstName == patientInfo.FirstName
-                    && patient.LastName == patientInfo.LastName);
+                patient.Last4SSN == patientInfo.Last4SSN
+                && patient.DOB == patientInfo.DOB
+                && patient.FirstName == patientInfo.FirstName
+                && patient.LastName == patientInfo.LastName
+            );
         }
 
         public int CreatePatient(PatientDTO patientInfo)
@@ -34,17 +36,17 @@ namespace PatientPortal.Services
                 Last4SSN = patientInfo.Last4SSN,
                 PhoneNumber = patientInfo.PhoneNumber,
                 Email = patientInfo.Email,
-                MessagingLink = new MessagingLink()
+                MessagingLink = new MessagingLink(),
             };
-            
-            if(patientInfo.Address != null)
+
+            if (patientInfo.Address != null)
             {
                 newPatient.Address = new Address()
                 {
                     StreetAddress = patientInfo.Address.StreetAddress,
                     City = patientInfo.Address.City,
                     State = patientInfo.Address.State,
-                    ZipCode = patientInfo.Address.ZipCode
+                    ZipCode = patientInfo.Address.ZipCode,
                 };
             }
 
@@ -93,17 +95,17 @@ namespace PatientPortal.Services
 
             return patient;
         }
-           
-        public IQueryable<Patient> SearchPatients(PatientSearch searchParams, int staffId)
+
+        public IQueryable<Patient> SearchPatients(PatientFilter searchParams, int staffId)
         {
             var results = _context.Patients
-                .Where(patient => searchParams.SearchPatientId == null || patient.PatientId == searchParams.SearchPatientId)
-                .Where(patient => string.IsNullOrEmpty(searchParams.SearchFirstName) || patient.FirstName.StartsWith(searchParams.SearchFirstName))
-                .Where(patient => string.IsNullOrEmpty(searchParams.SearchLastName) || patient.LastName.StartsWith(searchParams.SearchLastName))
-                .Where(patient => string.IsNullOrEmpty(searchParams.SearchSSN) || patient.Last4SSN == searchParams.SearchSSN)
-                .Where(patient => searchParams.SearchBirthdate == null || patient.DOB.Date == searchParams.SearchBirthdate.Value.Date);
+                .Where(patient => searchParams.PatientId == null || patient.PatientId == searchParams.PatientId)
+                .Where(patient => string.IsNullOrEmpty(searchParams.FirstName) || patient.FirstName.StartsWith(searchParams.FirstName))
+                .Where(patient => string.IsNullOrEmpty(searchParams.LastName) || patient.LastName.StartsWith(searchParams.LastName))
+                .Where(patient => string.IsNullOrEmpty(searchParams.SSN) || patient.Last4SSN == searchParams.SSN)
+                .Where(patient => searchParams.Birthdate == null || patient.DOB.Date == searchParams.Birthdate.Value.Date);
 
-            if(searchParams.SearchPatientsUnderCare == true)
+            if (searchParams.OnlyPatientsUnderCare == true)
             {
                 results = results
                     .Include(patient => patient.MedicalTeam)

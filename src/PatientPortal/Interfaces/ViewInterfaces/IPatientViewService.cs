@@ -6,6 +6,6 @@ namespace PatientPortal.Interfaces
     {
         PatientHeaderInfoView? GetPatientInfoHeader(int patientId);
         PatientInfoViewModel? GetPatientInfo(int patientId);
-        PatientManagerView ReturnPatientManagerView(PatientSearch searchQuery, Paginator paginationSettings, int staffId);
+        PatientManagerView ReturnPatientManagerView(PatientFilter filter, Paginator paging, string sortOrder, int staffId);
     }
 }

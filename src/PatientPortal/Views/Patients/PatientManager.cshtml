@@ -1,7 +1,7 @@
 @model PatientManagerView
 
-<partial name="_PatientSearchBar.cshtml" />
+<partial name="_PatientSearchBar.cshtml" model="Model.SearchForm" />
 <hr>
-<partial name="_PatientDisplay.cshtml" />
+<partial name="_PatientDisplay.cshtml" model="Model" />
 <hr>
-<partial name="~/Views/Shared/_PaginationBar.cshtml" for="PaginationSettings" />
+<partial name="~/Views/Shared/_PaginationBar.cshtml" model="new PaginationBarModel { Paging = Model.Query.Paging, Routes = Model.Query.ToRouteDict() }" />

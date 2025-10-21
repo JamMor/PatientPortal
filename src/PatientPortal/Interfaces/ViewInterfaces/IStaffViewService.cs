@@ -4,7 +4,7 @@ namespace PatientPortal.Interfaces
 {
     public interface IStaffViewService
     {
-        StaffManagerView ReturnStaffManagerView(StaffSearch searchQuery, Paginator paginationSettings);
+        StaffManagerView ReturnStaffManagerView(StaffFilter filter, Paginator paging, string sortOrder);
         StaffInfoViewModel? GetStaffInfo(int staffId);
     }
 }

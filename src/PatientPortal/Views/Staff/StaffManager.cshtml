@@ -1,7 +1,7 @@
 @model StaffManagerView
 
-<partial name="_StaffSearchBar.cshtml" />
+<partial name="_StaffSearchBar.cshtml" model="Model.SearchForm" />
 <hr>
-<partial name="_StaffDisplay.cshtml" />
+<partial name="_StaffDisplay.cshtml" model="Model" />
 <hr>
-<partial name="~/Views/Shared/_PaginationBar.cshtml" for="PaginationSettings" />
+<partial name="~/Views/Shared/_PaginationBar.cshtml" model="new PaginationBarModel { Paging = Model.Query.Paging, Routes = Model.Query.ToRouteDict() }" />

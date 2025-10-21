@@ -26,14 +26,14 @@ namespace PatientPortal.Controllers
 
         //===========================Patient Manager==============================
         [HttpGet("")]
-        public IActionResult PatientManager(PatientSearch searchBar, Paginator paginationSettings)
+        public IActionResult PatientManager(PatientFilter filter, Paginator paging, string sortOrder = PatientQuery.DefaultSort)
         {
             if(!staffId.HasValue)
             {
                 return StatusCode(500, "Unable to retrieve staff information. Please ensure you are logged in and try again.");
             }
 
-            PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(searchBar, paginationSettings, (int)staffId);
+            PatientManagerView viewModel = _patientViewService.ReturnPatientManagerView(filter, paging, sortOrder, (int)staffId);
 
             return View("PatientManager", viewModel);
         }

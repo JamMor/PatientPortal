@@ -28,7 +28,14 @@ public class StaffServiceTests : IDisposable
         _staffService = new StaffService(_context);
     }
 
-    private static Staff CreateStaff(string firstName, string lastName, string username, string role, bool isAdmin = false, string password = "hashedpassword")
+    private static Staff CreateStaff(
+        string firstName,
+        string lastName,
+        string username,
+        string role,
+        bool isAdmin = false,
+        string password = "hashedpassword"
+    )
     {
         return new Staff
         {
@@ -38,7 +45,7 @@ public class StaffServiceTests : IDisposable
             Password = password,
             Role = role,
             IsAdmin = isAdmin,
-            MessagingLink = new MessagingLink()
+            MessagingLink = new MessagingLink(),
         };
     }
 
@@ -140,7 +147,7 @@ public class StaffServiceTests : IDisposable
         var staff2 = CreateStaff("Jane", "Smith", "jsmith", "Nurse");
         AddStaff(staff1, staff2);
 
-        var searchParams = new StaffSearch { SearchFirstName = "John" };
+        var searchParams = new StaffFilter { FirstName = "John" };
 
         // Act
         var result = _staffService.SearchStaff(searchParams);
@@ -158,7 +165,7 @@ public class StaffServiceTests : IDisposable
         var staff2 = CreateStaff("Jane", "Smith", "jsmith", "Nurse");
         AddStaff(staff1, staff2);
 
-        var searchParams = new StaffSearch { SearchStaffId = staff1.StaffId };
+        var searchParams = new StaffFilter { StaffId = staff1.StaffId };
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();
@@ -177,7 +184,7 @@ public class StaffServiceTests : IDisposable
         var staff3 = CreateStaff("Bob", "Wilson", "bwilson", "Nurse");
         AddStaff(staff1, staff2, staff3);
 
-        var searchParams = new StaffSearch { SearchRole = "Doctor" };
+        var searchParams = new StaffFilter { Role = "Doctor" };
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();
@@ -196,7 +203,7 @@ public class StaffServiceTests : IDisposable
         var staff3 = CreateStaff("Jane", "Smith", "jsmith2", "Doctor");
         AddStaff(staff1, staff2, staff3);
 
-        var searchParams = new StaffSearch { SearchFirstName = "John", SearchRole = "Doctor" };
+        var searchParams = new StaffFilter { FirstName = "John", Role = "Doctor" };
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();
@@ -214,7 +221,7 @@ public class StaffServiceTests : IDisposable
         var staff2 = CreateStaff("Jane", "Smith", "jsmith", "Nurse");
         AddStaff(staff1, staff2);
 
-        var searchParams = new StaffSearch();
+        var searchParams = new StaffFilter();
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();
@@ -230,7 +237,7 @@ public class StaffServiceTests : IDisposable
         var staff = CreateStaff("John", "Doe", "jdoe", "Doctor");
         AddStaff(staff);
 
-        var searchParams = new StaffSearch { SearchFirstName = "NonExistent" };
+        var searchParams = new StaffFilter { FirstName = "NonExistent" };
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();

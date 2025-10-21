@@ -30,7 +30,8 @@ public class PatientServiceTests : IDisposable
         string last4Ssn,
         string? phoneNumber = null,
         string? email = null,
-        Address? address = null)
+        Address? address = null
+    )
     {
         return new Patient
         {
@@ -41,7 +42,7 @@ public class PatientServiceTests : IDisposable
             PhoneNumber = phoneNumber,
             Email = email,
             Address = address,
-            MessagingLink = new MessagingLink()
+            MessagingLink = new MessagingLink(),
         };
     }
 
@@ -52,7 +53,7 @@ public class PatientServiceTests : IDisposable
     }
 
     #region CRUD Tests
-    
+
     [Fact]
     public void DoesPatientExist_WithExistingPatient_ReturnsTrue()
     {
@@ -87,8 +88,13 @@ public class PatientServiceTests : IDisposable
     {
         // Arrange
         var patientDTO = new PatientDTO(
-            "Alice", "Johnson", new DateTime(1992, 3, 10), "9876",
-            "555-9876", "alice.johnson@email.com", null
+            "Alice",
+            "Johnson",
+            new DateTime(1992, 3, 10),
+            "9876",
+            "555-9876",
+            "alice.johnson@email.com",
+            null
         );
 
         // Act
@@ -96,7 +102,7 @@ public class PatientServiceTests : IDisposable
 
         // Assert
         Assert.True(patientId > 0);
-        
+
         var createdPatient = _context.Patients.Find(patientId);
         Assert.NotNull(createdPatient);
         Assert.Equal("Alice", createdPatient.FirstName);
@@ -111,8 +117,12 @@ public class PatientServiceTests : IDisposable
     {
         // Arrange
         var patientDTO = new PatientDTO(
-            "Bob", "Wilson", new DateTime(1988, 7, 20), "4321",
-            "555-4321", "bob.wilson@email.com",
+            "Bob",
+            "Wilson",
+            new DateTime(1988, 7, 20),
+            "4321",
+            "555-4321",
+            "bob.wilson@email.com",
             new AddressDTO("123 Main St", "Anytown", "CA", "12345")
         );
 
@@ -123,7 +133,7 @@ public class PatientServiceTests : IDisposable
         var createdPatient = _context.Patients
             .Include(p => p.Address)
             .FirstOrDefault(p => p.PatientId == patientId);
-        
+
         Assert.NotNull(createdPatient);
         Assert.NotNull(createdPatient.Address);
         Assert.Equal("123 Main St", createdPatient.Address.StreetAddress);
@@ -215,7 +225,7 @@ public class PatientServiceTests : IDisposable
         var patient2 = CreatePatient("Jane", "Smith", new DateTime(1985, 5, 15), "5678");
         AddPatients(patient1, patient2);
 
-        var searchParams = new PatientSearch { SearchPatientId = patient1.PatientId };
+        var searchParams = new PatientFilter { PatientId = patient1.PatientId };
 
         // Act
         var result = _patientService.SearchPatients(searchParams, 1).ToList();
@@ -234,7 +244,7 @@ public class PatientServiceTests : IDisposable
         var patient3 = CreatePatient("Jane", "Wilson", new DateTime(1988, 3, 20), "9012");
         AddPatients(patient1, patient2, patient3);
 
-        var searchParams = new PatientSearch { SearchFirstName = "John" };
+        var searchParams = new PatientFilter { FirstName = "John" };
 
         // Act
         var result = _patientService.SearchPatients(searchParams, 1).ToList();
@@ -252,7 +262,7 @@ public class PatientServiceTests : IDisposable
         var patient3 = CreatePatient("Bob", "Jones", new DateTime(1988, 3, 20), "9012");
         AddPatients(patient1, patient2, patient3);
 
-        var searchParams = new PatientSearch { SearchLastName = "Smith" };
+        var searchParams = new PatientFilter { LastName = "Smith" };
 
         // Act
         var result = _patientService.SearchPatients(searchParams, 1).ToList();
@@ -269,7 +279,7 @@ public class PatientServiceTests : IDisposable
         var patient2 = CreatePatient("Jane", "Smith", new DateTime(1985, 5, 15), "5678");
         AddPatients(patient1, patient2);
 
-        var searchParams = new PatientSearch { SearchSSN = "1234" };
+        var searchParams = new PatientFilter { SSN = "1234" };
 
         // Act
         var result = _patientService.SearchPatients(searchParams, 1).ToList();
@@ -288,7 +298,7 @@ public class PatientServiceTests : IDisposable
         var patient3 = CreatePatient("Bob", "Wilson", new DateTime(1985, 5, 15), "9012");
         AddPatients(patient1, patient2, patient3);
 
-        var searchParams = new PatientSearch { SearchBirthdate = new DateTime(1990, 1, 1) };
+        var searchParams = new PatientFilter { Birthdate = new DateTime(1990, 1, 1) };
 
         // Act
         var result = _patientService.SearchPatients(searchParams, 1).ToList();
@@ -306,7 +316,7 @@ public class PatientServiceTests : IDisposable
         var patient3 = CreatePatient("Jane", "Smith", new DateTime(1990, 1, 1), "9012");
         AddPatients(patient1, patient2, patient3);
 
-        var searchParams = new PatientSearch { SearchFirstName = "John", SearchLastName = "Smith" };
+        var searchParams = new PatientFilter { FirstName = "John", LastName = "Smith" };
 
         // Act
         var result = _patientService.SearchPatients(searchParams, 1).ToList();
@@ -323,7 +333,7 @@ public class PatientServiceTests : IDisposable
         var patient = CreatePatient("John", "Doe", new DateTime(1990, 1, 1), "1234");
         AddPatients(patient);
 
-        var searchParams = new PatientSearch { SearchFirstName = "NonExistent" };
+        var searchParams = new PatientFilter { FirstName = "NonExistent" };
 
         // Act
         var result = _patientService.SearchPatients(searchParams, 1).ToList();
@@ -340,7 +350,7 @@ public class PatientServiceTests : IDisposable
         var patient2 = CreatePatient("Jane", "Smith", new DateTime(1985, 5, 15), "5678");
         AddPatients(patient1, patient2);
 
-        var searchParams = new PatientSearch(); // All fields null/empty
+        var searchParams = new PatientFilter(); // All fields null/empty
 
         // Act
         var result = _patientService.SearchPatients(searchParams, 1).ToList();
@@ -434,8 +444,13 @@ public class PatientServiceTests : IDisposable
         AddPatients(patient);
 
         var patientDTO = new PatientDTO(
-            "John", "Doe", new DateTime(1990, 1, 1), "9999",
-            null, null, null
+            "John",
+            "Doe",
+            new DateTime(1990, 1, 1),
+            "9999",
+            null,
+            null,
+            null
         );
 
         // Act
@@ -450,8 +465,13 @@ public class PatientServiceTests : IDisposable
     {
         // Arrange
         var patientDTO = new PatientDTO(
-            "NoAddress", "Patient", new DateTime(1990, 1, 1), "0000",
-            null, null, null
+            "NoAddress",
+            "Patient",
+            new DateTime(1990, 1, 1),
+            "0000",
+            null,
+            null,
+            null
         );
 
         // Act

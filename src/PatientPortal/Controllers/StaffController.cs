@@ -26,9 +26,9 @@ namespace PatientPortal.Controllers
 
 //==============Staff Manager==============================
         [HttpGet("")]
-        public IActionResult StaffManager(StaffSearch searchBar, Paginator paginationSettings)
+        public IActionResult StaffManager(StaffFilter filter, Paginator paging, string sortOrder = StaffQuery.DefaultSort)
         {
-            StaffManagerView viewModel = _staffViewService.ReturnStaffManagerView(searchBar, paginationSettings);
+            StaffManagerView viewModel = _staffViewService.ReturnStaffManagerView(filter, paging, sortOrder);
 
             return View("StaffManager", viewModel);
         }

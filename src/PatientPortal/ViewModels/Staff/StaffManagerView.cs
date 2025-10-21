@@ -7,13 +7,26 @@ namespace PatientPortal.Models
     [NotMapped]
     public class StaffManagerView
     {
-        public required StaffSearch SearchBar { get; set; }
+        public required StaffQuery Query { get; set; }
 
-        public required Paginator PaginationSettings { get; set; }
+        public required StaffResultList Results { get; set; }
 
-        public int ResultsCount => PaginationSettings.ResultsCount;
+        public StaffSearchForm SearchForm => new StaffSearchForm
+        {
+            StaffId = Query.Filter.StaffId,
+            FirstName = Query.Filter.FirstName,
+            LastName = Query.Filter.LastName,
+            Role = Query.Filter.Role,
+            SortOrder = Query.Sort.SortString,
+            ResultsPerPage = Query.Paging.ResultsPerPage,
+            CurrentPage = Query.Paging.CurrentPage,
+        };
+    }
 
-        public List<StaffResult> SearchResults { get; set; } = [];
+    [NotMapped]
+    public class StaffResultList
+    {
+        public List<StaffResult> Staff { get; set; } = [];
     }
 
     public class StaffResult

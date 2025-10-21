@@ -10,6 +10,7 @@ namespace PatientPortal.Services
     public class StaffService : IStaffService
     {
         private PatientPortalContext _context;
+
         public StaffService(PatientPortalContext context)
         {
             _context = context;
@@ -29,7 +30,7 @@ namespace PatientPortal.Services
                 MessagingLink = new MessagingLink(),
                 // TODO: Remove these legacy fields after migration
                 StaffUsername = user.UserName!,
-                Password = "[Managed by Identity]"
+                Password = "[Managed by Identity]",
             };
 
             _context.Staff.Add(newStaff);
@@ -43,7 +44,7 @@ namespace PatientPortal.Services
             Staff? deletedStaff = _context.Staff
                 .Include(s => s.MessagingLink)
                 .SingleOrDefault(staff => staff.StaffId == staffId);
-            if(deletedStaff != null)
+            if (deletedStaff != null)
             {
                 _context.Staff.Remove(deletedStaff);
                 _context.SaveChanges();
@@ -58,14 +59,14 @@ namespace PatientPortal.Services
 
             return staffmember;
         }
-        
-        public IQueryable<Staff> SearchStaff(StaffSearch searchParams)
+
+        public IQueryable<Staff> SearchStaff(StaffFilter searchParams)
         {
             return _context.Staff
-                .Where(staff => searchParams.SearchStaffId == null || staff.StaffId == searchParams.SearchStaffId)
-                .Where(staff => string.IsNullOrEmpty(searchParams.SearchFirstName) || staff.FirstName.StartsWith(searchParams.SearchFirstName))
-                .Where(staff => string.IsNullOrEmpty(searchParams.SearchLastName) || staff.LastName.StartsWith(searchParams.SearchLastName) )
-                .Where(staff => string.IsNullOrEmpty(searchParams.SearchRole) || staff.Role == searchParams.SearchRole);
+                .Where(staff => searchParams.StaffId == null || staff.StaffId == searchParams.StaffId)
+                .Where(staff => string.IsNullOrEmpty(searchParams.FirstName) || staff.FirstName.StartsWith(searchParams.FirstName))
+                .Where(staff => string.IsNullOrEmpty(searchParams.LastName) || staff.LastName.StartsWith(searchParams.LastName) )
+                .Where(staff => string.IsNullOrEmpty(searchParams.Role) || staff.Role == searchParams.Role);
         }
 
         public IQueryable<Staff> SortStaff(IQueryable<Staff> query, string sortOrder)

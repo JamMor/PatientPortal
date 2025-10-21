@@ -7,13 +7,28 @@ namespace PatientPortal.Models
     [NotMapped]
     public class PatientManagerView
     {
-        public required PatientSearch SearchBar { get; set; }
+        public required PatientQuery Query { get; set; }
 
-        public required Paginator PaginationSettings { get; set; }
+        public required PatientResultList Results { get; set; }
 
-        public int ResultsCount => PaginationSettings.ResultsCount;
+        public PatientSearchForm SearchForm => new PatientSearchForm
+        {
+            PatientId = Query.Filter.PatientId,
+            FirstName = Query.Filter.FirstName,
+            LastName = Query.Filter.LastName,
+            SSN = Query.Filter.SSN,
+            Birthdate = Query.Filter.Birthdate,
+            OnlyPatientsUnderCare = Query.Filter.OnlyPatientsUnderCare,
+            SortOrder = Query.Sort.SortString,
+            ResultsPerPage = Query.Paging.ResultsPerPage,
+            CurrentPage = Query.Paging.CurrentPage,
+        };
+    }
 
-        public List<PatientResult> SearchResults { get; set; } = [];
+    [NotMapped]
+    public class PatientResultList
+    {
+        public List<PatientResult> Patients { get; set; } = [];
     }
 
     public class PatientResult

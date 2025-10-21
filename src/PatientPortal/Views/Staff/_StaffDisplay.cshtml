@@ -1,16 +1,7 @@
 @model StaffManagerView
 
 @{
-    var queryRoutes = Context.Request.Query
-        .Where(q => q.Key != "CurrentPage")
-        .ToDictionary(q => q.Key, q => q.Value.ToString());
-
-    var sortableTableColumns = new[]
-    {
-        (Label: "Last Name", Field: "LastName"),
-        (Label: "Role",      Field: "Role"),
-        (Label: "Staff Id",  Field: "StaffId")
-    };
+    var queryRoutes = Model.Query.ToRouteDict();
 }
 
 <div class="d-flex align-items-center gap-1">
@@ -18,7 +9,7 @@
         <span>
             Staff 
             <span class="badge hue-primary and-dimmed on-bg text-dark">
-                @Model.ResultsCount
+                @Model.Query.Paging.ResultsCount
             </span>
             :
         </span>
@@ -50,17 +41,15 @@
         <tr>
             <th class="align-middle text-muted">#</th>
             @* Sortable column links — active column reverses direction, new column defaults to descending *@
-            @foreach (var col in sortableTableColumns)
+            @foreach (var column in Model.Query.SortableColumns)
             {
-                var isActive = col.Field == Model.PaginationSettings.SortColumn();
-                var isAsc = isActive && Model.PaginationSettings.SortDirection() == "asc";
                 <th>
-                    <a class="@(isActive ? "sort-active" : "")"
+                    <a class="@(Model.Query.Sort.IsSortedBy(column) ? "sort-active" : "")"
                         asp-controller="Staff" asp-action="StaffManager"
                         asp-all-route-data="queryRoutes"
-                        asp-route-SortOrder="@Model.PaginationSettings.GetToggledSortOrder(col.Field)">
-                        <span class="d-flex text-nowrap gap-2 @(isAsc ? "sort-invert" : "")">
-                            @col.Label 
+                        asp-route-SortOrder="@Model.Query.Sort.GetSortOrderForLink(column)">
+                        <span class="d-flex text-nowrap gap-2 @(Model.Query.Sort.IsAscending(column) ? "sort-invert" : "")">
+                            @column.DisplayName
                             <partial name="_CaretDownIcon" />
                         </span>
                     </a>
@@ -72,7 +61,7 @@
     </thead>
     <tbody>
         @{
-            if(Model.SearchResults.Count == 0)
+            if(Model.Results.Staff.Count == 0)
             {
                 <tr>
                     <td colspan="6" class="text-center text-muted">No staff to display.</td>
@@ -81,10 +70,10 @@
         }
         @{
             int i = 1;
-            foreach (StaffResult staffmember in Model.SearchResults)
+            foreach (StaffResult staffmember in Model.Results.Staff)
             {
                 <tr>
-                    <td class="text-muted">@Model.PaginationSettings.RowNumber(i)</td>
+                    <td class="text-muted">@Model.Query.Paging.RowNumber(i)</td>
                     <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.FullName</a></td>
                     <td>@staffmember.Role</td>
                     <td>#@staffmember.StaffId.ToString("D5")</td>

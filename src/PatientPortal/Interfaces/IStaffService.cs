@@ -13,7 +13,7 @@ namespace PatientPortal.Interfaces
 
         //Queries
         IQueryable<Staff> GetStaffbyId(int staffId);
-        IQueryable<Staff> SearchStaff(StaffSearch searchParams);
+        IQueryable<Staff> SearchStaff(StaffFilter searchParams);
         IQueryable<Staff> SortStaff(IQueryable<Staff> query, string sortOrder);
     }
 }
