@@ -1,7 +1,7 @@
 @model PatientManagerView
 
 @{
-    var queryRoutes = Model.Query.ToRouteDict();
+    Dictionary<string, string> QueryRoutes() => Model.Query.ToRouteDict();
 }
 
 <div class="d-flex align-items-center gap-1">
@@ -24,7 +24,7 @@
                 {
                     <a  class="dropdown-item" 
                     asp-controller="Patients" asp-action="PatientManager" 
-                    asp-all-route-data="queryRoutes"
+                    asp-all-route-data="QueryRoutes()"
                     asp-route-ResultsPerPage="@option"
                     >@option</a>
                 }
@@ -46,7 +46,7 @@
                 <th>
                     <a class="@(Model.Query.Sort.IsSortedBy(column) ? "sort-active" : "")"
                         asp-controller="Patients" asp-action="PatientManager"
-                        asp-all-route-data="queryRoutes"
+                        asp-all-route-data="QueryRoutes()"
                         asp-route-SortOrder="@Model.Query.Sort.GetSortOrderForLink(column)">
                         <span class="d-flex text-nowrap gap-2 @(Model.Query.Sort.IsAscending(column) ? "sort-invert" : "")">
                             @column.DisplayName
