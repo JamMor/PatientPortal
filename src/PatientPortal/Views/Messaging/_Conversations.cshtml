@@ -84,7 +84,7 @@
                                 <p class="mb-0 ms-1">@message.MessageText</p>
                             </div>
                         }
-                            <partial name="_NewReply.cshtml" model="new ReplyView(){ConversationId = conversation.ConversationId}" />
+                            <partial name="_NewReply.cshtml" model='new ReplyView(){ConversationId = conversation.ConversationId, ReturnRoute = Model.Query.Type.Route}' />
                     </div>
 
                 </td>

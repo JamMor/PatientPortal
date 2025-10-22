@@ -1,6 +1,7 @@
 @model ReplyView
 
 <form asp-controller="Messaging" asp-action="NewReply" asp-route-conversationId="@Model.ConversationId" method="post">
+    <input type="hidden" asp-for="ReturnRoute" />
     <div class="input-group">
         <label class="input-group-text" asp-for="MessageText"></label>
         <input class="form-control" asp-for="MessageText" placeholder="Message...">

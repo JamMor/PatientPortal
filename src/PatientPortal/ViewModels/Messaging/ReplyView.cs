@@ -11,5 +11,7 @@ namespace PatientPortal.Models
 
         [Display(Name = "Reply: ")]
         public string? MessageText { get; set; }
+
+        public string? ReturnRoute { get; set; }
     }
 }

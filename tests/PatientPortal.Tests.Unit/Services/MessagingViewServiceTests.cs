@@ -89,12 +89,27 @@ public class MessagingViewServiceTests
             .Returns(0);
 
         _mockMessagingService
-            .GetAllConversationsForInbox(viewerLinkId, Arg.Any<ConversationSearch>())
+            .GetStaffConversations(viewerLinkId, Arg.Any<bool>())
+            .Returns(conversations.AsQueryable());
+
+        _mockMessagingService
+            .GetPatientConversations(viewerLinkId, Arg.Any<bool>())
             .Returns(conversations.AsQueryable());
     }
 
-    private static Paginator DefaultPaginator() => new Paginator { CurrentPage = 1, ResultsPerPage = 10 };
-    private static ConversationSearch StaffInboxFilters() => new ConversationSearch { IsPatientInbox = false };
+    private static InboxQuery StaffInboxQuery() => new InboxQuery
+    {
+        Type = InboxType.Staff,
+        OnlyUnread = false,
+        Paging = new Paginator { CurrentPage = 1, ResultsPerPage = 10 },
+    };
+
+    private static InboxQuery PatientInboxQuery() => new InboxQuery
+    {
+        Type = InboxType.Patient,
+        OnlyUnread = false,
+        Paging = new Paginator { CurrentPage = 1, ResultsPerPage = 10 },
+    };
 
     #endregion
 
@@ -107,7 +122,7 @@ public class MessagingViewServiceTests
         _mockMessagingService.GetMessagingLink(Arg.Any<int>()).Returns((MessagingLink?)null);
 
         // Act
-        var result = _messagingViewService.ReturnInboxView(999, StaffInboxFilters(), DefaultPaginator());
+        var result = _messagingViewService.ReturnInboxView(999, StaffInboxQuery());
 
         // Assert
         Assert.Null(result);
@@ -140,7 +155,7 @@ public class MessagingViewServiceTests
         SetupInboxMock(viewerLinkId, [conversation]);
 
         // Act
-        var result = _messagingViewService.ReturnInboxView(viewerLinkId, StaffInboxFilters(), DefaultPaginator());
+        var result = _messagingViewService.ReturnInboxView(viewerLinkId, StaffInboxQuery());
 
         // Assert
         Assert.NotNull(result);
@@ -167,7 +182,7 @@ public class MessagingViewServiceTests
         SetupInboxMock(viewerLinkId, [conversation]);
 
         // Act
-        var result = _messagingViewService.ReturnInboxView(viewerLinkId, StaffInboxFilters(), DefaultPaginator());
+        var result = _messagingViewService.ReturnInboxView(viewerLinkId, StaffInboxQuery());
 
         // Assert
         Assert.NotNull(result);
@@ -199,8 +214,7 @@ public class MessagingViewServiceTests
         // Act
         var result = _messagingViewService.ReturnInboxView(
             viewerLinkId,
-            new ConversationSearch { IsPatientInbox = true },
-            DefaultPaginator());
+            PatientInboxQuery());
 
         // Assert
         Assert.NotNull(result);
@@ -238,8 +252,7 @@ public class MessagingViewServiceTests
         // Act
         var result = _messagingViewService.ReturnInboxView(
             viewerLinkId,
-            new ConversationSearch { IsPatientInbox = true },
-            DefaultPaginator());
+            PatientInboxQuery());
 
         // Assert
         Assert.NotNull(result);
@@ -277,7 +290,7 @@ public class MessagingViewServiceTests
         SetupInboxMock(viewerLinkId, conversations);
 
         // Act
-        var result = _messagingViewService.ReturnInboxView(viewerLinkId, StaffInboxFilters(), DefaultPaginator());
+        var result = _messagingViewService.ReturnInboxView(viewerLinkId, StaffInboxQuery());
 
         // Assert
         Assert.NotNull(result);
@@ -307,7 +320,7 @@ public class MessagingViewServiceTests
         SetupInboxMock(viewerLinkId, [conversation]);
 
         // Act
-        var result = _messagingViewService.ReturnInboxView(viewerLinkId, StaffInboxFilters(), DefaultPaginator());
+        var result = _messagingViewService.ReturnInboxView(viewerLinkId, StaffInboxQuery());
 
         // Assert
         Assert.NotNull(result);

@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,49 +17,41 @@ namespace PatientPortal.Controllers
         private IMessagingService _messagingService;
         private IMessagingViewService _messagingViewService;
         private readonly IAuthorizationService _authorizationService;
-        
+
         public MessagingController(
-            IMessagingService messagingService, 
+            IMessagingService messagingService,
             IMessagingViewService messagingViewService,
-            IAuthorizationService authorizationService)
+            IAuthorizationService authorizationService
+        )
         {
             _messagingService = messagingService;
             _messagingViewService = messagingViewService;
             _authorizationService = authorizationService;
         }
 
-        private class InboxType
-        {
-            public const string WithoutPatients = "staff";
-            public const string WithPatients = "patient";
-        }
-
         //===========================Inbox Manager==============================
         [HttpGet("{inbox?}")]
-        public async Task<IActionResult> Inbox(string inbox, ConversationSearch inboxFilters, Paginator paginationSettings)
+        public async Task<IActionResult> Inbox(string inbox, InboxSearchForm searchForm)
         {
-            paginationSettings.ResultsPerPage = 5;
-            
             // Check if user can manage patients (staff member)
             bool isUserStaff = User.GetStaffId().HasValue;
 
-            if(!linkId.HasValue)
+            if (!linkId.HasValue)
             {
                 return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
             }
-            
-            
+
             //Redirect to appropriate URL's for patient or staff member
 
             // Patient Users
             // TODO: Revisit patient inbox logic when patients get login access
             // Currently patients don't have login, so this branch is not used
-            if(!isUserStaff)
+            if (!isUserStaff)
             {
                 // Force patient inbox
-                if(inbox != "")
+                if (inbox != "")
                 {
-                    return RedirectToAction("Inbox", new {inbox = ""});
+                    return RedirectToAction("Inbox", new { inbox = "" });
                 }
             }
             // Staff Users
@@ -71,20 +62,30 @@ namespace PatientPortal.Controllers
 
                 if (!CanMessagePatients)
                 {
-                    inbox = InboxType.WithoutPatients;
+                    inbox = InboxType.Staff.Route;
                 }
 
-                // If invalid inbox type, redirect to default staff inbox                
-                if(inbox != InboxType.WithoutPatients && inbox != InboxType.WithPatients)
+                // If invalid inbox type, redirect to default staff inbox (Patient Inbox)
+                if (InboxType.FromRoute(inbox) == null)
                 {
-                    return RedirectToAction("Inbox", new {inbox = InboxType.WithPatients});
+                    return RedirectToAction("Inbox", new { inbox = InboxType.Patient.Route });
                 }
             }
 
-            inboxFilters.IsPatientInbox = inbox != InboxType.WithoutPatients;
-            MessageInboxView? inboxView = _messagingViewService.ReturnInboxView((int)linkId, inboxFilters, paginationSettings);
+            var query = new InboxQuery
+            {
+                Type = InboxType.FromRoute(inbox) ?? InboxType.Patient,
+                OnlyUnread = searchForm.OnlyUnread,
+                Paging = new Paginator
+                {
+                    ResultsPerPage = searchForm.ResultsPerPage,
+                    CurrentPage = searchForm.CurrentPage,
+                },
+            };
 
-            if(inboxView == null)
+            MessageInboxView? inboxView = _messagingViewService.ReturnInboxView((int)linkId, query);
+
+            if (inboxView == null)
             {
                 return NotFound();
             }
@@ -95,25 +96,26 @@ namespace PatientPortal.Controllers
         [HttpGet("new")]
         public IActionResult NewConversationForm(int? toLinkId)
         {
-            if(!linkId.HasValue)
+            if (!linkId.HasValue)
             {
                 return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
             }
-            
-            NewConversationFormView newConversationFormViewModel = _messagingViewService.NewConversationForm((int)linkId, toLinkId);
+
+            NewConversationFormView newConversationFormViewModel =
+                _messagingViewService.NewConversationForm((int)linkId, toLinkId);
 
             return View("NewMessageForm", newConversationFormViewModel);
         }
-        
+
         [HttpPost("new")]
         public IActionResult NewConversation(NewConversationFormInput newConversationFormInput)
         {
-            if(!linkId.HasValue)
+            if (!linkId.HasValue)
             {
                 return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
             }
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -121,8 +123,11 @@ namespace PatientPortal.Controllers
                     var firstMessageDTO = newConversationFormInput.ToMessageDTO();
                     
                     _messagingService.CreateConversation((int)linkId, conversationDTO, firstMessageDTO);
-                    
-                    return RedirectToAction("Inbox");
+
+                    string inboxRoute = newConversationFormInput.WithPatient
+                        ? InboxType.Patient.Route
+                        : InboxType.Staff.Route;
+                    return RedirectToAction("Inbox", new { inbox = inboxRoute });
                 }
                 catch
                 {
@@ -131,53 +136,51 @@ namespace PatientPortal.Controllers
                 }
             }
 
-            var form = _messagingViewService.NewConversationForm((int)linkId, null).ApplyInput(newConversationFormInput);
+            var form = _messagingViewService.NewConversationForm((int)linkId, null)
+                .ApplyInput(newConversationFormInput);
             return View("NewMessageForm", form);
-
         }
 
         [HttpPost("reply/{conversationId}/new")]
         public IActionResult NewReply(int conversationId, ReplyView newReply)
         {
-            if(!linkId.HasValue)
+            if (!linkId.HasValue)
             {
                 return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
             }
 
-            if(ModelState.IsValid)
+            string returnRoute = InboxType.FromRoute(newReply.ReturnRoute)?.Route ?? InboxType.Patient.Route;
+
+            if (ModelState.IsValid)
             {
                 try
                 {
                     var newReplyDTO = newReply.ToMessageDTO();
-                    
+
                     _messagingService.CreateReply((int)linkId, conversationId, newReplyDTO);
-                    
-                    return RedirectToAction("Inbox");
                 }
                 catch
                 {
                     // Log the exception (not implemented here)
-                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the reply.");
                 }
-
             }
 
-            return View("Inbox", newReply);
+            return RedirectToAction("Inbox", new { inbox = returnRoute });
         }
 
         [HttpPost("message/read")]
         public IActionResult MarkRead(int messageId)
         {
-            if(!linkId.HasValue)
+            if (!linkId.HasValue)
             {
                 return StatusCode(500, "Unable to retrieve Messaging information. Please ensure you are logged in and try again.");
             }
 
             bool markedRead = _messagingService.MarkRead((int)linkId, messageId);
 
-            if(markedRead)
+            if (markedRead)
             {
-                return Ok(new {MessageId = messageId, MarkedUnread = true});
+                return Ok(new { MessageId = messageId, MarkedUnread = true });
             }
 
             return NoContent();

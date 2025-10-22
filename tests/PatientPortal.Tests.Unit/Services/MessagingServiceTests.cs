@@ -534,10 +534,10 @@ public class MessagingServiceTests : IDisposable
 
     #endregion
 
-    #region GetAllConversationsForInbox Tests
+    #region GetConversations Tests
 
     [Fact]
-    public void GetAllConversationsForInbox_ReturnsOnlyUserConversations()
+    public void GetStaffConversations_ReturnsOnlyUserConversations()
     {
         // Arrange
         var user = CreateStaff("John", "Doctor", "jdoctor");
@@ -572,10 +572,8 @@ public class MessagingServiceTests : IDisposable
         _context.Conversations.AddRange(userConversation, otherConversation);
         _context.SaveChanges();
 
-        var filters = new ConversationSearch { IsPatientInbox = false, OnlyUnread = false };
-
         // Act
-        var result = _messagingService.GetAllConversationsForInbox(userLinkId, filters).ToList();
+        var result = _messagingService.GetStaffConversations(userLinkId, onlyUnread: false).ToList();
 
         // Assert
         Assert.Single(result);
@@ -583,7 +581,7 @@ public class MessagingServiceTests : IDisposable
     }
 
     [Fact]
-    public void GetAllConversationsForInbox_WithPatientFilter_ReturnsOnlyPatientConversations()
+    public void GetPatientConversations_WithPatientFilter_ReturnsOnlyPatientConversations()
     {
         // Arrange
         var user = CreateStaff("John", "Doctor", "jdoctor");
@@ -614,10 +612,8 @@ public class MessagingServiceTests : IDisposable
         _context.Conversations.AddRange(patientConversation, staffConversation);
         _context.SaveChanges();
 
-        var filters = new ConversationSearch { IsPatientInbox = true, OnlyUnread = false };
-
         // Act
-        var result = _messagingService.GetAllConversationsForInbox(userLinkId, filters).ToList();
+        var result = _messagingService.GetPatientConversations(userLinkId, onlyUnread: false).ToList();
 
         // Assert
         Assert.Single(result);
@@ -625,7 +621,7 @@ public class MessagingServiceTests : IDisposable
     }
 
     [Fact]
-    public void GetAllConversationsForInbox_WithUnreadFilter_ReturnsOnlyUnreadConversations()
+    public void GetStaffConversations_WithUnreadFilter_ReturnsOnlyUnreadConversations()
     {
         // Arrange
         var user = CreateStaff("John", "Doctor", "jdoctor");
@@ -670,10 +666,8 @@ public class MessagingServiceTests : IDisposable
         _context.Conversations.AddRange(unreadConversation, readConversation);
         _context.SaveChanges();
 
-        var filters = new ConversationSearch { IsPatientInbox = false, OnlyUnread = true };
-
         // Act
-        var result = _messagingService.GetAllConversationsForInbox(userLinkId, filters).ToList();
+        var result = _messagingService.GetStaffConversations(userLinkId, onlyUnread: true).ToList();
 
         // Assert
         Assert.Single(result);

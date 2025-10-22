@@ -20,7 +20,8 @@ namespace PatientPortal.Interfaces
         int GetUnreadPatientCount(MessagingLink messagingLink);
         Recipient? GetPatientRecipient(int? toLinkId);
         List<Recipient> GetAllOtherStaffAsRecipients(int linkId, int? toLinkId);
-        IQueryable<Conversation> GetAllConversationsForInbox(int linkId, ConversationSearch inboxFilters);
+        IQueryable<Conversation> GetPatientConversations(int linkId, bool onlyUnread);
+        IQueryable<Conversation> GetStaffConversations(int linkId, bool onlyUnread);
 
     }
 }

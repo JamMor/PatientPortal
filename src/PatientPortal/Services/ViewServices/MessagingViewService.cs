@@ -8,11 +8,12 @@ namespace PatientPortal.Services
     public class MessagingViewService : IMessagingViewService
     {
         private IMessagingService _messagingService;
+
         public MessagingViewService(IMessagingService messagingService)
         {
             _messagingService = messagingService;
         }
-        
+
         public NewConversationFormView NewConversationForm(int linkId, int? toLinkId)
         {
             NewConversationFormView newConversationFormViewModel = new NewConversationFormView()
@@ -21,10 +22,10 @@ namespace PatientPortal.Services
             };
 
             //Adds patient recipient if toLinkId(addressee) is a patient
-            if(toLinkId != null)
+            if (toLinkId != null)
             {
                 var patientRecipient = _messagingService.GetPatientRecipient(toLinkId);
-                if(patientRecipient != null)
+                if (patientRecipient != null)
                 {
                     newConversationFormViewModel.PatientRecipient = patientRecipient;
                 }
@@ -33,28 +34,34 @@ namespace PatientPortal.Services
             return newConversationFormViewModel;
         }
 
-        public MessageInboxView? ReturnInboxView(int linkId, ConversationSearch inboxFilters, Paginator paginationSettings)
+        public MessageInboxView? ReturnInboxView(int linkId, InboxQuery query)
         {
             MessagingLink? messageLink = _messagingService.GetMessagingLink(linkId);
             if (messageLink == null) return null;
 
             int unreadTotal = _messagingService.GetUnreadTotalCount(messageLink);
             int unreadPatient = _messagingService.GetUnreadPatientCount(messageLink);
+            int unreadStaff = unreadTotal - unreadPatient;
+
+            var conversationQuery = query.Type.WithPatient
+                ? _messagingService.GetPatientConversations(linkId, query.OnlyUnread)
+                : _messagingService.GetStaffConversations(linkId, query.OnlyUnread);
 
             MessageInboxView inboxView = new MessageInboxView()
             {
                 UnreadTotal = unreadTotal,
-                UnreadPatient = unreadPatient,
-                UnreadStaff = unreadTotal - unreadPatient,
-                InboxFilters = inboxFilters,
-                PaginationSettings = paginationSettings
+                Query = query,
+                Tabs =
+                [
+                    new InboxTab(InboxType.Patient, IsActive: query.Type == InboxType.Patient, unreadPatient),
+                    new InboxTab(InboxType.Staff, IsActive: query.Type == InboxType.Staff, unreadStaff),
+                ],
             };
 
-            var conversations =  _messagingService.GetAllConversationsForInbox(linkId, inboxFilters);
-            inboxView.PaginationSettings.ResultsCount = conversations.Count();
+            inboxView.Query.Paging.ResultsCount = conversationQuery.Count();
 
-            inboxView.Conversations = conversations
-                .Select( c => new InboxConversation()
+            inboxView.Conversations = conversationQuery
+                .Select(c => new InboxConversation()
                 {
                     ConversationId = c.ConversationId,
                     Subject = c.Subject,
@@ -68,8 +75,8 @@ namespace PatientPortal.Services
                                     ? p.MessagingLink.Staff!.FullName()
                                     : "Unknown Staff",
                             Role = p.MessagingLink.StaffId != null
-                                ? p.MessagingLink.Staff!.Role
-                                : "Unknown Role"
+                                    ? p.MessagingLink.Staff!.Role
+                                    : "Unknown Role",
                         })
                         .ToList(),
                     PatientRecipient = c.ConversationParticipants
@@ -78,18 +85,21 @@ namespace PatientPortal.Services
                         {
                             LinkId = p.MessagingLinkId,
                             Name = p.MessagingLink!.PatientId != null
-                                ? p.MessagingLink.Patient!.FullName()
-                                : "Unknown Patient",
-                            Role = "Patient"
+                                    ? p.MessagingLink.Patient!.FullName()
+                                    : "Unknown Patient",
+                            Role = "Patient",
                         })
                         .FirstOrDefault(),
                     UnknownRecipients = c.ConversationParticipants
-                        .Where(p => p.MessagingLink!.PatientId == null && p.MessagingLink.StaffId == null)
+                        .Where(p =>
+                            p.MessagingLink!.PatientId == null 
+                            && p.MessagingLink.StaffId == null
+                        )
                         .Select(p => new InboxRecipient()
                         {
                             LinkId = p.MessagingLinkId,
                             Name = "Unknown Recipient",
-                            Role = "Unknown Role"
+                            Role = "Unknown Role",
                         })
                         .ToList(),
                     Messages = c.Messages
@@ -99,16 +109,15 @@ namespace PatientPortal.Services
                             SenderId = m.MessagingLinkId,
                             MessageText = m.MessageText,
                             Sent = m.CreatedAt,
-                            Unread = m.UnreadBy
-                                .Any(u => u.MessagingLinkId == linkId)
+                            Unread = m.UnreadBy.Any(u => u.MessagingLinkId == linkId),
                         })
                         .OrderBy(m => m.Sent)
                         .ToList(),
                     DateCreated = c.CreatedAt,
-                    DateLastMessage = c.UpdatedAt
+                    DateLastMessage = c.UpdatedAt,
                 })
                 .OrderByDescending(c => c.DateLastMessage)
-                .ToPagedList(paginationSettings.ResultsPerPage, paginationSettings.CurrentPage);
+                .ToPagedList(query.Paging.ResultsPerPage, query.Paging.CurrentPage);
 
             return inboxView;
         }

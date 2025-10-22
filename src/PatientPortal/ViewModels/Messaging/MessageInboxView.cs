@@ -4,15 +4,26 @@ using System.Linq;
 
 namespace PatientPortal.Models
 {
+    public record InboxTab(InboxType Type, bool IsActive, int UnreadCount)
+    {
+        public string Label => Type.Label;
+        public string Route => Type.Route;
+    }
+
     public class MessageInboxView
     {
         public int UnreadTotal { get; set; }
-        public int UnreadStaff { get; set; }
-        public int UnreadPatient { get; set; }
 
-        public required ConversationSearch InboxFilters { get; set; }
+        public required InboxQuery Query { get; set; }
+        public required InboxTab[] Tabs { get; set; }
 
-        public required Paginator PaginationSettings { get; set; }
+        public InboxSearchForm SearchForm =>
+            new InboxSearchForm
+            {
+                OnlyUnread = Query.OnlyUnread,
+                ResultsPerPage = Query.Paging.ResultsPerPage,
+                CurrentPage = Query.Paging.CurrentPage,
+            };
 
         public List<InboxConversation> Conversations { get; set; } = [];
     }
@@ -35,7 +46,9 @@ namespace PatientPortal.Models
 
         // Count of all recipients beyond the primary, for the overflow badge.
         public int OtherRecipientsCount =>
-            StaffRecipients.Count(p => p.LinkId != UserLinkId) + UnknownRecipients.Count + (PatientRecipient != null ? 1 : 0);
+            StaffRecipients.Count(p => p.LinkId != UserLinkId)
+            + UnknownRecipients.Count
+            + (PatientRecipient != null ? 1 : 0);
 
         // All recipient names ordered for the tooltip (patient first, then other staff, then unknowns).
         public string RecipientNameString
@@ -47,7 +60,8 @@ namespace PatientPortal.Models
                     .Select(p => p.Name)
                     .ToList();
                 names.AddRange(UnknownRecipients.Select(r => r.Name));
-                if (PatientRecipient != null) names.Insert(0, PatientRecipient.Name);
+                if (PatientRecipient != null)
+                    names.Insert(0, PatientRecipient.Name);
                 return string.Join(", ", names);
             }
         }
@@ -55,7 +69,8 @@ namespace PatientPortal.Models
         public string GetSenderName(int senderId)
         {
             IEnumerable<InboxRecipient> all = StaffRecipients.Concat(UnknownRecipients);
-            if (PatientRecipient != null) all = all.Append(PatientRecipient);
+            if (PatientRecipient != null)
+                all = all.Append(PatientRecipient);
             return all.FirstOrDefault(p => p.LinkId == senderId)?.Name ?? "(unknown)";
         }
 
