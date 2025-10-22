@@ -215,6 +215,10 @@ button.member-count-badge:hover {
   --bs-popover-body-padding-y: .5rem;
 }
 
+p.message-text {
+  white-space: pre-wrap;
+}
+
 /* Collapse Indicator */
 .card-header span.toggle-icon svg {
   stroke: currentColor;
