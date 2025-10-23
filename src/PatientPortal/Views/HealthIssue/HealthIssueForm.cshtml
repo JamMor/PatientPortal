@@ -3,15 +3,17 @@
 @{ int patientId = Convert.ToInt32(ViewContext.RouteData.Values["patientId"]); }
 @await Component.InvokeAsync("PatientInfoHeader", new { patientId = patientId })
 
-<h3>New Health Issue: </h3>
-<form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@patientId" method="post">
-    <form-field asp-for="ShortDescription"></form-field>
-    <form-field asp-for="LongDescription" type="textarea"></form-field>
-    <div class="mb-3">
-        <label class="form-label" for="Upload">Related Documents</label>
-        <input class="form-control" type="file" name="Upload" id="Upload">
-    </div>
-    <div asp-validation-summary="ModelOnly"></div>
-    <button-primary type="submit">Add Health Issue</button-primary>
-    <link-button-secondary outline asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patientId">Cancel</link-button-secondary>
-</form>
+<div class="form-constrained">
+    <h2 class="form-title">New Health Issue</h2>
+    <form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@patientId" method="post">
+        <form-field asp-for="ShortDescription"></form-field>
+        <form-field asp-for="LongDescription" type="textarea"></form-field>
+        <div class="mb-3">
+            <label class="form-label" for="Upload">Related Documents</label>
+            <input class="form-control" type="file" name="Upload" id="Upload">
+        </div>
+        <div asp-validation-summary="ModelOnly"></div>
+        <button-primary type="submit">Add Health Issue</button-primary>
+        <link-button-secondary outline asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patientId">Cancel</link-button-secondary>
+    </form>
+</div>

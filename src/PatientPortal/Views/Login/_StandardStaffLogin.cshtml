@@ -1,9 +1,11 @@
 @model LoginStaff
 
-<h3>Staff Login: </h3>
-<form asp-action="StaffLogin" asp-controller="Login" method="post">
-    <form-field asp-for="StaffUsername"></form-field>
-    <form-field asp-for="LoginPassword"></form-field>
-    <div asp-validation-summary="ModelOnly"></div>
-    <button-primary type="submit">Login</button-primary>
-</form>
+<div class="form-constrained">
+    <h2 class="form-title">Staff Login</h2>
+    <form asp-action="StaffLogin" asp-controller="Login" method="post">
+        <form-field asp-for="StaffUsername"></form-field>
+        <form-field asp-for="LoginPassword"></form-field>
+        <div asp-validation-summary="ModelOnly"></div>
+        <button-primary type="submit">Login</button-primary>
+    </form>
+</div>

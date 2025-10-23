@@ -81,11 +81,9 @@
             </div>
         </nav>
     </header>
-    <div class="container main-container p-0 bg-white shadow">
-        <main class="px-3 pb-3" role="main">
-            @RenderBody()
-        </main>
-    </div>
+    <main class="container flex-fill overflow-y-auto overflow-x-hidden px-3 pb-3 bg-white shadow">
+        @RenderBody()
+    </main>
 
     <footer class="footer position-fixed bottom-0 container-fluid hue-brand and-faint-light on-bg">
         <div class="text-light text-nowrap d-flex gap-2">

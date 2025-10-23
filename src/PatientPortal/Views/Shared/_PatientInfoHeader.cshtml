@@ -1,6 +1,6 @@
 @model PatientHeaderInfoView
 
-<div class="container p-3 pb-4 mb-2 shadow hue-brand and-faint-bright on-bg sticky-top">
+<section class="container p-3 pb-4 mb-2 shadow hue-brand and-faint-bright on-bg sticky-top">
     <hr>
     <div class="row">
         <div class="col d-flex justify-content-end">
@@ -12,15 +12,15 @@
     </div>
     <div class="row">
         <div class="col-md-6">
-            <h6><span class="fw-bold no-wrap">Name: </span> <a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@Model.CurrentPatientId">@Model.CurrentPatientFullNameReverse</a></h6>
-            <h6><span class="fw-bold no-wrap">Birthdate: </span> @string.Format("{0:MM/dd/yyyy}", Model.CurrentPatientDOB)</h6>
-            <h6><span class="fw-bold no-wrap">Age: </span> @Model.CurrentPatientAge</h6>
+            <p class="mb-1"><span class="fw-bold text-nowrap">Name: </span> <a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@Model.CurrentPatientId">@Model.CurrentPatientFullNameReverse</a></p>
+            <p class="mb-1"><span class="fw-bold text-nowrap">Birthdate: </span> @string.Format("{0:MM/dd/yyyy}", Model.CurrentPatientDOB)</p>
+            <p class="mb-1"><span class="fw-bold text-nowrap">Age: </span> @Model.CurrentPatientAge</p>
         </div>
         <div class="col-md-6">
-            <h6><span class="fw-bold no-wrap">Patient ID: </span> #@Model.CurrentPatientId.ToString("D6")</h6>
-            <h6><span class="fw-bold no-wrap">SSN: </span> <span class="text-muted">XXX-XX-</span>@Model.CurrentPatientSSN</h6>
-            <h6><span class="fw-bold no-wrap">Patient since: </span> @string.Format("{0:MM/dd/yyyy}", Model.CurrentPatientCreatedOn)</h6>
+            <p class="mb-1"><span class="fw-bold text-nowrap">Patient ID: </span> #@Model.CurrentPatientId.ToString("D6")</p>
+            <p class="mb-1"><span class="fw-bold text-nowrap">SSN: </span> <span class="text-muted">XXX-XX-</span>@Model.CurrentPatientSSN</p>
+            <p class="mb-1"><span class="fw-bold text-nowrap">Patient since: </span> @string.Format("{0:MM/dd/yyyy}", Model.CurrentPatientCreatedOn)</p>
         </div>
     </div>
     <hr>
-</div>
+</section>

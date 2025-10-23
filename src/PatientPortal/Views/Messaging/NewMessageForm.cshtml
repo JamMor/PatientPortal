@@ -1,43 +1,45 @@
 @model NewConversationFormView
 
-<h3 class="my-3">New Message: </h3>
-<form asp-controller="Messaging" asp-action="NewConversation" method="post">
-    <div class="input-group mb-3">
-        <button-secondary small outline class="dropdown-toggle" data-bs-toggle="dropdown">Send To</button-secondary>
-        <ul class="dropdown-menu ps-3 vert-scroll">
-            @if(Model.PatientRecipient != null)
-            {
+<div class="form-constrained">
+    <h2 class="form-title">New Message</h2>
+    <form asp-controller="Messaging" asp-action="NewConversation" method="post">
+        <div class="input-group mb-3">
+            <button-secondary small outline class="dropdown-toggle" data-bs-toggle="dropdown">Send To</button-secondary>
+            <ul class="dropdown-menu ps-3 vert-scroll">
+                @if(Model.PatientRecipient != null)
+                {
+                    <li class="dropdown-item form-check">
+                        <input class="form-check-input" type="checkbox" checked="checked" id="PatientRecipient_Id" disabled>
+                        <label class="form-check-label" asp-for="PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
+                        <input class="form-check-input" type="hidden" asp-for="PatientRecipient.LinkId">
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                }
+                @for(int i = 0; i < Model.Recipients.Count; i++)
+                {
                 <li class="dropdown-item form-check">
-                    <input class="form-check-input" type="checkbox" checked="checked" id="PatientRecipient_Id" disabled>
-                    <label class="form-check-label" asp-for="PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
-                    <input class="form-check-input" type="hidden" asp-for="PatientRecipient.LinkId">
+                    <input class="form-check-input" type="checkbox" asp-for="Recipients[i].Selected">
+                    <label class="form-check-label" asp-for="Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
+                    <input class="form-check-input" type="hidden" asp-for="Recipients[i].LinkId">
                 </li>
-                <li><hr class="dropdown-divider"></li>
-            }
-            @for(int i = 0; i < Model.Recipients.Count; i++)
-            {
-            <li class="dropdown-item form-check">
-                <input class="form-check-input" type="checkbox" asp-for="Recipients[i].Selected">
-                <label class="form-check-label" asp-for="Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
-                <input class="form-check-input" type="hidden" asp-for="Recipients[i].LinkId">
-            </li>
-            }
-        </ul>
-        <input id="selected-recipients" type="text" class="form-control" placeholder="Recipients..." readonly>
-    </div>
-    <input class="form-check-input" type="hidden" asp-for="WithPatient">
-    <div class="mb-3">
-        <label class="form-label" asp-for="Subject"></label>
-        <span class="text-danger" asp-validation-for="Subject"></span>
-        <input class="form-control" asp-for="Subject">
-    </div>
-    <div class="mb-3">
-        <label class="form-label" asp-for="MessageText"></label>
-        <span class="text-danger" asp-validation-for="MessageText"></span>
-        <textarea class="form-control" asp-for="MessageText"></textarea>
-    </div>
-    <button-primary type="submit">Send Message</button-primary>
-</form>
+                }
+            </ul>
+            <input id="selected-recipients" type="text" class="form-control" placeholder="Recipients..." readonly>
+        </div>
+        <input class="form-check-input" type="hidden" asp-for="WithPatient">
+        <div class="mb-3">
+            <label class="form-label" asp-for="Subject"></label>
+            <span class="text-danger" asp-validation-for="Subject"></span>
+            <input class="form-control" asp-for="Subject">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" asp-for="MessageText"></label>
+            <span class="text-danger" asp-validation-for="MessageText"></span>
+            <textarea class="form-control" asp-for="MessageText"></textarea>
+        </div>
+        <button-primary type="submit">Send Message</button-primary>
+    </form>
+</div>
 
 <script>
     $(document).ready(function() {

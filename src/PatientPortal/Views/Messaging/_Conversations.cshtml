@@ -76,13 +76,13 @@
                                 : "hue-secondary and-dimmed on-text";
                             string senderName = conversation.GetSenderName(message.SenderId);
 
-                            <div id="message-@message.MessageId" class="py-1 unread @messageClasses">
+                            <article id="message-@message.MessageId" class="py-1 unread @messageClasses">
                                 <div class="d-flex align-items-baseline gap-2">
                                     <span class="fw-bold @senderClasses">@senderName:</span>
-                                    <span class="text-secondary small ms-auto">@message.Sent</span>
+                                    <time class="text-secondary small ms-auto" datetime="@message.Sent.ToString("s")">@message.Sent</time>
                                 </div>
                                 <p class="mb-0 ms-1 message-text">@message.MessageText</p>
-                            </div>
+                            </article>
                         }
                             <partial name="_NewReply.cshtml" model='new ReplyView(){ConversationId = conversation.ConversationId, ReturnRoute = Model.Query.Type.Route}' />
                     </div>

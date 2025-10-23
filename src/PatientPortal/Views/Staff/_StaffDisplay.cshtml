@@ -6,15 +6,12 @@
 
 
 <div class="d-flex align-items-center gap-1">
-    <h4 class="my-0 me-auto">
-        <span>
-            Staff 
-            <span class="badge hue-primary and-dimmed on-bg text-dark">
-                @Model.Query.Paging.ResultsCount
-            </span>
-            :
+    <h2 class="my-0 me-auto fs-5 fw-semibold">
+        Staff
+        <span class="badge align-middle hue-primary and-dimmed on-bg text-dark">
+            @Model.Query.Paging.ResultsCount
         </span>
-    </h4>
+    </h2>
     <div class="dropdown">
         <button-secondary small outline class="dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             Results per page...

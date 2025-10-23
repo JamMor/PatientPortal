@@ -1,15 +1,12 @@
 @model MessageInboxView
 
 <div class="d-flex align-items-center mt-3">
-    <h4 class="my-0 me-auto">
-        <span>
-            Messages
-            <span class='badge hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>
-                @Model.UnreadTotal
-            </span>
-            :
+    <h2 class="my-0 me-auto fs-5 fw-semibold">
+        Messages
+        <span class='badge align-middle hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>
+            @Model.UnreadTotal
         </span>
-    </h4>
+    </h2>
     <div class="dropdown">
         <button-primary small outline class="dropdown-toggle" data-bs-toggle="dropdown">+</button-primary>
         <div class="dropdown-menu">

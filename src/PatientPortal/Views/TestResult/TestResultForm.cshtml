@@ -4,30 +4,32 @@
 @await Component.InvokeAsync("PatientInfoHeader", new { patientId = patientId })
 
 
-<h3>New Test Result: </h3>
-<form asp-controller="TestResult" asp-action="TestResultCreate" asp-route-patientId="@patientId" method="post">
-    <div class="mb-3">
-        <label class="form-label" asp-for="Type"></label>
-        <span class="text-danger" asp-validation-for="Type"></span>
-        <select class="form-control" asp-for="Type">
-            <option value="Vitals">Vitals</option>
-            <option value="Labwork">Labwork</option>
-            <option value="Pathology">Pathology</option>
-            <option value="Imaging">Imaging</option>
-        </select>
-    </div>
-    <form-field asp-for="Comment" type="textarea"></form-field>
-    <div class="mb-3">
-        @for(int i = 0; i < Model.HealthIssues.Count; i++)
-        {
-            <partial name="~/Views/Shared/_HealthIssueCheckbox.cshtml" for="HealthIssues[i]" />
-        }
-    </div>
-    <div class="mb-3">
-        <label class="form-label" for="Upload">Related Documents</label>
-        <input class="form-control" type="file" name="Upload" id="Upload">
-    </div>
-    <div asp-validation-summary="ModelOnly"></div>
-    <button-primary type="submit">Submit Test Result</button-primary>
-    <link-button-secondary outline asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patientId">Cancel</link-button-secondary>
-</form>
+<div class="form-constrained">
+    <h2 class="form-title">New Test Result</h2>
+    <form asp-controller="TestResult" asp-action="TestResultCreate" asp-route-patientId="@patientId" method="post">
+        <div class="mb-3">
+            <label class="form-label" asp-for="Type"></label>
+            <span class="text-danger" asp-validation-for="Type"></span>
+            <select class="form-control" asp-for="Type">
+                <option value="Vitals">Vitals</option>
+                <option value="Labwork">Labwork</option>
+                <option value="Pathology">Pathology</option>
+                <option value="Imaging">Imaging</option>
+            </select>
+        </div>
+        <form-field asp-for="Comment" type="textarea"></form-field>
+        <div class="mb-3">
+            @for(int i = 0; i < Model.HealthIssues.Count; i++)
+            {
+                <partial name="~/Views/Shared/_HealthIssueCheckbox.cshtml" for="HealthIssues[i]" />
+            }
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="Upload">Related Documents</label>
+            <input class="form-control" type="file" name="Upload" id="Upload">
+        </div>
+        <div asp-validation-summary="ModelOnly"></div>
+        <button-primary type="submit">Submit Test Result</button-primary>
+        <link-button-secondary outline asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patientId">Cancel</link-button-secondary>
+    </form>
+</div>

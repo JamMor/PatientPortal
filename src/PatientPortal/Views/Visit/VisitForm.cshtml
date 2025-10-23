@@ -3,21 +3,23 @@
 @{ int patientId = Convert.ToInt32(ViewContext.RouteData.Values["patientId"]); }
 @await Component.InvokeAsync("PatientInfoHeader", new { patientId = patientId })
 
-<h3>New Visit: </h3>
-<form asp-action="VisitCreate" asp-controller="Visit" asp-route-patientId="@patientId" method="post">
-    <form-field asp-for="DateOfVisit"></form-field>
-    <form-field asp-for="Comment" type="textarea"></form-field>
-    <div class="mb-3">
-        @for(int i = 0; i < Model.HealthIssues.Count; i++)
-        {
-            <partial name="~/Views/Shared/_HealthIssueCheckbox.cshtml" for="HealthIssues[i]" />
-        }
-    </div>
-    <div class="mb-3">
-        <label class="form-label" for="Upload">Related Documents</label>
-        <input class="form-control" type="file" name="Upload" id="Upload">
-    </div>
-    <div asp-validation-summary="ModelOnly"></div>
-    <button-primary type="submit">Add Visit Note</button-primary>
-    <link-button-secondary outline asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patientId">Cancel</link-button-secondary>
-</form>
+<div class="form-constrained">
+    <h2 class="form-title">New Visit</h2>
+    <form asp-action="VisitCreate" asp-controller="Visit" asp-route-patientId="@patientId" method="post">
+        <form-field asp-for="DateOfVisit"></form-field>
+        <form-field asp-for="Comment" type="textarea"></form-field>
+        <div class="mb-3">
+            @for(int i = 0; i < Model.HealthIssues.Count; i++)
+            {
+                <partial name="~/Views/Shared/_HealthIssueCheckbox.cshtml" for="HealthIssues[i]" />
+            }
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="Upload">Related Documents</label>
+            <input class="form-control" type="file" name="Upload" id="Upload">
+        </div>
+        <div asp-validation-summary="ModelOnly"></div>
+        <button-primary type="submit">Add Visit Note</button-primary>
+        <link-button-secondary outline asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patientId">Cancel</link-button-secondary>
+    </form>
+</div>

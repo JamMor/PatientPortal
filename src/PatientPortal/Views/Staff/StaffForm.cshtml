@@ -1,28 +1,30 @@
 @model StaffFormView
 
-<h3>New Staffmember: </h3>
-<form asp-action="StaffCreate" asp-controller="Staff" method="post">
-    <form-field asp-for="FirstName"></form-field>
-    <form-field asp-for="LastName"></form-field>
-    <div class="mb-3">
-        <label class="form-label" asp-for="Role"></label>
-        <span class="text-danger" asp-validation-for="Role"></span>
-        <select class="form-control" asp-for="Role">
-            <option value="Chief of Medicine">Chief of Medicine</option>
-            <option value="MD">MD</option>
-            <option value="NP">NP</option>
-            <option value="RN">RN</option>
-            <option value="LN">LN</option>
-            <option value="Lab Technician">Lab Technician</option>
-            <option value="Front Office">Front Office</option>
-            <option value="Billing">Billing</option>
-            <option value="Scheduling">Scheduling</option>
-            <option value="Admin">Admin</option>
-        </select>
-    </div>
-    <form-field asp-for="StaffUsername"></form-field>
-    <form-field asp-for="Password"></form-field>
-    <form-field asp-for="ConfirmPassword"></form-field>
-    <div asp-validation-summary="ModelOnly"></div>
-    <button-primary type="submit">Add to Staff</button-primary>
-</form>
+<div class="form-constrained">
+    <h2 class="form-title">New Staffmember</h2>
+    <form asp-action="StaffCreate" asp-controller="Staff" method="post">
+        <form-field asp-for="FirstName"></form-field>
+        <form-field asp-for="LastName"></form-field>
+        <div class="mb-3">
+            <label class="form-label" asp-for="Role"></label>
+            <span class="text-danger" asp-validation-for="Role"></span>
+            <select class="form-control" asp-for="Role">
+                <option value="Chief of Medicine">Chief of Medicine</option>
+                <option value="MD">MD</option>
+                <option value="NP">NP</option>
+                <option value="RN">RN</option>
+                <option value="LN">LN</option>
+                <option value="Lab Technician">Lab Technician</option>
+                <option value="Front Office">Front Office</option>
+                <option value="Billing">Billing</option>
+                <option value="Scheduling">Scheduling</option>
+                <option value="Admin">Admin</option>
+            </select>
+        </div>
+        <form-field asp-for="StaffUsername"></form-field>
+        <form-field asp-for="Password"></form-field>
+        <form-field asp-for="ConfirmPassword"></form-field>
+        <div asp-validation-summary="ModelOnly"></div>
+        <button-primary type="submit">Add to Staff</button-primary>
+    </form>
+</div>
