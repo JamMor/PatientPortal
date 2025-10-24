@@ -3,13 +3,18 @@ for details on configuring this project to bundle and minify static web assets. 
 
 /* #region Color Vars */
 :root {
+  /* 
+  The l-mod (light modifier) var modifies the lightness of colors where it is 
+  used. +1 being full lightness and -1 being full darkness.
+  */
+  --l-mod: 1;
   --main-color: currentColor;
   --color-blue: oklch(37% 0.127 262);
   --color-cyan: oklch(100% 0.4 195);
   --color-violet: oklch(74% 0.245 324);
   --color-yellow: oklch(84% 0.172 84);
   --color-gray-light: oklch(70% 0 0);
-  
+
   --color-brand: var(--color-blue);
   --color-primary: var(--color-cyan);
   --color-secondary: var(--color-gray-light);
@@ -37,21 +42,22 @@ for details on configuring this project to bundle and minify static web assets. 
 
 /* Color Modifier Classes */
 .and-dimmed {
-  --output-color: oklch(from var(--main-color) calc(l * 0.77) calc(c * 0.5) h);
+  --output-color: oklch(from var(--main-color) calc(l * (1 - var(--l-mod) * 0.23)) calc(c * 0.5) h);
 }
 .and-darkened {
-  --output-color: oklch(from var(--main-color) calc(l * 0.5) calc(c * 0.3) h);
+  --output-color: oklch(from var(--main-color) calc(l * (1 - var(--l-mod) * 0.5)) calc(c * 0.3) h);
 }
 .and-faint-light {
-  --output-color: oklch(from var(--main-color) 80% calc(c * 0.12) h);
+  --output-color: oklch(from var(--main-color) calc(50% + var(--l-mod) * 30%) calc(c * 0.2) h);
 }
 .and-faint-bright {
-  --output-color: oklch(from var(--main-color) 97% calc(c * 0.12) h);
+  --output-color: oklch(from var(--main-color) calc(50% + var(--l-mod) * 47%) calc(c * 0.2) h);
 }
 
 /* Color Target Property Classes */
 .on-bg {
   background-color: var(--output-color, var(--main-color));
+  transition: background-color 0.4s ease-in-out;
 }
 .on-text {
   color: var(--output-color, var(--main-color));
@@ -268,7 +274,7 @@ p.message-text {
   max-height: 110px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--main-color) oklch(from var(--main-color) 97% 0.03 h);
+  scrollbar-color: var(--main-color) oklch(from var(--main-color) calc(50% + var(--l-mod) * 47%) 0.03 h);
 }
 
 /* #endregion Demo Login Styles */
@@ -333,3 +339,39 @@ p.message-text {
 }
 
 /* #endregion Patient Info Sections */
+
+/* #region Dark Theme */
+[data-bs-theme="dark"] {
+  --l-mod: -0.3;
+  --bs-body-bg: oklch(12% 0.015 262);
+}
+
+#theme-toggle {
+  position:relative;
+}
+#theme-toggle, #theme-toggle span svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+#theme-toggle span {
+  position:absolute;
+  top: 0;
+  left: 0;
+  opacity:0.3;
+  transition: opacity 0.5s ease-in-out;
+}
+#theme-toggle span:not(.active-theme),
+#theme-toggle:hover span.active-theme {
+  opacity:0.1;
+  z-index: 1;
+}
+#theme-toggle span.active-theme,
+#theme-toggle:hover span:not(.active-theme) {
+  z-index: 2;
+}
+
+#theme-toggle:hover span:not(.active-theme) {
+  opacity:1;
+}
+/* #endregion Dark Theme */

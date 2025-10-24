@@ -19,6 +19,14 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <script>
+        (function () {
+            var savedTheme = localStorage.getItem('color-scheme');
+            var systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            var theme = savedTheme ?? systemPreference;
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        })();
+    </script>
 </head>
 <body class="hue-brand and-faint-bright on-bg overflow-hidden">
     <header>
@@ -81,7 +89,7 @@
             </div>
         </nav>
     </header>
-    <main class="container flex-fill overflow-y-auto overflow-x-hidden px-3 pb-3 bg-white shadow">
+    <main class="container flex-fill overflow-y-auto overflow-x-hidden px-3 pb-3 bg-body shadow">
         @RenderBody()
     </main>
 
@@ -93,9 +101,16 @@
                 <a class="text-light text-decoration-underline link-offset-2 link-underline-light link-underline-opacity-0 link-underline-opacity-75-hover" asp-area="" asp-controller="Home" asp-action="About">About</a>
                 <a class="text-light text-decoration-underline link-offset-2 link-underline-light link-underline-opacity-0 link-underline-opacity-75-hover" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
             </div>
+            <div class="ms-auto align-self-center">
+                <button id="theme-toggle" class="btn text-light p-0 border-0" aria-label="Toggle dark mode">
+                    <partial name="_ThemeDarkIcon" />
+                    <partial name="_ThemeLightIcon" />
+                </button>
+            </div>
         </div>
     </footer>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
