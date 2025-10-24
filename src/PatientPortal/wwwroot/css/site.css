@@ -23,6 +23,9 @@ for details on configuring this project to bundle and minify static web assets. 
   /* Equivalent to `hue-primary and-dimmed hover-lighten on-text` */
   --link-color: oklch(from var(--color-primary) calc(l * 0.77) calc(c * 0.5) h);
   --link-hover-color: oklch(from var(--link-color) calc(l * 1.2) calc(c * 1.2) h);
+
+  --l-mod-dark: -0.3;
+  --dark-body: oklch(20% 0.015 262);
 }
 /* #endregion Color Vars */
 
@@ -355,8 +358,8 @@ p.message-text {
 
 /* #region Dark Theme */
 [data-bs-theme="dark"] {
-  --l-mod: -0.3;
-  --bs-body-bg: oklch(12% 0.015 262);
+  --l-mod: var(--l-mod-dark);
+  --bs-body-bg: var(--dark-body);
 }
 
 #theme-toggle {
