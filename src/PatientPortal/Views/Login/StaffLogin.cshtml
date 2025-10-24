@@ -1,10 +1,12 @@
 
-<partial name="_StandardStaffLogin.cshtml" model="new LoginStaff()"/>
-<hr>
-@* DemoLogin Can Be Removed After *@
-<div id="demo-login-container-squared"></div>
-<script>
-    $(function() {
-        $("#demo-login-container-squared").load("/Demo/staff");
-    });
-</script>
+<div class="form-constrained">
+    <partial name="_StandardStaffLogin.cshtml" model="new LoginStaff()"/>
+    <hr>
+    @* DemoLogin Can Be Removed After *@
+    <div id="demo-login-container-squared"></div>
+    <script>
+        $(function() {
+            $("#demo-login-container-squared").load("/Demo/staff");
+        });
+    </script>
+</div>
