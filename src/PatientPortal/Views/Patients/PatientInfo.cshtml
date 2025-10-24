@@ -39,7 +39,7 @@
                 @foreach (HealthIssueInfo issue in Model.HealthIssues)
                 {
                     <li class="card list-group-item">
-                        <h6 class="card-header collapsed text-link" data-bs-toggle="collapse" data-bs-target="#issue-detail-@issue.HealthIssueId" aria-expanded="false" aria-controls="issue-detail-@issue.HealthIssueId">
+                        <h6 class="card-header collapsed hue-primary and-dimmed on-text" data-bs-toggle="collapse" data-bs-target="#issue-detail-@issue.HealthIssueId" aria-expanded="false" aria-controls="issue-detail-@issue.HealthIssueId">
                             <div class="d-flex align-items-center">
                                 <span class="flex-grow-1">@issue.ShortDescription</span>
                                 <partial name="_ToggleIcon.cshtml" />
@@ -75,7 +75,7 @@
                 @foreach (VisitInfo visit in Model.Visits)
                 {
                     <li class="card list-group-item">
-                        <h6 class="card-header collapsed text-link" data-bs-toggle="collapse" data-bs-target="#visit-detail-@visit.VisitId" aria-expanded="false" aria-controls="visit-detail-@visit.VisitId">
+                        <h6 class="card-header collapsed hue-primary and-dimmed on-text" data-bs-toggle="collapse" data-bs-target="#visit-detail-@visit.VisitId" aria-expanded="false" aria-controls="visit-detail-@visit.VisitId">
                             <div class="d-flex">
                                 <span class="flex-grow-1">@visit.DateOfVisit</span>
                                 <partial name="_ToggleIcon.cshtml" />
@@ -109,7 +109,7 @@
                 @foreach (TestResultInfo test in Model.TestResults)
                 {
                     <li class="card list-group-item">
-                        <h6 class="card-header collapsed text-link" data-bs-toggle="collapse" data-bs-target="#test-detail-@test.TestResultId" aria-expanded="false" aria-controls="test-detail-@test.TestResultId">
+                        <h6 class="card-header collapsed hue-primary and-dimmed on-text" data-bs-toggle="collapse" data-bs-target="#test-detail-@test.TestResultId" aria-expanded="false" aria-controls="test-detail-@test.TestResultId">
                             <div class="d-flex">
                                 <span class="flex-grow-1">@test.Type - @test.CreatedAt</span>
                                 <partial name="_ToggleIcon.cshtml" />

@@ -3,7 +3,7 @@
 <div class="d-flex align-items-center mt-3">
     <h2 class="my-0 me-auto fs-5 fw-semibold">
         Messages
-        <span class='badge align-middle hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-faint-light") on-bg text-dark'>
+        <span class='badge align-middle hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-highlight") on-bg text-dark'>
             @Model.UnreadTotal
         </span>
     </h2>
@@ -31,7 +31,7 @@
             ? "active fw-semibold"
             : "text-secondary";
         string activeTabColorClass = tab.IsActive ? "hue-primary" : "hue-secondary";
-        string hasUnreadsModifierClass = tab.UnreadCount > 0 ? "and-dimmed" : "and-faint-light";
+        string hasUnreadsModifierClass = tab.UnreadCount > 0 ? "and-dimmed" : "and-highlight";
         string badgeClasses = $"{activeTabColorClass} {hasUnreadsModifierClass} on-bg text-dark";
 
         <li class="nav-item">

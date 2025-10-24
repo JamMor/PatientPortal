@@ -19,6 +19,10 @@ for details on configuring this project to bundle and minify static web assets. 
   --color-primary: var(--color-cyan);
   --color-secondary: var(--color-gray-light);
   --color-tertiary: var(--color-yellow);
+
+  /* Equivalent to `hue-primary and-dimmed hover-lighten on-text` */
+  --link-color: oklch(from var(--color-primary) calc(l * 0.77) calc(c * 0.5) h);
+  --link-hover-color: oklch(from var(--link-color) calc(l * 1.2) calc(c * 1.2) h);
 }
 /* #endregion Color Vars */
 
@@ -42,15 +46,15 @@ for details on configuring this project to bundle and minify static web assets. 
 
 /* Color Modifier Classes */
 .and-dimmed {
-  --output-color: oklch(from var(--main-color) calc(l * (1 - var(--l-mod) * 0.23)) calc(c * 0.5) h);
+  --output-color: oklch(from var(--main-color) calc(l * 0.77) calc(c * 0.5) h);
 }
-.and-darkened {
+.and-muted {
   --output-color: oklch(from var(--main-color) calc(l * (1 - var(--l-mod) * 0.5)) calc(c * 0.3) h);
 }
-.and-faint-light {
+.and-highlight {
   --output-color: oklch(from var(--main-color) calc(50% + var(--l-mod) * 30%) calc(c * 0.2) h);
 }
-.and-faint-bright {
+.and-faint-highlight {
   --output-color: oklch(from var(--main-color) calc(50% + var(--l-mod) * 47%) calc(c * 0.2) h);
 }
 
@@ -102,9 +106,18 @@ for details on configuring this project to bundle and minify static web assets. 
 /* #endregion Color Classes */
 
 /* Links */
-a, .text-link, .page-link {
-  color: oklch(from var(--color-primary) calc(l * 0.7) 0.1 h);
+a {
+  color: var(--link-color);
   text-decoration: none;
+}
+a:hover, a:focus, a:active {
+  color: var(--link-hover-color);
+}
+/* Bootstrap Pagination */
+.pagination a.page-link {
+  --bs-pagination-color: var(--link-color) !important;
+  --bs-pagination-hover-color: var(--link-hover-color) !important;
+  --bs-pagination-focus-color: var(--link-hover-color) !important;
 }
 
 /*  Navbar links  */

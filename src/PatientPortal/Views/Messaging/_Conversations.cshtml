@@ -22,7 +22,7 @@
         @foreach (InboxConversation conversation in Model.Conversations)
         {
             string conversationRowClasses = conversation.UnreadCount() > 0
-                ? "hue-brand and-faint-bright on-bg fw-bold"
+                ? "hue-brand and-faint-highlight on-bg fw-bold"
                 : "";
 
             <tr data-bs-target="#conversation-@conversation.ConversationId" class="collapsed @conversationRowClasses">
@@ -69,7 +69,7 @@
                         @foreach (InboxMessage message in conversation.Messages)
                         {
                             string messageClasses = message.Unread
-                                ? "hue-brand and-faint-bright on-bg fw-bold"
+                                ? "hue-brand and-faint-highlight on-bg fw-bold"
                                 : "";
                             string senderClasses = message.SenderId == User.GetMessageLinkId()
                                 ? "hue-primary and-dimmed on-text"
