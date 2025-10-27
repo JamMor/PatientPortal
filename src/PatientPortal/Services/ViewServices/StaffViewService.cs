@@ -62,7 +62,8 @@ namespace PatientPortal.Services
                 .Select(r => new StaffResult
                 {
                     StaffId = r.StaffId,
-                    FullName = r.FullName(),
+                    FirstName = r.FirstName,
+                    LastName = r.LastName,
                     Role = r.Role,
                     PatientCount = r.Patients.Count,
                     CreatedAt = r.CreatedAt,

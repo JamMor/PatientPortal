@@ -72,7 +72,7 @@
             {
                 <tr>
                     <td class="text-muted">@Model.Query.Paging.RowNumber(i)</td>
-                    <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.FullName</a></td>
+                    <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.LastName, @staffmember.FirstName</a></td>
                     <td>@staffmember.Role</td>
                     <td>#@staffmember.StaffId.ToString("D5")</td>
                     <td>@staffmember.PatientCount</td>

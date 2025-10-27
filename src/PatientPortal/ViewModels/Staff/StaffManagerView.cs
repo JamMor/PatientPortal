@@ -32,7 +32,8 @@ namespace PatientPortal.Models
     public class StaffResult
     {
         public int StaffId { get; set; }
-        public required string FullName { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
         public required string Role { get; set; }
         public int PatientCount { get; set; }
         public DateTime CreatedAt { get; set; }
