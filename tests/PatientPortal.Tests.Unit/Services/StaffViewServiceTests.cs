@@ -127,7 +127,8 @@ public class StaffViewServiceTests
         // Assert
         var staffResult = result.Results.Staff.Single();
         Assert.Equal(42, staffResult.StaffId);
-        Assert.Equal("Alice Jones", staffResult.FullName);
+        Assert.Equal("Alice", staffResult.FirstName);
+        Assert.Equal("Jones", staffResult.LastName);
         Assert.Equal("Physical Therapist", staffResult.Role);
         Assert.Equal(5, staffResult.PatientCount);
     }
