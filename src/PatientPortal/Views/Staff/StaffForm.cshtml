@@ -25,6 +25,9 @@
         <form-field asp-for="Password"></form-field>
         <form-field asp-for="ConfirmPassword"></form-field>
         <div asp-validation-summary="ModelOnly"></div>
-        <button-primary type="submit">Add to Staff</button-primary>
+        <div class="mb-3 d-flex flex-column flex-sm-row gap-2 justify-content-end">
+            <button-primary type="submit">Add to Staff</button-primary>
+            <link-button-secondary outline asp-action="StaffManager">Cancel</link-button-secondary>
+        </div>
     </form>
 </div>

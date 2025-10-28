@@ -37,7 +37,10 @@
             <span class="text-danger" asp-validation-for="MessageText"></span>
             <textarea class="form-control" asp-for="MessageText"></textarea>
         </div>
-        <button-primary type="submit">Send Message</button-primary>
+        <div class="mb-3 d-flex flex-column flex-sm-row gap-2 justify-content-end">
+            <button-primary type="submit">Send Message</button-primary>
+            <link-button-secondary outline asp-action="Inbox">Cancel</link-button-secondary>
+        </div>
     </form>
 </div>
 
