@@ -1,13 +1,11 @@
-using System;
-using System.Collections.Generic;
-using PatientPortal.Models;
+using PatientPortal.DTOs;
 
 namespace PatientPortal.Interfaces
 {
-    public interface IVisitService : IDisposable
+    public interface IVisitService
     {
 
-        void CreateVisit(int patientId, int staffId, VisitFormView formData);
+        void CreateVisit(int patientId, int staffId, VisitDTO formData);
         void DeleteVisit(int visitId);
     }
 }

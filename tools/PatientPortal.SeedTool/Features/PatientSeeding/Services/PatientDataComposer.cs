@@ -1,0 +1,142 @@
+using PatientPortal.Models;
+using PatientPortal.SeedTool.Features.PatientSeeding.DataGenerators;
+using PatientPortal.SeedTool.Utilities;
+using static PatientPortal.SeedTool.Settings.SeedSettings.PatientSettings;
+
+namespace PatientPortal.SeedTool.Features.PatientSeeding.Services;
+
+/// <summary>
+/// Composes patient data by orchestrating multiple data generators.
+/// Handles the composition logic for creating fully populated patient entities.
+/// </summary>
+public class PatientDataComposer(
+    PatientDataGenerator patientDataGenerator,
+    AddressDataGenerator addressDataGenerator,
+    PatientStaffConnectionDataGenerator connectionDataGenerator,
+    VisitDataGenerator visitDataGenerator,
+    TestResultDataGenerator testResultDataGenerator,
+    HealthIssueDataGenerator healthIssueDataGenerator
+)
+{
+    private readonly PatientDataGenerator _patientDataGenerator = patientDataGenerator;
+    private readonly AddressDataGenerator _addressDataGenerator = addressDataGenerator;
+    private readonly PatientStaffConnectionDataGenerator _connectionDataGenerator =
+        connectionDataGenerator;
+    private readonly VisitDataGenerator _visitDataGenerator = visitDataGenerator;
+    private readonly TestResultDataGenerator _testResultDataGenerator = testResultDataGenerator;
+    private readonly HealthIssueDataGenerator _healthIssueDataGenerator = healthIssueDataGenerator;
+
+    /// <summary>
+    /// Creates a list of patients with basic demographic data.
+    /// This does not include any related entities or associations.
+    /// </summary>
+    /// <param name="count">Number of patients to create</param>
+    /// <returns>List of Patient objects with basic data</returns>
+    public List<Patient> CreatePatients(int count)
+    {
+        return _patientDataGenerator.GenerateNPatients(count);
+    }
+
+    /// <summary>
+    /// Attaches independent data to a patient (address, staff connections, visits, tests, health issues).
+    /// These entities are not yet associated with each other.
+    /// </summary>
+    /// <param name="patient">Patient to attach data to</param>
+    /// <param name="availableStaffIds">List of all available staff IDs</param>
+    public void AttachIndependentData(Patient patient, List<int> availableStaffIds)
+    {
+        if (Rand.RandomDouble() < AddressProbability)
+        {
+            patient.Address = _addressDataGenerator.GenerateAddress();
+        }
+
+        // Select random staff members for medical team
+        List<int> selectedStaffIds = Rand.GetRandomSubset(
+            availableStaffIds,
+            Rand.BetweenOneAnd(MaxStaffPerPatient)
+        );
+
+        patient.MedicalTeam = _connectionDataGenerator.GenerateConnectionsForStaffIds(
+            selectedStaffIds,
+            patient.CreatedAt
+        );
+
+        patient.Visits = _visitDataGenerator.GenerateVisitsWithoutNavProps(
+            Rand.BetweenOneAnd(MaxIndependentVisitsPerPatient),
+            selectedStaffIds,
+            patient.CreatedAt
+        );
+
+        patient.Tests = _testResultDataGenerator.GenerateTestResultsWithoutNavProps(
+            Rand.BetweenOneAnd(MaxIndependentTestResultsPerPatient),
+            selectedStaffIds,
+            patient.CreatedAt
+        );
+
+        patient.HealthIssues = _healthIssueDataGenerator.GenerateHealthIssuesWithoutNavProps(
+            Rand.BetweenOneAnd(MaxIndependentHealthIssuesPerPatient),
+            patient.CreatedAt
+        );
+    }
+
+    /// <summary>
+    /// Creates health issues with associated visits and test results for a list of patients.
+    /// Requires patients to have valid PatientIds and medical team from the database.
+    /// </summary>
+    /// <param name="patients">List of persisted patients (must have PatientId and medical team)</param>
+    /// <returns>List of HealthIssue objects with associated visits and test results</returns>
+    public List<HealthIssue> CreateHealthIssuesWithVisitsAndTests(List<Patient> patients)
+    {
+        var allIssues = new List<HealthIssue>();
+
+        foreach (var patient in patients)
+        {
+            int issueCount = Rand.BetweenOneAnd(MaxRelatedHealthIssuesPerPatient);
+            List<HealthIssue> issues = _healthIssueDataGenerator.GenerateHealthIssuesWithPatientId(
+                issueCount,
+                patient.PatientId,
+                patient.CreatedAt
+            );
+
+            List<int> medicalTeamIds = patient.MedicalTeam.Select(mt => mt.StaffId).ToList();
+
+            foreach (var issue in issues)
+            {
+                AttachHealthIssueAssociatedData(issue, patient.PatientId, medicalTeamIds);
+            }
+
+            allIssues.AddRange(issues);
+        }
+
+        return allIssues;
+    }
+
+    public void AttachHealthIssueAssociatedData(
+        HealthIssue issue,
+        int patientId,
+        List<int> medicalTeamIds
+    )
+    {
+        List<Visit> visits = _visitDataGenerator.GenerateVisitsWithPatientId(
+            Rand.BetweenOneAnd(MaxVisitsPerHealthIssue),
+            patientId,
+            medicalTeamIds,
+            issue.CreatedAt
+        );
+
+        List<TestResult> tests = _testResultDataGenerator.GenerateTestResultsWithPatientId(
+            Rand.BetweenOneAnd(MaxTestResultsPerHealthIssue),
+            patientId,
+            medicalTeamIds,
+            issue.CreatedAt
+        );
+
+        issue.AssociatedVisits = visits
+            .Select(v => new VisitHealthIssueAssociation { Visit = v })
+            .ToList();
+
+        issue.AssociatedTestResults = tests
+            .Select(t => new TestHealthIssueAssociation { TestResult = t })
+            .ToList();
+    }
+}

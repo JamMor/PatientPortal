@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Models;
 using PatientPortal.Services;
 
@@ -75,18 +76,15 @@ public class MessagingServiceTests : IDisposable
         var sender = CreateStaff("John", "Doctor", "jdoctor");
         var recipient = CreateStaff("Jane", "Nurse", "jnurse");
 
-        var newConversationForm = new NewConversationFormView
-        {
-            Subject = "Test Subject",
-            MessageText = "Hello, this is a test message.",
-            Recipients = new List<Recipient>
-            {
-                new Recipient { LinkId = GetMessagingLinkId(recipient), Selected = true }
-            }
-        };
+        var conversationDTO = new ConversationDTO(
+            "Test Subject",
+            false,
+            [GetMessagingLinkId(recipient)]
+        );
+        var messageDTO = new MessageDTO("Hello, this is a test message.");
 
         // Act
-        _messagingService.CreateConversation(GetMessagingLinkId(sender), newConversationForm);
+        _messagingService.CreateConversation(GetMessagingLinkId(sender), conversationDTO, messageDTO);
 
         // Assert
         var conversation = _context.Conversations
@@ -109,16 +107,15 @@ public class MessagingServiceTests : IDisposable
         var sender = CreateStaff("John", "Doctor", "jdoctor");
         var patient = CreatePatient("Bob", "Patient");
 
-        var newConversationForm = new NewConversationFormView
-        {
-            Subject = "Patient Inquiry",
-            MessageText = "How are you feeling today?",
-            Recipients = new List<Recipient>(),
-            PatientRecipient = new Recipient { LinkId = GetMessagingLinkId(patient), Selected = true }
-        };
+        var conversationDTO = new ConversationDTO(
+            "Patient Inquiry",
+            true,
+            [GetMessagingLinkId(patient)]
+        );
+        var messageDTO = new MessageDTO("How are you feeling today?");
 
         // Act
-        _messagingService.CreateConversation(GetMessagingLinkId(sender), newConversationForm);
+        _messagingService.CreateConversation(GetMessagingLinkId(sender), conversationDTO, messageDTO);
         // Assert
         var conversation = _context.Conversations
             .Include(c => c.ConversationParticipants)
@@ -136,18 +133,15 @@ public class MessagingServiceTests : IDisposable
         var sender = CreateStaff("John", "Doctor", "jdoctor");
         var recipient = CreateStaff("Jane", "Nurse", "jnurse");
 
-        var newConversationForm = new NewConversationFormView
-        {
-            Subject = "Urgent",
-            MessageText = "Please check this.",
-            Recipients = new List<Recipient>
-            {
-                new Recipient { LinkId = GetMessagingLinkId(recipient), Selected = true }
-            }
-        };
+        var conversationDTO = new ConversationDTO(
+            "Urgent",
+            false,
+            [GetMessagingLinkId(recipient)]
+        );
+        var messageDTO = new MessageDTO("Please check this.");
 
         // Act
-        _messagingService.CreateConversation(GetMessagingLinkId(sender), newConversationForm);
+        _messagingService.CreateConversation(GetMessagingLinkId(sender), conversationDTO, messageDTO);
 
         // Assert
         var message = _context.Messages
@@ -167,19 +161,15 @@ public class MessagingServiceTests : IDisposable
         var recipient1 = CreateStaff("Jane", "Nurse", "jnurse");
         var recipient2 = CreateStaff("Bob", "Admin", "badmin");
 
-        var newConversationForm = new NewConversationFormView
-        {
-            Subject = "Team Meeting",
-            MessageText = "Let's discuss the patient.",
-            Recipients = new List<Recipient>
-            {
-                new Recipient { LinkId = GetMessagingLinkId(recipient1), Selected = true },
-                new Recipient { LinkId = GetMessagingLinkId(recipient2), Selected = true }
-            }
-        };
+        var conversationDTO = new ConversationDTO(
+            "Team Meeting",
+            false,
+            [GetMessagingLinkId(recipient1), GetMessagingLinkId(recipient2)]
+        );
+        var messageDTO = new MessageDTO("Let's discuss the patient.");
 
         // Act
-        _messagingService.CreateConversation(GetMessagingLinkId(sender), newConversationForm);
+        _messagingService.CreateConversation(GetMessagingLinkId(sender), conversationDTO, messageDTO);
 
         // Assert
         var conversation = _context.Conversations
@@ -198,19 +188,16 @@ public class MessagingServiceTests : IDisposable
         var selectedRecipient = CreateStaff("Jane", "Nurse", "jnurse");
         var unselectedRecipient = CreateStaff("Bob", "Admin", "badmin");
 
-        var newConversationForm = new NewConversationFormView
-        {
-            Subject = "Private Message",
-            MessageText = "This is private.",
-            Recipients = new List<Recipient>
-            {
-                new Recipient { LinkId = GetMessagingLinkId(selectedRecipient), Selected = true },
-                new Recipient { LinkId = GetMessagingLinkId(unselectedRecipient), Selected = false }
-            }
-        };
+        // Only include the selected recipient's link ID
+        var conversationDTO = new ConversationDTO(
+            "Private Message",
+            false,
+            [GetMessagingLinkId(selectedRecipient)]
+        );
+        var messageDTO = new MessageDTO("This is private.");
 
         // Act
-        _messagingService.CreateConversation(GetMessagingLinkId(sender), newConversationForm);
+        _messagingService.CreateConversation(GetMessagingLinkId(sender), conversationDTO, messageDTO);
 
         // Assert
         var conversation = _context.Conversations
@@ -249,10 +236,10 @@ public class MessagingServiceTests : IDisposable
         _context.Conversations.Add(conversation);
         _context.SaveChanges();
 
-        var replyView = new ReplyView { MessageText = "This is a reply." };
+        var replyDTO = new MessageDTO("This is a reply.");
 
         // Act
-        _messagingService.CreateReply(GetMessagingLinkId(recipient), conversation.ConversationId, replyView);
+        _messagingService.CreateReply(GetMessagingLinkId(recipient), conversation.ConversationId, replyDTO);
 
         // Assert
         var updatedConversation = _context.Conversations
@@ -285,10 +272,10 @@ public class MessagingServiceTests : IDisposable
         _context.Conversations.Add(conversation);
         _context.SaveChanges();
 
-        var replyView = new ReplyView { MessageText = "Reply message" };
+        var replyDTO = new MessageDTO("Reply message");
 
         // Act
-        _messagingService.CreateReply(GetMessagingLinkId(sender), conversation.ConversationId, replyView);
+        _messagingService.CreateReply(GetMessagingLinkId(sender), conversation.ConversationId, replyDTO);
 
         // Assert
         var newMessage = _context.Messages
@@ -407,8 +394,8 @@ public class MessagingServiceTests : IDisposable
     {
         // Arrange
         var staff = CreateStaff("John", "Doctor", "jdoctor");
-        var messagingLinkId = GetMessagingLinkId(staff);
-        var link = _context.MessagingLinks.Find(messagingLinkId);
+        var link = staff.MessagingLink!;
+        var messagingLinkId = link.MessagingLinkId;
 
         _context.UnreadMessages.AddRange(
             new Unread { MessagingLinkId = messagingLinkId, MessageId = 1, WithPatient = false },
@@ -429,8 +416,8 @@ public class MessagingServiceTests : IDisposable
     {
         // Arrange
         var staff = CreateStaff("John", "Doctor", "jdoctor");
-        var messagingLinkId = GetMessagingLinkId(staff);
-        var link = _context.MessagingLinks.Find(messagingLinkId);
+        var link = staff.MessagingLink!;
+        var messagingLinkId = link.MessagingLinkId;
 
         _context.UnreadMessages.AddRange(
             new Unread { MessagingLinkId = messagingLinkId, MessageId = 1, WithPatient = false },
@@ -451,8 +438,7 @@ public class MessagingServiceTests : IDisposable
     {
         // Arrange
         var staff = CreateStaff("John", "Doctor", "jdoctor");
-        var messagingLinkId = GetMessagingLinkId(staff);
-        var link = _context.MessagingLinks.Find(messagingLinkId);
+        var link = staff.MessagingLink!;
 
         // Act
         var result = _messagingService.GetUnreadTotalCount(link);
@@ -470,7 +456,8 @@ public class MessagingServiceTests : IDisposable
     {
         // Arrange
         var patient = CreatePatient("Bob", "Patient");
-        var messagingLinkId = GetMessagingLinkId(patient);
+        var link = patient.MessagingLink!;
+        var messagingLinkId = link.MessagingLinkId;
 
         // Act
         var result = _messagingService.GetPatientRecipient(messagingLinkId);
@@ -547,10 +534,10 @@ public class MessagingServiceTests : IDisposable
 
     #endregion
 
-    #region GetAllConversationsForInbox Tests
+    #region GetConversations Tests
 
     [Fact]
-    public void GetAllConversationsForInbox_ReturnsOnlyUserConversations()
+    public void GetStaffConversations_ReturnsOnlyUserConversations()
     {
         // Arrange
         var user = CreateStaff("John", "Doctor", "jdoctor");
@@ -585,10 +572,8 @@ public class MessagingServiceTests : IDisposable
         _context.Conversations.AddRange(userConversation, otherConversation);
         _context.SaveChanges();
 
-        var filters = new ConversationSearch { IsPatientInbox = false, OnlyUnread = false };
-
         // Act
-        var result = _messagingService.GetAllConversationsForInbox(userLinkId, filters).ToList();
+        var result = _messagingService.GetStaffConversations(userLinkId, onlyUnread: false).ToList();
 
         // Assert
         Assert.Single(result);
@@ -596,7 +581,7 @@ public class MessagingServiceTests : IDisposable
     }
 
     [Fact]
-    public void GetAllConversationsForInbox_WithPatientFilter_ReturnsOnlyPatientConversations()
+    public void GetPatientConversations_WithPatientFilter_ReturnsOnlyPatientConversations()
     {
         // Arrange
         var user = CreateStaff("John", "Doctor", "jdoctor");
@@ -627,10 +612,8 @@ public class MessagingServiceTests : IDisposable
         _context.Conversations.AddRange(patientConversation, staffConversation);
         _context.SaveChanges();
 
-        var filters = new ConversationSearch { IsPatientInbox = true, OnlyUnread = false };
-
         // Act
-        var result = _messagingService.GetAllConversationsForInbox(userLinkId, filters).ToList();
+        var result = _messagingService.GetPatientConversations(userLinkId, onlyUnread: false).ToList();
 
         // Assert
         Assert.Single(result);
@@ -638,7 +621,7 @@ public class MessagingServiceTests : IDisposable
     }
 
     [Fact]
-    public void GetAllConversationsForInbox_WithUnreadFilter_ReturnsOnlyUnreadConversations()
+    public void GetStaffConversations_WithUnreadFilter_ReturnsOnlyUnreadConversations()
     {
         // Arrange
         var user = CreateStaff("John", "Doctor", "jdoctor");
@@ -683,10 +666,8 @@ public class MessagingServiceTests : IDisposable
         _context.Conversations.AddRange(unreadConversation, readConversation);
         _context.SaveChanges();
 
-        var filters = new ConversationSearch { IsPatientInbox = false, OnlyUnread = true };
-
         // Act
-        var result = _messagingService.GetAllConversationsForInbox(userLinkId, filters).ToList();
+        var result = _messagingService.GetStaffConversations(userLinkId, onlyUnread: true).ToList();
 
         // Assert
         Assert.Single(result);
@@ -697,7 +678,6 @@ public class MessagingServiceTests : IDisposable
 
     public void Dispose()
     {
-        _messagingService?.Dispose();
         _context?.Dispose();
     }
 }

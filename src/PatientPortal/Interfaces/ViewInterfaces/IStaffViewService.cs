@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
 {
-    public interface IStaffViewService : IDisposable
+    public interface IStaffViewService
     {
-        StaffManagerView ReturnStaffManagerView(StaffSearch searchQuery, Paginator paginationSettings);
-        StaffInfoViewModel GetStaffInfo(int staffId);
+        StaffManagerView ReturnStaffManagerView(StaffFilter filter, Paginator paging, string sortOrder);
+        StaffInfoViewModel? GetStaffInfo(int staffId);
     }
 }

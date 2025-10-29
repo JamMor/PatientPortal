@@ -1,14 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using PatientPortal.Authorization;
+using PatientPortal.DTOs;
+using PatientPortal.Extensions;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
-using PatientPortal.Extensions;
-using Microsoft.AspNetCore.Authorization;
-using PatientPortal.Authorization;
 
 namespace PatientPortal.Controllers
 {
@@ -18,12 +14,10 @@ namespace PatientPortal.Controllers
     {
         private int? staffId => User.GetStaffId();
 
-        private IPatientViewService _patientViewService;
         private IVisitService _visitService;
         private IVisitViewService _visitViewService;
-        public VisitController(IPatientViewService patientViewService, IVisitService visitService, IVisitViewService visitViewService)
+        public VisitController(IVisitService visitService, IVisitViewService visitViewService)
         {
-            _patientViewService = patientViewService;
             _visitService = visitService;
             _visitViewService = visitViewService;
         }
@@ -32,24 +26,37 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult VisitAdd(int patientId)
         {
-            VisitFormView viewModel = _visitViewService.ReturnVisitFormView(patientId);
-            
-            return View("VisitForm", viewModel);
+            VisitFormView form = _visitViewService.GetNewVisitForm(patientId);
+
+            return View("VisitForm", form);
         }
 
         [HttpPost("")]
-        public IActionResult VisitCreate(int patientId, VisitFormView formData)
+        public IActionResult VisitCreate(int patientId, VisitFormInput formData)
         {
-            if(ModelState.IsValid)
+            if(!staffId.HasValue)
             {
-                _visitService.CreateVisit(patientId, (int)staffId, formData);
-                
-                return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+                return StatusCode(500, "Unable to retrieve staff information. Please ensure you are logged in and try again.");
             }
             
-            formData.Patient = _patientViewService.GetPatientInfoHeader(patientId);
-            
-            return View("VisitForm", formData);
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    var visitDTO = formData.ToVisitDTO();
+                    _visitService.CreateVisit(patientId, (int)staffId, visitDTO);
+                    
+                    return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+                }
+                catch
+                {
+                    // Log the exception (not implemented here)
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the visit.");
+                }
+            }
+
+            var form = _visitViewService.GetNewVisitForm(patientId).ApplyInput(formData);
+            return View("VisitForm", form);
         }
         
         [HttpPost("{visitId}/delete")]

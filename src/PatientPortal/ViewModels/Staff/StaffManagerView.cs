@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PatientPortal.Models
@@ -8,18 +7,34 @@ namespace PatientPortal.Models
     [NotMapped]
     public class StaffManagerView
     {
-        public StaffSearch SearchBar { get; set; }
+        public required StaffQuery Query { get; set; }
 
-        public Paginator PaginationSettings { get; set; }
+        public required StaffResultList Results { get; set; }
 
-        public List<StaffResult> SearchResults { get; set; }
+        public StaffSearchForm SearchForm => new StaffSearchForm
+        {
+            StaffId = Query.Filter.StaffId,
+            FirstName = Query.Filter.FirstName,
+            LastName = Query.Filter.LastName,
+            Role = Query.Filter.Role,
+            SortOrder = Query.Sort.SortString,
+            ResultsPerPage = Query.Paging.ResultsPerPage,
+            CurrentPage = Query.Paging.CurrentPage,
+        };
     }
-    
+
+    [NotMapped]
+    public class StaffResultList
+    {
+        public List<StaffResult> Staff { get; set; } = [];
+    }
+
     public class StaffResult
     {
         public int StaffId { get; set; }
-        public string FullName { get; set; }
-        public string Role { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
+        public required string Role { get; set; }
         public int PatientCount { get; set; }
         public DateTime CreatedAt { get; set; }
     }

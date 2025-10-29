@@ -1,14 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using PatientPortal.Authorization;
+using PatientPortal.DTOs;
+using PatientPortal.Extensions;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
-using PatientPortal.Extensions;
-using Microsoft.AspNetCore.Authorization;
-using PatientPortal.Authorization;
 
 namespace PatientPortal.Controllers
 {
@@ -18,12 +14,10 @@ namespace PatientPortal.Controllers
     {
         private int? staffId => User.GetStaffId();
 
-        private IPatientViewService _patientViewService;
         private ITestResultService _testResultService;
         private ITestResultViewService _testResultViewService;
-        public TestResultController(IPatientViewService patientViewService, ITestResultService testResultService, ITestResultViewService testResultViewService)
+        public TestResultController(ITestResultService testResultService, ITestResultViewService testResultViewService)
         {
-            _patientViewService = patientViewService;
             _testResultService = testResultService;
             _testResultViewService = testResultViewService;
         }
@@ -32,23 +26,37 @@ namespace PatientPortal.Controllers
         [HttpGet("")]
         public IActionResult TestResultAdd(int patientId)
         {
-            TestResultFormView viewModel = _testResultViewService.ReturnTestResultFormView(patientId);
+            TestResultFormView form = _testResultViewService.GetNewTestResultForm(patientId);
                 
-            return View("TestResultForm", viewModel);
+            return View("TestResultForm", form);
         }
 
         [HttpPost("")]
-        public IActionResult TestResultCreate(int patientId, TestResultFormView formData)
+        public IActionResult TestResultCreate(int patientId, TestResultFormInput formData)
         {
-            if(ModelState.IsValid)
+            if(!staffId.HasValue)
             {
-                _testResultService.CreateTestResult(patientId, (int)staffId, formData);
-                return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+                return StatusCode(500, "Unable to retrieve staff information. Please ensure you are logged in and try again.");
             }
 
-            formData.Patient = _patientViewService.GetPatientInfoHeader(patientId);
-            
-            return View("TestResultForm", formData);
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    var testResultDTO = formData.ToTestResultDTO();
+                    _testResultService.CreateTestResult(patientId, (int)staffId, testResultDTO);
+                    
+                    return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
+                }
+                catch
+                {
+                    // Log the exception (not implemented here)
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the test result.");
+                }
+            }
+
+            var form = _testResultViewService.GetNewTestResultForm(patientId).ApplyInput(formData);
+            return View("TestResultForm", form);
         }
     
         [HttpPost("{testId}/delete")]

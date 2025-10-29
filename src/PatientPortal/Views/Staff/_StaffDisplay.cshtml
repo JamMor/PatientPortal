@@ -1,65 +1,65 @@
 @model StaffManagerView
 
 @{
-var search = new Dictionary<string, string>
-            {
-                {"SearchPatientId", @Model.SearchBar.SearchStaffId.ToString()},
-                {"SearchFirstName", @Model.SearchBar.SearchFirstName},
-                {"SearchLastName", @Model.SearchBar.SearchLastName},
-                {"SearchRole", @Model.SearchBar.SearchRole}
-            };
+    Dictionary<string, string> QueryRoutes() => Model.Query.ToRouteDict();
 }
 
-<div class="d-flex">
-    <h4 class="my-0 mr-auto">Staff <span class="badge badge-secondary">@Model.PaginationSettings.ResultsCount</span>:</h4>
+
+<div class="d-flex align-items-center gap-1">
+    <h2 class="my-0 me-auto fs-5 fw-semibold">
+        Staff
+        <span class="badge align-middle hue-primary and-dimmed on-bg text-dark">
+            @Model.Query.Paging.ResultsCount
+        </span>
+    </h2>
     <div class="dropdown">
-        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+        <button-secondary small outline class="dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             Results per page...
-        </button>
+        </button-secondary>
         <div class="dropdown-menu">
             @{int[] options = {5,10,20,50,100};
                 foreach(int option in options)
                 {
                     <a  class="dropdown-item" 
                     asp-controller="Staff" asp-action="StaffManager" 
-                    asp-all-route-data="search"
-                    asp-route-SortOrder="@Model.PaginationSettings.SortOrder" 
+                    asp-all-route-data="QueryRoutes()"
                     asp-route-ResultsPerPage="@option"
                     >@option</a>
                 }
             }
         </div>
     </div>
-    <a asp-controller="Staff" asp-action="StaffAdd" class="btn btn-outline-primary btn-sm extend">+<span>  Add Staff</span></a>
+    <link-button-primary asp-controller="Staff" asp-action="StaffAdd" class="extend" small outline>
+        <span>+</span>
+        <span class="extend-shrinkable">Add Staff</span>
+    </link-button-primary>
 </div>
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th class="align-middle text-muted">#</th>
-            @* Already selected sort column link is changed to reverse direction *@
-            @{
-                string[] sortOptions = {"Last Name", "Role", "Staff Id"};
-                foreach(string sortOption in sortOptions)
-                {
-                string sortField = sortOption.Replace(" ", "");
+            @* Sortable column links — active column reverses direction, new column defaults to descending *@
+            @foreach (var column in Model.Query.SortableColumns)
+            {
                 <th>
-                    <a asp-controller="Staff" asp-action="StaffManager" 
-                    asp-all-route-data="search"
-                    asp-route-ResultsPerPage="@Model.PaginationSettings.ResultsPerPage"
-                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == @sortField ? Model.PaginationSettings.Reverse() : "desc")'>
-                        @sortOption
+                    <a class="@(Model.Query.Sort.IsSortedBy(column) ? "sort-active" : "")"
+                        asp-controller="Staff" asp-action="StaffManager"
+                        asp-all-route-data="QueryRoutes()"
+                        asp-route-SortOrder="@Model.Query.Sort.GetSortOrderForLink(column)">
+                        <span class="d-flex text-nowrap gap-2 @(Model.Query.Sort.IsAscending(column) ? "sort-invert" : "")">
+                            @column.DisplayName
+                            <partial name="_CaretDownIcon" />
+                        </span>
                     </a>
                 </th>
-
-                }
             }
             <th class="align-middle">Patients</th>
-            <th class="align-middle">Registered</th>
+            <th class="align-middle d-none d-sm-table-cell">Registered</th>
         </tr>
     </thead>
     <tbody>
         @{
-            if(@Model.SearchResults.Count == 0)
+            if(Model.Results.Staff.Count == 0)
             {
                 <tr>
                     <td colspan="6" class="text-center text-muted">No staff to display.</td>
@@ -68,15 +68,18 @@ var search = new Dictionary<string, string>
         }
         @{
             int i = 1;
-            foreach (StaffResult staffmember in @Model.SearchResults)
+            foreach (StaffResult staffmember in Model.Results.Staff)
             {
                 <tr>
-                    <td class="text-muted">@(Model.PaginationSettings.ResultsPerPage*(Model.PaginationSettings.CurrentPage - 1) + i)</td>
-                    <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.FullName</a></td>
+                    <td class="text-muted">@Model.Query.Paging.RowNumber(i)</td>
+                    <td><a asp-controller="Staff" asp-action="StaffInfo" asp-route-staffId="@staffmember.StaffId">@staffmember.LastName, @staffmember.FirstName</a></td>
                     <td>@staffmember.Role</td>
                     <td>#@staffmember.StaffId.ToString("D5")</td>
                     <td>@staffmember.PatientCount</td>
-                    <td>@staffmember.CreatedAt</td>
+                    <td class="small d-none d-sm-table-cell">
+                        <span class="text-nowrap">@staffmember.CreatedAt.ToString("M/d/yyyy")</span>
+                        <span class="text-nowrap">@staffmember.CreatedAt.ToString("h:mm:ss\u00a0tt")</span>
+                    </td>
                 </tr>
                 i++;
             }

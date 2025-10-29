@@ -7,10 +7,10 @@ namespace PatientPortal.Models
     public class PatientHeaderInfoView
     {
         public int CurrentPatientId { get; set; }
-        public int CurrentPatientLinkId { get; set; }
-        public string CurrentPatientFirstName { get; set; }
-        public string CurrentPatientLastName { get; set; }
-        public string CurrentPatientSSN { get; set; }
+        public int? CurrentPatientLinkId { get; set; }
+        public required string CurrentPatientFirstName { get; set; }
+        public required string CurrentPatientLastName { get; set; }
+        public required string CurrentPatientSSN { get; set; }
         public DateTime CurrentPatientDOB { get; set; }
         public int CurrentPatientAge { get; set; }
         public DateTime CurrentPatientCreatedOn { get; set; }

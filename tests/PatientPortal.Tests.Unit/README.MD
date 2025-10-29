@@ -1,6 +1,17 @@
 # PatientPortal.Tests.Unit
 
-Unit tests for PatientPortal service and logic components.
+Unit tests for the PatientPortal service layer and supporting logic. Test coverage is primarily focused on service classes (health issues, visits, messaging, patients, staff, test results, patient-staff connections), with additional coverage for authentication extensions.
+
+## Tech Stack
+
+| Category | Stack |
+| --- | --- |
+| Runtime | .NET 8.0 |
+| Test Framework | xUnit v3 |
+| Test Runner | Microsoft Testing Platform (MTP) |
+| Coverage | Microsoft.Testing.Extensions.CodeCoverage |
+| In-Memory Database | EF Core InMemory |
+| Mocking | NSubstitute |
 
 ## Quickstart
 
@@ -18,14 +29,6 @@ reportgenerator -reports:tests/PatientPortal.Tests.Unit/bin/Debug/net8.0/TestRes
 ```
 
 Open `CoverageReport/index.html` in your browser to view the report.
-
-## Frameworks & Tools
-
-- **xUnit v3**: Test framework ([docs](https://xunit.net/docs/getting-started/v3/getting-started))
-- **Microsoft Testing Platform (MTP)**: Modern test discovery/execution ([info](https://xunit.net/docs/getting-started/v3/microsoft-testing-platform))
-- **NSubstitute**: Mocking framework ([docs](https://nsubstitute.github.io/))
-- **EF Core InMemory**: Fast, isolated data store for tests
-- **Microsoft.Testing.Extensions.CodeCoverage**: Code coverage collection ([docs](https://xunit.net/docs/getting-started/v3/code-coverage-with-mtp))
 
 ## Project Configuration
 
@@ -69,6 +72,16 @@ List all options:
 ```sh
 dotnet test -?
 ```
+
+List all tests:
+```sh
+dotnet test -p:TestingPlatformCaptureOutput=false -- --list-tests
+```
+
+> [!TIP]
+> `--list-tests` only works when the Platform Capture Output option is disabled.
+> - [xunit Github issue](https://github.com/xunit/xunit/issues/3092#issuecomment-2556234421)
+> - [Microsoft: Show Complete Platform Output](https://learn.microsoft.com/en-us/dotnet/core/testing/microsoft-testing-platform-integration-dotnet-test#show-complete-platform-output)
 
 ## Example Test
 

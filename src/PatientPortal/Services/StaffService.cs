@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
 
@@ -10,6 +10,7 @@ namespace PatientPortal.Services
     public class StaffService : IStaffService
     {
         private PatientPortalContext _context;
+
         public StaffService(PatientPortalContext context)
         {
             _context = context;
@@ -17,19 +18,19 @@ namespace PatientPortal.Services
 
         //COMMANDS
         // Creates NON-admin staff, with auth
-        public Staff CreateStaff(StaffFormView staffFormView, IdentityUser user)
+        public Staff CreateStaff(StaffDTO staffDTO, IdentityUser user)
         {
             Staff newStaff = new Staff()
             {
-                FirstName = staffFormView.FirstName,
-                LastName = staffFormView.LastName,
-                Role = staffFormView.Role,
+                FirstName = staffDTO.FirstName,
+                LastName = staffDTO.LastName,
+                Role = staffDTO.Role,
                 User = user,
                 IsAdmin = false,
                 MessagingLink = new MessagingLink(),
                 // TODO: Remove these legacy fields after migration
                 StaffUsername = user.UserName!,
-                Password = "[Managed by Identity]"
+                Password = "[Managed by Identity]",
             };
 
             _context.Staff.Add(newStaff);
@@ -40,10 +41,10 @@ namespace PatientPortal.Services
 
         public void DeleteStaff(int staffId)
         {
-            Staff deletedStaff = _context.Staff
+            Staff? deletedStaff = _context.Staff
                 .Include(s => s.MessagingLink)
                 .SingleOrDefault(staff => staff.StaffId == staffId);
-            if(deletedStaff != null)
+            if (deletedStaff != null)
             {
                 _context.Staff.Remove(deletedStaff);
                 _context.SaveChanges();
@@ -58,14 +59,14 @@ namespace PatientPortal.Services
 
             return staffmember;
         }
-        
-        public IQueryable<Staff> SearchStaff(StaffSearch searchParams)
+
+        public IQueryable<Staff> SearchStaff(StaffFilter searchParams)
         {
             return _context.Staff
-                .Where(staff => searchParams.SearchStaffId == null || staff.StaffId == searchParams.SearchStaffId)
-                .Where(staff => string.IsNullOrEmpty(searchParams.SearchFirstName) || staff.FirstName.StartsWith(searchParams.SearchFirstName))
-                .Where(staff => string.IsNullOrEmpty(searchParams.SearchLastName) || staff.LastName.StartsWith(searchParams.SearchLastName) )
-                .Where(staff => string.IsNullOrEmpty(searchParams.SearchRole) || staff.Role == searchParams.SearchRole);
+                .Where(staff => searchParams.StaffId == null || staff.StaffId == searchParams.StaffId)
+                .Where(staff => string.IsNullOrEmpty(searchParams.FirstName) || staff.FirstName.StartsWith(searchParams.FirstName))
+                .Where(staff => string.IsNullOrEmpty(searchParams.LastName) || staff.LastName.StartsWith(searchParams.LastName) )
+                .Where(staff => string.IsNullOrEmpty(searchParams.Role) || staff.Role == searchParams.Role);
         }
 
         public IQueryable<Staff> SortStaff(IQueryable<Staff> query, string sortOrder)
@@ -95,38 +96,6 @@ namespace PatientPortal.Services
                     break;
             }
             return query;
-        }
-       
-        private bool disposedValue;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                    _context.Dispose();
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                disposedValue = true;
-            }
-        }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~PatientService()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            System.GC.SuppressFinalize(this);
         }
     }
 }

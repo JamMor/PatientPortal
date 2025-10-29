@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
 {
-    public interface ITestResultViewService : IDisposable
+    public interface ITestResultViewService
     {
-        TestResultFormView ReturnTestResultFormView(int patientId);
+        TestResultFormView GetNewTestResultForm(int patientId);
     }
 }

@@ -303,7 +303,6 @@ public class PatientStaffConnectionServiceTests : IDisposable
 
     public void Dispose()
     {
-        _connectionService?.Dispose();
         _context?.Dispose();
     }
 }

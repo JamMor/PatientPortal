@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Models;
 using PatientPortal.Services;
 
@@ -27,7 +28,14 @@ public class StaffServiceTests : IDisposable
         _staffService = new StaffService(_context);
     }
 
-    private static Staff CreateStaff(string firstName, string lastName, string username, string role, bool isAdmin = false, string password = "hashedpassword")
+    private static Staff CreateStaff(
+        string firstName,
+        string lastName,
+        string username,
+        string role,
+        bool isAdmin = false,
+        string password = "hashedpassword"
+    )
     {
         return new Staff
         {
@@ -37,7 +45,7 @@ public class StaffServiceTests : IDisposable
             Password = password,
             Role = role,
             IsAdmin = isAdmin,
-            MessagingLink = new MessagingLink()
+            MessagingLink = new MessagingLink(),
         };
     }
 
@@ -55,18 +63,11 @@ public class StaffServiceTests : IDisposable
     public void CreateStaff_WithValidData_ReturnsStaff()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Jane",
-            LastName = "Nurse",
-            StaffUsername = "jnurse",
-            Password = "password123",
-            Role = "Nurse"
-        };
+        var staffDTO = new StaffDTO("Jane", "Nurse", "Nurse");
         var identityUser = new IdentityUser { UserName = "jnurse" };
 
         // Act
-        var createdStaff = _staffService.CreateStaff(staffFormView, identityUser);
+        var createdStaff = _staffService.CreateStaff(staffDTO, identityUser);
 
         // Assert
         Assert.NotNull(createdStaff);
@@ -146,7 +147,7 @@ public class StaffServiceTests : IDisposable
         var staff2 = CreateStaff("Jane", "Smith", "jsmith", "Nurse");
         AddStaff(staff1, staff2);
 
-        var searchParams = new StaffSearch { SearchFirstName = "John" };
+        var searchParams = new StaffFilter { FirstName = "John" };
 
         // Act
         var result = _staffService.SearchStaff(searchParams);
@@ -164,7 +165,7 @@ public class StaffServiceTests : IDisposable
         var staff2 = CreateStaff("Jane", "Smith", "jsmith", "Nurse");
         AddStaff(staff1, staff2);
 
-        var searchParams = new StaffSearch { SearchStaffId = staff1.StaffId };
+        var searchParams = new StaffFilter { StaffId = staff1.StaffId };
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();
@@ -183,7 +184,7 @@ public class StaffServiceTests : IDisposable
         var staff3 = CreateStaff("Bob", "Wilson", "bwilson", "Nurse");
         AddStaff(staff1, staff2, staff3);
 
-        var searchParams = new StaffSearch { SearchRole = "Doctor" };
+        var searchParams = new StaffFilter { Role = "Doctor" };
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();
@@ -202,7 +203,7 @@ public class StaffServiceTests : IDisposable
         var staff3 = CreateStaff("Jane", "Smith", "jsmith2", "Doctor");
         AddStaff(staff1, staff2, staff3);
 
-        var searchParams = new StaffSearch { SearchFirstName = "John", SearchRole = "Doctor" };
+        var searchParams = new StaffFilter { FirstName = "John", Role = "Doctor" };
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();
@@ -220,7 +221,7 @@ public class StaffServiceTests : IDisposable
         var staff2 = CreateStaff("Jane", "Smith", "jsmith", "Nurse");
         AddStaff(staff1, staff2);
 
-        var searchParams = new StaffSearch();
+        var searchParams = new StaffFilter();
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();
@@ -236,7 +237,7 @@ public class StaffServiceTests : IDisposable
         var staff = CreateStaff("John", "Doe", "jdoe", "Doctor");
         AddStaff(staff);
 
-        var searchParams = new StaffSearch { SearchFirstName = "NonExistent" };
+        var searchParams = new StaffFilter { FirstName = "NonExistent" };
 
         // Act
         var result = _staffService.SearchStaff(searchParams).ToList();
@@ -330,18 +331,11 @@ public class StaffServiceTests : IDisposable
     public void CreateStaff_SetsIsAdminFalse_ByDefault()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "New",
-            LastName = "Staff",
-            StaffUsername = "newstaff",
-            Password = "password",
-            Role = "Doctor"
-        };
+        var staffDTO = new StaffDTO("New", "Staff", "Doctor");
         var identityUser = new IdentityUser { UserName = "newstaff" };
 
         // Act
-        var createdStaff = _staffService.CreateStaff(staffFormView, identityUser);
+        var createdStaff = _staffService.CreateStaff(staffDTO, identityUser);
 
         // Assert
         Assert.NotNull(createdStaff);
@@ -352,18 +346,11 @@ public class StaffServiceTests : IDisposable
     public void CreateStaff_CreatesMessagingLink_Automatically()
     {
         // Arrange
-        var staffFormView = new StaffFormView
-        {
-            FirstName = "Link",
-            LastName = "Test",
-            StaffUsername = "linktest",
-            Password = "password",
-            Role = "Nurse"
-        };
+        var staffDTO = new StaffDTO("Link", "Test", "Nurse");
         var identityUser = new IdentityUser { UserName = "linktest" };
 
         // Act
-        var createdStaff = _staffService.CreateStaff(staffFormView, identityUser);
+        var createdStaff = _staffService.CreateStaff(staffDTO, identityUser);
 
         // Assert
         var savedStaff = _context.Staff
@@ -387,7 +374,6 @@ public class StaffServiceTests : IDisposable
 
     public void Dispose()
     {
-        _staffService?.Dispose();
         _context?.Dispose();
     }
 }

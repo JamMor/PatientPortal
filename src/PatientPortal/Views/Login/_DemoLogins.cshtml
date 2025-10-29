@@ -1,0 +1,46 @@
+@model IEnumerable<DemoLoginViewModel>
+
+<div id="demo-login-container" class="card">
+    <div class="card-header py-2">
+        <span class="badge me-2 hue-secondary on-bg text-dark">DEMO</span>
+        <span class="fw-bold text-secondary small">Quick Login</span>
+    </div>
+    <div class="card-body px-3 py-3">
+        @if(Model != null && Model.Any())
+        {
+        <form id="demo-login-options" asp-controller="DemoLogin" asp-action="LoginDemoStaff">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="mb-3">
+                <span class="demo-login-label small text-secondary text-uppercase fw-semibold d-block mb-2">Full Administrative Privileges</span>
+                <div class="demo-login-buttons d-flex flex-wrap gap-1">
+                    @foreach(var staff in Model.Where(s => s.IsDemoStaffAdmin))
+                    {
+                        <button-primary small type="submit" name="staffId" value="@staff.DemoStaffId">
+                            @staff.DemoStaffName
+                        </button-primary>
+                    }
+                </div>
+            </div>
+            <div>
+                <span class="demo-login-label small text-secondary text-uppercase fw-semibold d-block mb-2">Patient Admin Privileges Only</span>
+                <div class="demo-login-buttons d-flex flex-wrap gap-1">
+                    @foreach(var staff in Model.Where(s => !s.IsDemoStaffAdmin))
+                    {
+                        <button-secondary small name='staffId' value='@staff.DemoStaffId'>
+                            @staff.DemoStaffName
+                        </button-secondary>
+                    }
+                </div>
+            </div>
+        </form>
+        }
+        else
+        {
+        <form class='d-flex' asp-controller='DemoLogin' asp-action='CreateDemoAdmin'>
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <span class='me-2'>No demo accounts found.</span>
+            <button-warning small class='mx-1'>Create Picard</button-warning>
+        </form>
+        }
+    </div>
+</div>

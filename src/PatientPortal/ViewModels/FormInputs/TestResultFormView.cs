@@ -1,24 +1,34 @@
-using System;
+// Form Input Model
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace PatientPortal.Models
 {
     public class TestResultFormView
     {
-        public TestResult TestResult { get; set; }
-        public PatientHeaderInfoView Patient{ get; set; }
-        public List<HealthIssueCheckbox> HealthIssues { get; set; }
+        public string? Type { get; set; }
 
+        public string? Comment { get; set; }
+
+        public List<HealthIssueCheckbox> HealthIssues { get; set; } = [];
     }
 
-    public class HealthIssueCheckbox
+    public static class TestResultFormViewExtensions
     {
-        public int HealthIssueId { get; set; }
-        public string ShortDescription { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public bool Selected { get; set; } = false;
-
+        public static TestResultFormView ApplyInput(this TestResultFormView form, TestResultFormInput input)
+        {
+            form.Type = input.Type;
+            form.Comment = input.Comment;
+            foreach (var checkbox in form.HealthIssues)
+            {
+                var selection = input.HealthIssues
+                    .FirstOrDefault(s => s.HealthIssueId == checkbox.HealthIssueId);
+                if (selection != null)
+                {
+                    checkbox.Selected = selection.Selected;
+                }
+            }
+            return form;
+        }
     }
 }

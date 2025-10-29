@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using PatientPortal.Models;
 
 namespace PatientPortal.Interfaces
 {
-    public interface IPatientViewService : IDisposable
+    public interface IPatientViewService
     {
-        PatientHeaderInfoView GetPatientInfoHeader(int patientId);
-        PatientInfoViewModel GetPatientInfo(int patientId);
-        PatientManagerView ReturnPatientManagerView(PatientSearch searchQuery, Paginator paginationSettings, int staffId);
+        PatientHeaderInfoView? GetPatientInfoHeader(int patientId);
+        PatientInfoViewModel? GetPatientInfo(int patientId);
+        PatientManagerView ReturnPatientManagerView(PatientFilter filter, Paginator paging, string sortOrder, int staffId);
     }
 }

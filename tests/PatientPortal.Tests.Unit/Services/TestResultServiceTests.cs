@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Models;
 using PatientPortal.Services;
 using TestResultModel = PatientPortal.Models.TestResult;
@@ -87,15 +88,7 @@ public class TestResultServiceTests : IDisposable
         var patient = CreatePatient();
         var staff = CreateStaff();
 
-        var formData = new TestResultFormView
-        {
-            TestResult = new TestResultModel
-            {
-                Type = "Blood Test",
-                Comment = "Normal levels"
-            },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
+        var formData = new TestResultDTO("Blood Test", "Normal levels", []);
 
         // Act
         _testResultService.CreateTestResult(patient.PatientId, staff.StaffId, formData);
@@ -118,19 +111,11 @@ public class TestResultServiceTests : IDisposable
         var healthIssue1 = CreateHealthIssue(patient.PatientId, "Issue 1");
         var healthIssue2 = CreateHealthIssue(patient.PatientId, "Issue 2");
 
-        var formData = new TestResultFormView
-        {
-            TestResult = new TestResultModel
-            {
-                Type = "MRI Scan",
-                Comment = "Scan results"
-            },
-            HealthIssues = new List<HealthIssueCheckbox>
-            {
-                new HealthIssueCheckbox { HealthIssueId = healthIssue1.HealthIssueId, Selected = true },
-                new HealthIssueCheckbox { HealthIssueId = healthIssue2.HealthIssueId, Selected = true }
-            }
-        };
+        var formData = new TestResultDTO(
+            "MRI Scan",
+            "Scan results",
+            [healthIssue1.HealthIssueId, healthIssue2.HealthIssueId]
+        );
 
         // Act
         _testResultService.CreateTestResult(patient.PatientId, staff.StaffId, formData);
@@ -152,19 +137,11 @@ public class TestResultServiceTests : IDisposable
         var healthIssue1 = CreateHealthIssue(patient.PatientId, "Selected Issue");
         var healthIssue2 = CreateHealthIssue(patient.PatientId, "Unselected Issue");
 
-        var formData = new TestResultFormView
-        {
-            TestResult = new TestResultModel
-            {
-                Type = "X-Ray",
-                Comment = "X-Ray results"
-            },
-            HealthIssues = new List<HealthIssueCheckbox>
-            {
-                new HealthIssueCheckbox { HealthIssueId = healthIssue1.HealthIssueId, Selected = true },
-                new HealthIssueCheckbox { HealthIssueId = healthIssue2.HealthIssueId, Selected = false }
-            }
-        };
+        var formData = new TestResultDTO(
+            "X-Ray",
+            "X-Ray results",
+            [healthIssue1.HealthIssueId]
+        );
 
         // Act
         _testResultService.CreateTestResult(patient.PatientId, staff.StaffId, formData);
@@ -185,15 +162,7 @@ public class TestResultServiceTests : IDisposable
         var patient = CreatePatient();
         var staff = CreateStaff();
 
-        var formData = new TestResultFormView
-        {
-            TestResult = new TestResultModel
-            {
-                Type = "Routine Check",
-                Comment = "All normal"
-            },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
+        var formData = new TestResultDTO("Routine Check", "All normal", []);
 
         // Act
         _testResultService.CreateTestResult(patient.PatientId, staff.StaffId, formData);
@@ -213,15 +182,7 @@ public class TestResultServiceTests : IDisposable
         var patient = CreatePatient();
         var staff = CreateStaff();
 
-        var formData = new TestResultFormView
-        {
-            TestResult = new TestResultModel
-            {
-                Type = "Lab Test",
-                Comment = "Results pending"
-            },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
+        var formData = new TestResultDTO("Lab Test", "Results pending", []);
 
         // Act
         _testResultService.CreateTestResult(patient.PatientId, staff.StaffId, formData);
@@ -239,16 +200,8 @@ public class TestResultServiceTests : IDisposable
         var patient = CreatePatient();
         var staff = CreateStaff();
 
-        var formData1 = new TestResultFormView
-        {
-            TestResult = new TestResultModel { Type = "Test 1", Comment = "Comment 1" },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
-        var formData2 = new TestResultFormView
-        {
-            TestResult = new TestResultModel { Type = "Test 2", Comment = "Comment 2" },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
+        var formData1 = new TestResultDTO("Test 1", "Comment 1", []);
+        var formData2 = new TestResultDTO("Test 2", "Comment 2", []);
 
         // Act
         _testResultService.CreateTestResult(patient.PatientId, staff.StaffId, formData1);
@@ -345,7 +298,6 @@ public class TestResultServiceTests : IDisposable
 
     public void Dispose()
     {
-        _testResultService?.Dispose();
         _context?.Dispose();
     }
 }

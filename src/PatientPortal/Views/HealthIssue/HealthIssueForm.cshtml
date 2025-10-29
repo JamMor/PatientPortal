@@ -1,23 +1,21 @@
-@model HealthIssueFormView
+@model HealthIssueForm
 
-<partial name="~/Views/Shared/_PatientInfoHeader.cshtml" for="Patient"/>
+@{ int patientId = Convert.ToInt32(ViewContext.RouteData.Values["patientId"]); }
+@await Component.InvokeAsync("PatientInfoHeader", new { patientId = patientId })
 
-<h3>New Health Issue: </h3>
-<form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@Model.Patient.CurrentPatientId" method="post">
-    <div class="form-group">
-        <label class="form-label" asp-for="HealthIssue.ShortDescription"></label>
-        <span class="text-danger" asp-validation-for="HealthIssue.ShortDescription"></span>
-        <input class="form-control" asp-for="HealthIssue.ShortDescription">
-    </div>
-    <div class="form-group">
-        <label class="form-label" asp-for="HealthIssue.LongDescription"></label>
-        <span class="text-danger" asp-validation-for="HealthIssue.LongDescription"></span>
-        <textarea class="form-control" asp-for="HealthIssue.LongDescription"></textarea>
-    </div>
-    <div class="form-group">
-        <label class="form-label" for="Upload"></label>
-        <input class="form-control"type="file" name="Upload" id="Upload">
-    </div>
-    <button class="btn btn-info">Add Health Issue</button>
-    <a class="btn btn-outline-danger" asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@Model.Patient.CurrentPatientId">Cancel</a>
-</form>
+<div class="form-constrained">
+    <h2 class="form-title">New Health Issue</h2>
+    <form asp-action="HealthIssueCreate" asp-controller="HealthIssue" asp-route-patientId="@patientId" method="post">
+        <form-field asp-for="ShortDescription"></form-field>
+        <form-field asp-for="LongDescription" type="textarea"></form-field>
+        <div class="mb-3">
+            <label class="form-label" for="Upload">Related Documents</label>
+            <input class="form-control" type="file" name="Upload" id="Upload">
+        </div>
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="mb-3 d-flex flex-column flex-sm-row gap-2 justify-content-end">
+            <button-primary type="submit">Add Health Issue</button-primary>
+            <link-button-secondary outline asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patientId">Cancel</link-button-secondary>
+        </div>
+    </form>
+</div>

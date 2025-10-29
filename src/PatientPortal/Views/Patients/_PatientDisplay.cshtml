@@ -1,66 +1,63 @@
 @model PatientManagerView
 
 @{
-var search = new Dictionary<string, string>
-            {
-                {"SearchPatientId", @Model.SearchBar.SearchPatientId.ToString()},
-                {"SearchFirstName", @Model.SearchBar.SearchFirstName},
-                {"SearchLastName", @Model.SearchBar.SearchLastName},
-                {"SearchBirthdate", @Model.SearchBar.SearchBirthdate.ToString()},
-                {"SearchSSN", @Model.SearchBar.SearchSSN},
-                {"SearchPatientsUnderCare", @Model.SearchBar.SearchPatientsUnderCare.ToString()}
-            };
+    Dictionary<string, string> QueryRoutes() => Model.Query.ToRouteDict();
 }
 
-<div class="d-flex">
-    <h4 class="my-0 mr-auto">Patients <span class="badge badge-secondary">@Model.PaginationSettings.ResultsCount</span>:</h4>
+<div class="d-flex align-items-center gap-1">
+    <h2 class="my-0 me-auto fs-5 fw-semibold">
+        Patients
+        <span class="badge align-middle hue-primary and-dimmed on-bg text-dark">
+            @Model.Query.Paging.ResultsCount
+        </span>
+    </h2>
     <div class="dropdown">
-        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+        <button-secondary small outline class="dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             Results per page...
-        </button>
+        </button-secondary>
         <div class="dropdown-menu">
             @{int[] options = {5,10,20,50,100};
                 foreach(int option in options)
                 {
                     <a  class="dropdown-item" 
                     asp-controller="Patients" asp-action="PatientManager" 
-                    asp-all-route-data="search"
-                    asp-route-SortOrder="@Model.PaginationSettings.SortOrder" 
+                    asp-all-route-data="QueryRoutes()"
                     asp-route-ResultsPerPage="@option"
                     >@option</a>
                 }
             }
         </div>
     </div>
-    <a asp-controller="Patients" asp-action="PatientCreate" class="btn btn-outline-primary btn-sm extend">+<span>  Add Patient</span></a>
+    <link-button-primary asp-controller="Patients" asp-action="PatientCreate" class="extend" small outline>
+        <span>+</span>
+        <span class="extend-shrinkable">Add Patient</span>
+    </link-button-primary>
 </div>
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th class="align-middle text-muted">#</th>
-            @* Already selected sort column link is changed to reverse direction *@
-            @{
-                string[] sortOptions = {"Last Name", "DOB", "Patient Id"};
-                foreach(string sortOption in sortOptions)
-                {
-                string sortField = sortOption.Replace(" ", "");
+            @* Sortable column links — active column reverses direction, new column defaults to descending *@
+            @foreach (var column in Model.Query.SortableColumns)
+            {
                 <th>
-                    <a asp-controller="Patients" asp-action="PatientManager" 
-                    asp-all-route-data="search"
-                    asp-route-ResultsPerPage="@Model.PaginationSettings.ResultsPerPage"
-                    asp-route-SortOrder='@(sortField)_@(Model.PaginationSettings.SortColumn() == @sortField ? Model.PaginationSettings.Reverse() : "desc")'>
-                        @sortOption
+                    <a class="@(Model.Query.Sort.IsSortedBy(column) ? "sort-active" : "")"
+                        asp-controller="Patients" asp-action="PatientManager"
+                        asp-all-route-data="QueryRoutes()"
+                        asp-route-SortOrder="@Model.Query.Sort.GetSortOrderForLink(column)">
+                        <span class="d-flex text-nowrap gap-2 @(Model.Query.Sort.IsAscending(column) ? "sort-invert" : "")">
+                            @column.DisplayName
+                            <partial name="_CaretDownIcon" />
+                        </span>
                     </a>
                 </th>
-
-                }
             }
             <th class="align-middle">SSN</th>
         </tr>
     </thead>
     <tbody>
         @{
-            if(@Model.SearchResults.Count == 0)
+            if(Model.Results.Patients.Count == 0)
             {
                 <tr>
                     <td colspan="5" class="text-center text-muted">No patients to display.</td>
@@ -69,12 +66,12 @@ var search = new Dictionary<string, string>
         }
         @{
             int i = 1;
-            foreach (PatientResult patient in @Model.SearchResults)
+            foreach (PatientResult patient in Model.Results.Patients)
             {
                 <tr>
-                    <td class="text-muted">@(Model.PaginationSettings.ResultsPerPage*(Model.PaginationSettings.CurrentPage - 1) + i)</td>
+                    <td class="text-muted">@Model.Query.Paging.RowNumber(i)</td>
                     <td><a asp-controller="Patients" asp-action="PatientInfo" asp-route-patientId="@patient.PatientId">@patient.LastName, @patient.FirstName</a></td>
-                    <td>@string.Format("{0:MM/dd/yyyy}", @patient.DOB) <span class="ml-1 text-muted">(@patient.Age)</span></td>
+                    <td>@string.Format("{0:MM/dd/yyyy}", patient.DOB) <span class="ms-1 text-muted">(@patient.Age)</span></td>
                     <td>#@patient.PatientId.ToString("D6")</td>
                     <td>@patient.Last4SSN</td>
                 </tr>

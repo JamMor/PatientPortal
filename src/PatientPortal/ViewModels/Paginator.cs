@@ -1,6 +1,5 @@
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace PatientPortal.Models
 {
@@ -8,12 +7,13 @@ namespace PatientPortal.Models
     {
         public int ResultsCount { get; set; }
         public int CurrentPage { get; set; } = 1;
-
         public int ResultsPerPage { get; set; } = 10;
+
         public int TotalPages()
         {
             return (int)Math.Ceiling(ResultsCount / (double)ResultsPerPage);
         }
+
         // # of page links displayed in navbar at a time
         public int MaxPageLinksPerPage { get; } = 5;
 
@@ -36,19 +36,9 @@ namespace PatientPortal.Models
             }
         }
 
-        public string SortOrder { get; set; } = "LastName_asc";
-        public string SortColumn()
-        {
-            return SortOrder.Split("_")[0];
-        }
+        public int RowNumber(int i) => ResultsPerPage * (CurrentPage - 1) + i;
 
-        public string SortDirection()
-        {
-            return SortOrder.Split("_")[1];
-        }
-        public string Reverse()
-        {
-            return SortDirection() == "desc" ? "asc" : "desc";
-        }
+        public Dictionary<string, string> ToRouteDict() =>
+            new Dictionary<string, string> { { "ResultsPerPage", ResultsPerPage.ToString() } };
     }
 }

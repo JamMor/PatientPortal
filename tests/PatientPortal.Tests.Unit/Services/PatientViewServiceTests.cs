@@ -8,7 +8,7 @@ namespace PatientPortal.Tests.Unit.Services;
 // TODO: Add tests for empty result sets and null returns from IPatientService methods.
 // TODO: Add validation tests for pagination boundaries (page out of range, zero/negative page sizes).
 // TODO: Add tests for sorting fallback/default behavior in ReturnPatientManagerView.
-public class PatientViewServiceTests : IDisposable
+public class PatientViewServiceTests
 {
     private readonly IPatientService _mockPatientService;
     private readonly PatientViewService _patientViewService;
@@ -18,76 +18,90 @@ public class PatientViewServiceTests : IDisposable
         _mockPatientService = Substitute.For<IPatientService>();
         _patientViewService = new PatientViewService(_mockPatientService);
     }
-    
-        #region Helper Methods
 
-        private static DateTime DaysAgo(int daysAgo)
-        {
-            var anchorDate = new DateTime(2024, 1, 1);
-            return anchorDate.AddDays(-daysAgo);
-        }
+    #region Helper Methods
 
-        private static Patient CreatePatient(
-            int id,
-            string firstName,
-            string lastName,
-            DateTime dob,
-            string ssn,
-            int createdDaysAgo = 0,
-            string? phoneNumber = null,
-            string? email = null,
-            Address? address = null)
-        {            
-            var createdAt = DaysAgo(createdDaysAgo);
-            return new Patient
-            {
-                PatientId = id,
-                FirstName = firstName,
-                LastName = lastName,
-                DOB = dob,
-                Last4SSN = ssn,
-                CreatedAt = createdAt,
-                Address = address,
-                PhoneNumber = phoneNumber,
-                Email = email,
-                MessagingLink = new MessagingLink()
-            };
-        }
-    
-        // Helper for creating an Address
-        private static Address CreateAddress(string street, string city, string state, string zip)
-        {
-            return new Address
-            {
-                StreetAddress = street,
-                City = city,
-                State = state,
-                ZipCode = zip
-            };
-        }
+    private static DateTime DaysAgo(int daysAgo)
+    {
+        var anchorDate = new DateTime(2024, 1, 1);
+        return anchorDate.AddDays(-daysAgo);
+    }
 
-        // Helper for creating a fully populated Patient
-        private static Patient CreateFullPatient(
-            int id,
-            string firstName,
-            string lastName,
-            DateTime dob,
-            string ssn,
-            int createdDaysAgo = 0,
-            int? updatedDaysAgo = null,
-            string? phone = null,
-            string? email = null,
-            Address? address = null)
+    private static Patient CreatePatient(
+        int id,
+        string firstName,
+        string lastName,
+        DateTime dob,
+        string ssn,
+        int createdDaysAgo = 0,
+        string? phoneNumber = null,
+        string? email = null,
+        Address? address = null
+    )
+    {
+        var createdAt = DaysAgo(createdDaysAgo);
+        return new Patient
         {
-            var patient = CreatePatient(id, firstName, lastName, dob, ssn, createdDaysAgo, phone, email, address);
-            patient.UpdatedAt = updatedDaysAgo.HasValue ? DaysAgo(updatedDaysAgo.Value) : DaysAgo(createdDaysAgo-10);
-            patient.MedicalTeam = new List<PatientStaffConnection>();
-            patient.HealthIssues = new List<HealthIssue>();
-            patient.Visits = new List<Visit>();
-            patient.Tests = new List<PatientPortal.Models.TestResult>();
-            return patient;
-        }
-    
+            PatientId = id,
+            FirstName = firstName,
+            LastName = lastName,
+            DOB = dob,
+            Last4SSN = ssn,
+            CreatedAt = createdAt,
+            Address = address,
+            PhoneNumber = phoneNumber,
+            Email = email,
+            MessagingLink = new MessagingLink(),
+        };
+    }
+
+    // Helper for creating an Address
+    private static Address CreateAddress(string street, string city, string state, string zip)
+    {
+        return new Address
+        {
+            StreetAddress = street,
+            City = city,
+            State = state,
+            ZipCode = zip,
+        };
+    }
+
+    // Helper for creating a fully populated Patient
+    private static Patient CreateFullPatient(
+        int id,
+        string firstName,
+        string lastName,
+        DateTime dob,
+        string ssn,
+        int createdDaysAgo = 0,
+        int? updatedDaysAgo = null,
+        string? phone = null,
+        string? email = null,
+        Address? address = null
+    )
+    {
+        var patient = CreatePatient(
+            id,
+            firstName,
+            lastName,
+            dob,
+            ssn,
+            createdDaysAgo,
+            phone,
+            email,
+            address
+        );
+        patient.UpdatedAt = updatedDaysAgo.HasValue
+            ? DaysAgo(updatedDaysAgo.Value)
+            : DaysAgo(createdDaysAgo - 10);
+        patient.MedicalTeam = new List<PatientStaffConnection>();
+        patient.HealthIssues = new List<HealthIssue>();
+        patient.Visits = new List<Visit>();
+        patient.Tests = new List<PatientPortal.Models.TestResult>();
+        return patient;
+    }
+
     #endregion
 
     #region GetPatientInfoHeader Tests
@@ -100,7 +114,7 @@ public class PatientViewServiceTests : IDisposable
         var patients = new List<Patient>
         {
             CreatePatient(1, "John", "Doe", new DateTime(1990, 1, 1), "1234", 30),
-            CreatePatient(2, "Jane", "Smith", new DateTime(1985, 5, 15), "5678", 60)
+            CreatePatient(2, "Jane", "Smith", new DateTime(1985, 5, 15), "5678", 60),
         }.AsQueryable();
 
         var firstPatient = patients.First();
@@ -113,7 +127,7 @@ public class PatientViewServiceTests : IDisposable
         // Assert
         Assert.NotNull(result);
         Assert.Equal(1, result.CurrentPatientId);
-        Assert.Equal(firstPatient.MessagingLink.MessagingLinkId, result.CurrentPatientLinkId);
+        Assert.Equal(firstPatient.MessagingLink!.MessagingLinkId, result.CurrentPatientLinkId);
         Assert.Equal("John", result.CurrentPatientFirstName);
         Assert.Equal("Doe", result.CurrentPatientLastName);
         Assert.Equal("1234", result.CurrentPatientSSN);
@@ -162,7 +176,7 @@ public class PatientViewServiceTests : IDisposable
                 "555-9876",
                 "alice.johnson@email.com",
                 CreateAddress("123 Main St", "Anytown", "CA", "12345")
-            )
+            ),
         }.AsQueryable();
 
         _mockPatientService.GetPatientFullInfo().Returns(patients);
@@ -173,7 +187,7 @@ public class PatientViewServiceTests : IDisposable
         // Assert
         Assert.NotNull(result);
         Assert.Equal(1, result.PatientId);
-        Assert.Equal(patients.First().MessagingLink.MessagingLinkId, result.MessagingLinkId);
+        Assert.Equal(patients.First().MessagingLink!.MessagingLinkId, result.MessagingLinkId);
         Assert.Equal("Alice", result.FirstName);
         Assert.Equal("Johnson", result.LastName);
         Assert.Equal(new DateTime(1992, 3, 10), result.DOB);
@@ -213,7 +227,7 @@ public class PatientViewServiceTests : IDisposable
                 "555-0000",
                 "bob.wilson@email.com",
                 null // No address
-            )
+            ),
         }.AsQueryable();
 
         _mockPatientService.GetPatientFullInfo().Returns(patients);
@@ -223,11 +237,7 @@ public class PatientViewServiceTests : IDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.NotNull(result.Address);
-        Assert.Null(result.Address.StreetAddress);
-        Assert.Null(result.Address.City);
-        Assert.Null(result.Address.State);
-        Assert.Null(result.Address.ZipCode);
+        Assert.Null(result.Address);
     }
 
     #endregion
@@ -238,33 +248,38 @@ public class PatientViewServiceTests : IDisposable
     public void ReturnPatientManagerView_WithSearchAndPagination_ReturnsPatientManagerView()
     {
         // Arrange
-        var searchQuery = new PatientSearch { SearchFirstName = "John" };
-        var paginationSettings = new Paginator { CurrentPage = 1, ResultsPerPage = 10, SortOrder = "firstname_asc" };
+        var filter = new PatientFilter { FirstName = "John" };
+        string sortOrder = "LastName_asc";
+        var paging = new Paginator();
         var staffId = 1;
 
         var searchResults = new List<Patient>
         {
             CreatePatient(1, "John", "Doe", new DateTime(1990, 1, 1), "1234"),
-            CreatePatient(2, "John", "Smith", new DateTime(1985, 5, 15), "5678")
+            CreatePatient(2, "John", "Smith", new DateTime(1985, 5, 15), "5678"),
         }.AsQueryable();
 
-        var sortedResults = searchResults.OrderBy(p => p.FirstName).AsQueryable();
+        var sortedResults = searchResults.OrderBy(p => p.LastName).AsQueryable();
 
-        _mockPatientService.SearchPatients(searchQuery, staffId).Returns(searchResults);
-        _mockPatientService.SortPatients(searchResults, paginationSettings.SortOrder).Returns(sortedResults);
+        _mockPatientService.SearchPatients(filter, staffId).Returns(searchResults);
+        _mockPatientService.SortPatients(searchResults, sortOrder).Returns(sortedResults);
 
         // Act
-        var result = _patientViewService.ReturnPatientManagerView(searchQuery, paginationSettings, staffId);
+        var result = _patientViewService.ReturnPatientManagerView(
+            filter,
+            paging,
+            sortOrder,
+            staffId
+        );
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(searchQuery, result.SearchBar);
-        Assert.Equal(paginationSettings, result.PaginationSettings);
-        Assert.Equal(2, result.PaginationSettings.ResultsCount);
-        Assert.NotNull(result.SearchResults);
-        Assert.Equal(2, result.SearchResults.Count());
+        Assert.Equal("John", result.Query.Filter.FirstName);
+        Assert.Equal(2, result.Query.Paging.ResultsCount);
+        Assert.NotNull(result.Results.Patients);
+        Assert.Equal(2, result.Results.Patients.Count());
 
-        var firstResult = result.SearchResults.First();
+        var firstResult = result.Results.Patients.First();
         Assert.Equal(1, firstResult.PatientId);
         Assert.Equal("John", firstResult.FirstName);
         Assert.Equal("Doe", firstResult.LastName);
@@ -272,9 +287,4 @@ public class PatientViewServiceTests : IDisposable
     }
 
     #endregion
-
-    public void Dispose()
-    {
-        _patientViewService?.Dispose();
-    }
 }

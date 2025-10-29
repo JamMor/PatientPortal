@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PatientPortal.DTOs;
 using PatientPortal.Models;
 using PatientPortal.Services;
 
@@ -82,21 +83,14 @@ public class VisitServiceTests : IDisposable
         var staff = CreateStaff();
         var healthIssue = CreateHealthIssue(patient.PatientId);
 
-        var visitFormView = new VisitFormView
-        {
-            Visit = new Visit
-            {
-                Comment = "Regular checkup",
-                DateOfVisit = DateTime.Today
-            },
-            HealthIssues = new List<HealthIssueCheckbox>
-            {
-                new HealthIssueCheckbox { HealthIssueId = healthIssue.HealthIssueId, Selected = true }
-            }
-        };
+        var visitData = new VisitDTO(
+            "Regular checkup",
+            DateTime.Today,
+            [healthIssue.HealthIssueId]
+        );
 
         // Act
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData);
 
         // Assert
         var createdVisit = _context.Visits
@@ -119,18 +113,14 @@ public class VisitServiceTests : IDisposable
         var patient = CreatePatient("Jane", "Smith", "5678");
         var staff = CreateStaff("Dr", "Johnson", "drjohnson");
 
-        var visitFormView = new VisitFormView
-        {
-            Visit = new Visit
-            {
-                Comment = "Emergency visit",
-                DateOfVisit = DateTime.Today.AddDays(-1)
-            },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
+        var visitData = new VisitDTO(
+            "Emergency visit",
+            DateTime.Today.AddDays(-1),
+            []
+        );
 
         // Act
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData);
 
         // Assert
         var createdVisit = _context.Visits
@@ -154,19 +144,14 @@ public class VisitServiceTests : IDisposable
         var healthIssue2 = CreateHealthIssue(patient.PatientId, "Issue 2");
         var healthIssue3 = CreateHealthIssue(patient.PatientId, "Issue 3");
 
-        var visitFormView = new VisitFormView
-        {
-            Visit = new Visit { Comment = "Multi-issue visit", DateOfVisit = DateTime.Today },
-            HealthIssues = new List<HealthIssueCheckbox>
-            {
-                new HealthIssueCheckbox { HealthIssueId = healthIssue1.HealthIssueId, Selected = true },
-                new HealthIssueCheckbox { HealthIssueId = healthIssue2.HealthIssueId, Selected = true },
-                new HealthIssueCheckbox { HealthIssueId = healthIssue3.HealthIssueId, Selected = true }
-            }
-        };
+        var visitData = new VisitDTO(
+            "Multi-issue visit",
+            DateTime.Today,
+            [healthIssue1.HealthIssueId, healthIssue2.HealthIssueId, healthIssue3.HealthIssueId]
+        );
 
         // Act
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData);
 
         // Assert
         var createdVisit = _context.Visits
@@ -187,19 +172,14 @@ public class VisitServiceTests : IDisposable
         var healthIssue2 = CreateHealthIssue(patient.PatientId, "Not Selected");
         var healthIssue3 = CreateHealthIssue(patient.PatientId, "Selected 2");
 
-        var visitFormView = new VisitFormView
-        {
-            Visit = new Visit { Comment = "Mixed selection visit", DateOfVisit = DateTime.Today },
-            HealthIssues = new List<HealthIssueCheckbox>
-            {
-                new HealthIssueCheckbox { HealthIssueId = healthIssue1.HealthIssueId, Selected = true },
-                new HealthIssueCheckbox { HealthIssueId = healthIssue2.HealthIssueId, Selected = false },
-                new HealthIssueCheckbox { HealthIssueId = healthIssue3.HealthIssueId, Selected = true }
-            }
-        };
+        var visitData = new VisitDTO(
+            "Mixed selection visit",
+            DateTime.Today,
+            [healthIssue1.HealthIssueId, healthIssue3.HealthIssueId]
+        );
 
         // Act
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData);
 
         // Assert
         var createdVisit = _context.Visits
@@ -216,14 +196,10 @@ public class VisitServiceTests : IDisposable
         var patient = CreatePatient("ID", "Test", "1111");
         var staff = CreateStaff("Dr", "ID", "drid");
 
-        var visitFormView = new VisitFormView
-        {
-            Visit = new Visit { Comment = "ID test", DateOfVisit = DateTime.Today },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
+        var visitData = new VisitDTO("ID test", DateTime.Today, []);
 
         // Act
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData);
 
         // Assert
         var createdVisit = _context.Visits.FirstOrDefault();
@@ -238,14 +214,10 @@ public class VisitServiceTests : IDisposable
         var patient = CreatePatient("Association", "Test", "6666");
         var staff = CreateStaff("Dr", "Association", "drassoc");
 
-        var visitFormView = new VisitFormView
-        {
-            Visit = new Visit { Comment = "Association test", DateOfVisit = DateTime.Today },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
+        var visitData = new VisitDTO("Association test", DateTime.Today, []);
 
         // Act
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData);
 
         // Assert
         var createdVisit = _context.Visits.FirstOrDefault();
@@ -262,14 +234,10 @@ public class VisitServiceTests : IDisposable
         var staff = CreateStaff("Dr", "Past", "drpast");
 
         var pastDate = DateTime.Today.AddDays(-30);
-        var visitFormView = new VisitFormView
-        {
-            Visit = new Visit { Comment = "Past date visit", DateOfVisit = pastDate },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
+        var visitData = new VisitDTO("Past date visit", pastDate, []);
 
         // Act
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData);
 
         // Assert
         var createdVisit = _context.Visits.FirstOrDefault();
@@ -284,26 +252,14 @@ public class VisitServiceTests : IDisposable
         var patient = CreatePatient("Multiple", "Visits", "4444");
         var staff = CreateStaff("Dr", "Multiple", "drmultiple");
 
-        var visitFormView1 = new VisitFormView
-        {
-            Visit = new Visit { Comment = "Visit 1", DateOfVisit = DateTime.Today.AddDays(-10) },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
-        var visitFormView2 = new VisitFormView
-        {
-            Visit = new Visit { Comment = "Visit 2", DateOfVisit = DateTime.Today.AddDays(-5) },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
-        var visitFormView3 = new VisitFormView
-        {
-            Visit = new Visit { Comment = "Visit 3", DateOfVisit = DateTime.Today },
-            HealthIssues = new List<HealthIssueCheckbox>()
-        };
+        var visitData1 = new VisitDTO("Visit 1", DateTime.Today.AddDays(-10), []);
+        var visitData2 = new VisitDTO("Visit 2", DateTime.Today.AddDays(-5), []);
+        var visitData3 = new VisitDTO("Visit 3", DateTime.Today, []);
 
         // Act
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView1);
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView2);
-        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitFormView3);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData1);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData2);
+        _visitService.CreateVisit(patient.PatientId, staff.StaffId, visitData3);
 
         // Assert
         var visits = _context.Visits.Where(v => v.PatientId == patient.PatientId).ToList();
@@ -369,7 +325,6 @@ public class VisitServiceTests : IDisposable
 
     public void Dispose()
     {
-        _visitService?.Dispose();
         _context?.Dispose();
     }
 }

@@ -7,6 +7,7 @@
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
     var canManageStaff = isAuthenticated && (await AuthorizationService.AuthorizeAsync(User, PolicyNames.ManageStaff)).Succeeded;
     var canManagePatients = isAuthenticated && (await AuthorizationService.AuthorizeAsync(User, PolicyNames.ManagePatients)).Succeeded;
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
 }
 
 <!DOCTYPE html>
@@ -18,45 +19,52 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <script src="https://kit.fontawesome.com/bb93b9a982.js" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            var savedTheme = localStorage.getItem('color-scheme');
+            var systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            var theme = savedTheme ?? systemPreference;
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        })();
+    </script>
 </head>
-<body class="bg-light overflow-hidden">
+<body class="hue-brand and-faint-highlight on-bg overflow-hidden">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
-            <div class="container">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm hue-brand on-bg shadow" data-bs-theme="dark">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <a class="navbar-brand text-nowrap" asp-area="" asp-controller="Home" asp-action="Index">PatientPortal</a>
+                <a class="navbar-brand hue-primary on-text text-nowrap hover-darken fw-bold" asp-area="" asp-controller="Home" asp-action="Index">PatientPortal</a>
                 @if(isAuthenticated)
                 {
                     <div class="order-0 order-sm-last">
-                        <a asp-controller="Messaging" asp-action="Inbox"><i class="fas fa-envelope fa-2x"></i></a>
+                        @await Component.InvokeAsync("InboxIcon")
                     </div>
                 }
                 <div class="navbar-collapse collapse d-sm-inline-flex">
                     @if(isAuthenticated)
                     {
-                        <h6 class="p-2 text-dark">Welcome, @User.GetFullName()!</h6>
+                        <h6 class="p-2 m-0 hue-primary and-dimmed on-text">Welcome, @User.GetFullName()!</h6>
                     }
                     <ul class="navbar-nav flex-grow-1 order-sm-first">
-                        <li class="nav-item border-left border-right border-muted">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <li class="nav-item border-muted">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         @if(isAuthenticated)
                         {
                             @if(canManageStaff)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Staff"
+                                    <a class="nav-link @(currentController == "Staff" ? "active" : "")" asp-area="" asp-controller="Staff"
                                         asp-action="StaffManager">Staff</a>
                                 </li>
                             }
                             @if(canManagePatients)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Patients"
+                                    <a class="nav-link @(currentController == "Patients" ? "active" : "")" asp-area="" asp-controller="Patients"
                                         asp-action="PatientManager">Patients</a>
                                 </li>
                             }
@@ -64,37 +72,45 @@
                         @if(!isAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                             </li>
                         }
                     </ul>
                      @if(isAuthenticated)
                     {
                         <form class="p-2" asp-controller="Login" asp-action="Logout">
-                            <button class="btn btn-secondary btn-sm">Logout</button>
+                            <button-secondary small type="submit" class="fw-semibold text-dark">Logout</button-secondary>
                         </form>
                     }
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container main-container p-0 bg-white box-shadow">
-        <main class="px-3 pb-3" role="main">
-            @RenderBody()
-        </main>
-    </div>
+    <main class="container flex-fill overflow-y-auto overflow-x-hidden px-3 pb-3 bg-body shadow">
+        @RenderBody()
+    </main>
 
-    <footer class="border-top footer text-muted bg-white mt-1">
-        <div class="container">
-            &copy; 2021 - 2026 - PatientPortal 
-            - <a asp-area="" asp-controller="Home" asp-action="About">About</a> 
-            - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="footer position-fixed bottom-0 container-fluid hue-brand and-highlight on-bg">
+        <div class="text-light text-nowrap d-flex gap-2">
+            <span>&copy; 2021 - 2026</span>
+            <span class="hue-primary and-muted on-text">PatientPortal</span>
+            <div class="d-flex mx-2 gap-3">
+                <a class="text-light text-decoration-underline link-offset-2 link-underline-light link-underline-opacity-0 link-underline-opacity-75-hover" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                <a class="text-light text-decoration-underline link-offset-2 link-underline-light link-underline-opacity-0 link-underline-opacity-75-hover" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+            <div class="ms-auto align-self-center">
+                <button id="theme-toggle" class="btn text-light p-0 border-0" aria-label="Toggle dark mode">
+                    <partial name="_ThemeDarkIcon" />
+                    <partial name="_ThemeLightIcon" />
+                </button>
+            </div>
         </div>
     </footer>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

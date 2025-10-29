@@ -4,138 +4,147 @@
 <partial name="~/Views/Shared/_PatientInfoHeader.cshtml" for="PatientHeader"/>
 
 
-<table class="table">
-    <tbody>
-        <tr>
-            <th class="col-3">Medical Team</th>
-            <td>
-                <ul class="list-group list-group-flush">
-                    @foreach (StaffInfo staff in @Model.MedicalTeam)
-                    {
-                        <li class="list-group-item pl-0 d-flex">
-                            <p class="my-0 mr-auto">@staff.FullName, @staff.Role</p> 
-                            @if(@staff.StaffId == @User.GetStaffId())
-                            {
-                            <form asp-controller="Patients" asp-action="MedicalTeamLeave" asp-route-patientId="@Model.PatientId">
-                                <button class="btn btn-sm btn-outline-danger" href="#">Remove</button>
-                            </form>
-                            }
-                        </li>
-                    }
-                    @if(!@Model.MedicalTeam.Any(staff => staff.StaffId == @User.GetStaffId()))
-                    {
-                        <li class="list-group-item text-right">
-                            <form asp-controller="Patients" asp-action="MedicalTeamJoin" asp-route-patientId="@Model.PatientId">
-                                <button class="btn btn-sm btn-outline-success" href="#">Join</button>
-                            </form>
-                        </li>
-                    }                    
-                </ul>
-            </td>
-        </tr>
-        <tr>
-            <th class="col-3">Health Issues</th>
-            <td>
-                <ul class="list-group list-group-flush">
-                    @foreach (HealthIssueInfo issue in @Model.HealthIssues)
-                    {
-                        <li class="card list-group-item">
-                            <h6 class="card-header collapsed text-link" data-toggle="collapse" data-target="#issue-detail-@issue.HealthIssueId" aria-expanded="true" aria-controls="issue-detail-@issue.HealthIssueId">
-                                <div class="d-flex" >
-                                    <span>@issue.ShortDescription</span>
-                                    <i class="fas fa-chevron-down ml-auto"></i>
-                                </div>
-                            </h6>
-                            <div id="issue-detail-@issue.HealthIssueId" class="collapse">
-                                <div class="card-body">
-                                    <p class="card-text">@issue.LongDescription</p>
-                                    <p class="card-text">@issue.AssociatedTestResultsCount Related Tests</p>
-                                    <p class="card-text">@issue.AssociatedVisitsCount Related Visits</p>
-                                </div>
-                                <div class="card-footer d-flex align-items-center">
-                                    <span>First Reported: @issue.CreatedAt</span>
-                                    <form class="ml-auto" asp-controller="HealthIssue" asp-action="IssueDelete" asp-route-patientId="@Model.PatientId" asp-route-issueId="@issue.HealthIssueId">
-                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
+<dl class="patient-dl">
+    <div>
+        <dt>Medical Team</dt>
+        <dd>
+            <ul class="list-group list-group-flush">
+                @foreach (StaffInfo staff in Model.MedicalTeam)
+                {
+                    <li class="list-group-item d-flex">
+                        <p class="my-0 me-auto">@staff.FullName, @staff.Role</p> 
+                        @if(staff.StaffId == User.GetStaffId())
+                        {
+                        <form asp-controller="Patients" asp-action="MedicalTeamLeave" asp-route-patientId="@Model.PatientId">
+                            <button-secondary small outline type="submit">Remove</button-secondary>
+                        </form>
+                        }
+                    </li>
+                }
+                @if(!Model.MedicalTeam.Any(staff => staff.StaffId == User.GetStaffId()))
+                {
+                    <li class="list-group-item text-end">
+                        <form asp-controller="Patients" asp-action="MedicalTeamJoin" asp-route-patientId="@Model.PatientId">
+                            <button-primary small outline type="submit">Join</button-primary>
+                        </form>
+                    </li>
+                }
+            </ul>
+        </dd>
+    </div>
+    <div>
+        <dt>Health Issues</dt>
+        <dd>
+            <ul class="list-group list-group-flush">
+                @foreach (HealthIssueInfo issue in Model.HealthIssues)
+                {
+                    <li class="card list-group-item">
+                        <h6 class="card-header collapsed hue-primary and-dimmed on-text" data-bs-toggle="collapse" data-bs-target="#issue-detail-@issue.HealthIssueId" aria-expanded="false" aria-controls="issue-detail-@issue.HealthIssueId">
+                            <div class="d-flex align-items-center">
+                                <span class="flex-grow-1">@issue.ShortDescription</span>
+                                <partial name="_ToggleIcon.cshtml" />
                             </div>
-                        </li>
-                    }
-                    <li class="list-group-item text-right"><a class ="btn btn-sm btn-outline-success" asp-controller="HealthIssue" asp-action="HealthIssueAdd" asp-route-patientId="@Model.PatientId">Add Health Issue</a></li>
-                </ul>
-            </td>
-        </tr>
-        <tr>
-            <th class="col-3">Visits</th>
-            <td>
-                <ul class="list-group list-group-flush">
-                    @foreach (VisitInfo visit in @Model.Visits)
-                    {
-                        <li class="card list-group-item">
-                            <h6 class="card-header collapsed text-link" data-toggle="collapse" data-target="#visit-detail-@visit.VisitId" aria-expanded="true" aria-controls="issue-detail-@visit.VisitId">
-                                <div  class="d-flex" >
-                                    <span>@visit.DateOfVisit</span>
-                                    <i class="fas fa-chevron-down ml-auto"></i>
-                                </div>
-                            </h6>
-                            <div id="visit-detail-@visit.VisitId" class="collapse">
-                                <div class="card-body">
-                                    <p class="card-text">@visit.Comment</p>
-                                </div>
-                                <div class="card-footer d-flex align-items-center">
-                                    <p class="mb-0">@visit.CreatedBy</p>
-                                    <form class="ml-auto" asp-controller="Visit" asp-action="VisitDelete" asp-route-patientId="@Model.PatientId" asp-route-visitId="@visit.VisitId">
-                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
+                        </h6>
+                        <div id="issue-detail-@issue.HealthIssueId" class="collapse">
+                            <div class="card-body">
+                                <p class="card-text">@issue.LongDescription</p>
+                                <p class="card-text">@issue.AssociatedTestResultsCount Related Tests</p>
+                                <p class="card-text">@issue.AssociatedVisitsCount Related Visits</p>
                             </div>
-                        </li>
-                    }
-                    <li class="list-group-item text-right"><a class ="btn btn-sm btn-outline-success" asp-controller="Visit" asp-action="VisitAdd" asp-route-patientId="@Model.PatientId">Add Visit</a></li>
-                </ul>
-            </td>
-        </tr>
-        <tr>
-            <th class="col-3">Tests</th>
-            <td>
-                <ul class="list-group list-group-flush">
-                    @foreach (TestResultInfo test in @Model.TestResults)
-                    {
-                        <li class="card list-group-item">
-                            <h6 class="card-header collapsed text-link" data-toggle="collapse" data-target="#test-detail-@test.TestResultId" aria-expanded="true" aria-controls="test-detail-@test.TestResultId">
-                                <div class="d-flex">
-                                    <span>@test.Type - @test.CreatedAt</span>
-                                    <i class="fas fa-chevron-down ml-auto"></i>
-                                </div>
-                            </h6>
-                            <div id="test-detail-@test.TestResultId" class="collapse">
-                                <div class="card-body">
-                                    <p class="card-text">@test.Comment</p>
-                                </div>
-                                <div class="card-footer d-flex align-items-center">
-                                    <p class="mb-0">@test.CreatedBy</p>
-                                    <form class="ml-auto" asp-controller="TestResult" asp-action="TestResultDelete" asp-route-patientId="@Model.PatientId" asp-route-testId="@test.TestResultId">
-                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
+                            <div class="card-footer d-flex align-items-center">
+                                <span>First Reported: @issue.CreatedAt</span>
+                                <form class="ms-auto" asp-controller="HealthIssue" asp-action="IssueDelete" asp-route-patientId="@Model.PatientId" asp-route-issueId="@issue.HealthIssueId">
+                                    <button-danger small outline type="submit">Delete</button-danger>
+                                </form>
                             </div>
-                        </li>
-                    }
-                    <li class="list-group-item text-right"><a class ="btn btn-sm btn-outline-success" asp-controller="TestResult" asp-action="TestResultAdd" asp-route-patientId="@Model.PatientId">Add Test</a></li>
-                </ul>
-            </td>
-        </tr>
-        
-        <tr>
-            <th class="col-3">Added to System</th>
-            <td>@Model.CreatedAt</td>
-        </tr>
-        <tr>
-            <th class="col-3">Last Updated</th>
-            <td>@Model.UpdatedAt</td>
-        </tr>
-    </tbody>
-</table>
-<form class="text-right" asp-controller="Patients" asp-action="PatientDelete" asp-route-patientId="@Model.PatientId">
-    <button class="btn btn-sm btn-outline-danger" href="#">Delete Patient</button>
+                        </div>
+                    </li>
+                }
+                <li class="list-group-item text-end">
+                    <link-button-primary small outline asp-controller="HealthIssue" asp-action="HealthIssueAdd" asp-route-patientId="@Model.PatientId">
+                        Add Health Issue
+                    </link-button-primary>
+                </li>
+            </ul>
+        </dd>
+    </div>
+    <div>
+        <dt>Visits</dt>
+        <dd>
+            <ul class="list-group list-group-flush">
+                @foreach (VisitInfo visit in Model.Visits)
+                {
+                    <li class="card list-group-item">
+                        <h6 class="card-header collapsed hue-primary and-dimmed on-text" data-bs-toggle="collapse" data-bs-target="#visit-detail-@visit.VisitId" aria-expanded="false" aria-controls="visit-detail-@visit.VisitId">
+                            <div class="d-flex">
+                                <span class="flex-grow-1">@visit.DateOfVisit</span>
+                                <partial name="_ToggleIcon.cshtml" />
+                            </div>
+                        </h6>
+                        <div id="visit-detail-@visit.VisitId" class="collapse">
+                            <div class="card-body">
+                                <p class="card-text">@visit.Comment</p>
+                            </div>
+                            <div class="card-footer d-flex align-items-center">
+                                <p class="mb-0">@visit.CreatedBy</p>
+                                <form class="ms-auto" asp-controller="Visit" asp-action="VisitDelete" asp-route-patientId="@Model.PatientId" asp-route-visitId="@visit.VisitId">
+                                    <button-danger small outline type="submit">Delete</button-danger>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                }
+                <li class="list-group-item text-end">
+                    <link-button-primary small outline asp-controller="Visit" asp-action="VisitAdd" asp-route-patientId="@Model.PatientId">
+                        Add Visit
+                    </link-button-primary>
+                </li>
+            </ul>
+        </dd>
+    </div>
+    <div>
+        <dt>Tests</dt>
+        <dd>
+            <ul class="list-group list-group-flush">
+                @foreach (TestResultInfo test in Model.TestResults)
+                {
+                    <li class="card list-group-item">
+                        <h6 class="card-header collapsed hue-primary and-dimmed on-text" data-bs-toggle="collapse" data-bs-target="#test-detail-@test.TestResultId" aria-expanded="false" aria-controls="test-detail-@test.TestResultId">
+                            <div class="d-flex">
+                                <span class="flex-grow-1">@test.Type - @test.CreatedAt</span>
+                                <partial name="_ToggleIcon.cshtml" />
+                            </div>
+                        </h6>
+                        <div id="test-detail-@test.TestResultId" class="collapse">
+                            <div class="card-body">
+                                <p class="card-text">@test.Comment</p>
+                            </div>
+                            <div class="card-footer d-flex align-items-center">
+                                <p class="mb-0">@test.CreatedBy</p>
+                                <form class="ms-auto" asp-controller="TestResult" asp-action="TestResultDelete" asp-route-patientId="@Model.PatientId" asp-route-testId="@test.TestResultId">
+                                    <button-danger small outline type="submit">Delete</button-danger>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                }
+                <li class="list-group-item text-end">
+                    <link-button-primary small outline asp-controller="TestResult" asp-action="TestResultAdd" asp-route-patientId="@Model.PatientId">
+                        Add Test
+                    </link-button-primary>
+                </li>
+            </ul>
+        </dd>
+    </div>
+    <div>
+        <dt>Added to System</dt>
+        <dd>@Model.CreatedAt</dd>
+    </div>
+    <div>
+        <dt>Last Updated</dt>
+        <dd>@Model.UpdatedAt</dd>
+    </div>
+</dl>
+<form class="text-end" asp-controller="Patients" asp-action="PatientDelete" asp-route-patientId="@Model.PatientId">
+    <button-danger small outline type="submit">Delete Patient</button-danger>
 </form>

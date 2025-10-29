@@ -1,50 +1,48 @@
 @model NewConversationFormView
 
-<h3 class="my-3">New Message: </h3>
-<form asp-controller="Messaging" asp-action="NewConversation" method="post">
-    <label class="form-label">To:</label>
-    <div class="d-flex mb-3">
-        <div class="dropdown">
-            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Send To</button>
-            <div class="dropdown-menu vert-scroll">
-                @if(@Model.PatientRecipient != null)
+<div class="form-constrained">
+    <h2 class="form-title">New Message</h2>
+    <form asp-controller="Messaging" asp-action="NewConversation" method="post">
+        <div class="input-group mb-3">
+            <button-secondary small outline class="dropdown-toggle" data-bs-toggle="dropdown">Send To</button-secondary>
+            <ul class="dropdown-menu ps-3 vert-scroll">
+                @if(Model.PatientRecipient != null)
                 {
-                    <div class="dropdown-item form-check">
+                    <li class="dropdown-item form-check">
                         <input class="form-check-input" type="checkbox" checked="checked" id="PatientRecipient_Id" disabled>
-                        <label class="form-check-label" asp-for="@Model.PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
-                        <input class="form-check-input" type="hidden" asp-for="@Model.PatientRecipient.LinkId">
-                        <input class="form-check-input" type="hidden" asp-for="@Model.PatientRecipient.Name">
-                        <input class="form-check-input" type="hidden" asp-for="@Model.PatientRecipient.Role">
-                    </div>
-                    <hr>
+                        <label class="form-check-label" asp-for="PatientRecipient.Selected">@Model.PatientRecipient.Name (@Model.PatientRecipient.Role)</label>
+                        <input class="form-check-input" type="hidden" asp-for="PatientRecipient.LinkId">
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
                 }
-                @for(int i = 0; i < @Model.Recipients.Count; i++)
+                @for(int i = 0; i < Model.Recipients.Count; i++)
                 {
-                <div class="dropdown-item form-check">
-                    <input class="form-check-input" type="checkbox" asp-for="@Model.Recipients[i].Selected">
-                    <label class="form-check-label" asp-for="@Model.Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
-                    <input class="form-check-input" type="hidden" asp-for="@Model.Recipients[i].LinkId">
-                    <input class="form-check-input" type="hidden" asp-for="@Model.Recipients[i].Name">
-                    <input class="form-check-input" type="hidden" asp-for="@Model.Recipients[i].Role">
-                </div>
+                <li class="dropdown-item form-check">
+                    <input class="form-check-input" type="checkbox" asp-for="Recipients[i].Selected">
+                    <label class="form-check-label" asp-for="Recipients[i].Selected">@Model.Recipients[i].Name, @Model.Recipients[i].Role</label>
+                    <input class="form-check-input" type="hidden" asp-for="Recipients[i].LinkId">
+                </li>
                 }
-            </div>
+            </ul>
+            <input id="selected-recipients" type="text" class="form-control" placeholder="Recipients..." readonly>
         </div>
-        <div class="w-100" id="selected-recipients"></div>
-    </div>
-    <input class="form-check-input" type="hidden" asp-for="@Model.WithPatient">
-    <div class="form-group">
-        <label class="form-label" asp-for="Subject"></label>
-        <span class="text-danger" asp-validation-for="Subject"></span>
-        <input class="form-control" asp-for="Subject">
-    </div>
-    <div class="form-group">
-        <label class="form-label" asp-for="MessageText"></label>
-        <span class="text-danger" asp-validation-for="MessageText"></span>
-        <textarea class="form-control" asp-for="MessageText"></textarea>
-    </div>
-    <button class="btn btn-info">Send Message</button>
-</form>
+        <input class="form-check-input" type="hidden" asp-for="WithPatient">
+        <div class="mb-3">
+            <label class="form-label" asp-for="Subject"></label>
+            <span class="text-danger" asp-validation-for="Subject"></span>
+            <input class="form-control" asp-for="Subject">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" asp-for="MessageText"></label>
+            <span class="text-danger" asp-validation-for="MessageText"></span>
+            <textarea class="form-control" asp-for="MessageText"></textarea>
+        </div>
+        <div class="mb-3 d-flex flex-column flex-sm-row gap-2 justify-content-end">
+            <button-primary type="submit">Send Message</button-primary>
+            <link-button-secondary outline asp-action="Inbox">Cancel</link-button-secondary>
+        </div>
+    </form>
+</div>
 
 <script>
     $(document).ready(function() {
@@ -59,7 +57,7 @@
         //Replace names of all currently selected on call
         function displayNames(chosen) {
             let currentUsers = chosen.filter( x => x != null).join(";  ");
-            $("#selected-recipients").text(currentUsers);
+            $("#selected-recipients").val(currentUsers);
             return;
         };
 

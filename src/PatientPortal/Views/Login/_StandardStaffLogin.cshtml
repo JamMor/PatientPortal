@@ -1,17 +1,9 @@
 @model LoginStaff
 
-<h3>Staff Login: </h3>
+<h2 class="form-title">Staff Login</h2>
 <form asp-action="StaffLogin" asp-controller="Login" method="post">
-    <div class="form-group">
-        <label class="form-label"asp-for="StaffUsername"></label>
-        <span class="text-danger" asp-validation-for="StaffUsername"></span>
-        <input class="form-control"asp-for="StaffUsername">
-    </div>
-    <div class="form-group">
-        <label class="form-label"asp-for="LoginPassword"></label>
-        <span class="text-danger" asp-validation-for="LoginPassword"></span>
-        <input class="form-control"asp-for="LoginPassword">
-    </div>
+    <form-field asp-for="StaffUsername"></form-field>
+    <form-field asp-for="LoginPassword"></form-field>
     <div asp-validation-summary="ModelOnly"></div>
-    <button class="btn btn-info">Login</button>
+    <button-primary type="submit">Login</button-primary>
 </form>

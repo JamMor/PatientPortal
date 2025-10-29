@@ -13,6 +13,9 @@ nupkg/
 !.github/actions
 !.github/workflows
 
+#CSharpier
+.config/
+
 # Rider
 .idea
 

@@ -1,31 +1,185 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+/* #region Color Vars */
+:root {
+  /* 
+  The l-mod (light modifier) var modifies the lightness of colors where it is 
+  used. +1 being full lightness and -1 being full darkness.
+  */
+  --l-mod: 1;
+  --main-color: currentColor;
+  --color-blue: oklch(37% 0.127 262);
+  --color-cyan: oklch(100% 0.4 195);
+  --color-violet: oklch(74% 0.245 324);
+  --color-yellow: oklch(84% 0.172 84);
+  --color-gray-light: oklch(70% 0 0);
+
+  --color-brand: var(--color-blue);
+  --color-primary: var(--color-cyan);
+  --color-secondary: var(--color-gray-light);
+  --color-tertiary: var(--color-yellow);
+
+  /* Equivalent to `hue-primary and-dimmed hover-lighten on-text` */
+  --link-color: oklch(from var(--color-primary) calc(l * 0.77) calc(c * 0.5) h);
+  --link-hover-color: oklch(from var(--link-color) calc(l * 1.2) calc(c * 1.2) h);
+
+  --l-mod-dark: -0.3;
+  --dark-body: oklch(20% 0.015 262);
+}
+/* #endregion Color Vars */
+
+/* #region Color Classes */
+.hue-brand, .hue-primary, .hue-secondary, .hue-warning,
+.hue-royal-blue, .hue-cyan, .hue-gray, .hue-yellow {
+  --output-color: initial;
+}
+.hue-brand, .hue-royal-blue {
+  --main-color: var(--color-brand);
+}
+.hue-primary, .hue-success, .hue-cyan {
+  --main-color: var(--color-primary);
+}
+.hue-secondary, .hue-info, .hue-gray {
+  --main-color: var(--color-secondary);
+}
+.hue-warning, .hue-yellow {
+  --main-color: var(--color-tertiary);
 }
 
-/* Provide sufficient contrast against white background */
-a, .text-link {
-  color: #0366d6;
+/* Color Modifier Classes */
+.and-dimmed {
+  --output-color: oklch(from var(--main-color) calc(l * 0.77) calc(c * 0.5) h);
+}
+.and-muted {
+  --output-color: oklch(from var(--main-color) calc(l * (1 - var(--l-mod) * 0.5)) calc(c * 0.3) h);
+}
+.and-highlight {
+  --output-color: oklch(from var(--main-color) calc(50% + var(--l-mod) * 30%) calc(c * 0.2) h);
+}
+.and-faint-highlight {
+  --output-color: oklch(from var(--main-color) calc(50% + var(--l-mod) * 47%) calc(c * 0.2) h);
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+/* Color Target Property Classes */
+.on-bg {
+  background-color: var(--output-color, var(--main-color));
+  transition: background-color 0.4s ease-in-out;
+}
+.on-text {
+  color: var(--output-color, var(--main-color));
+}
+.on-border {
+  border-color: var(--output-color, var(--main-color));
+}
+.on-btn {
+  --hue-button-color: var(--output-color, var(--main-color));
+  --bs-btn-color: var(--bs-black);
+  --bs-btn-bg: var(--hue-button-color);
+  --bs-btn-border-color: var(--hue-button-color);
+  --bs-btn-hover-color: var(--bs-black);
+  --bs-btn-hover-bg: var(--hover-color);
+  --bs-btn-hover-border-color: var(--hover-color);
+  --bs-btn-focus-shadow-rgb: var(--hover-color);
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  --bs-btn-active-bg: var(--hover-color);
+  --bs-btn-active-border-color: var(--hover-color);
+}
+.on-btn-outline {
+  --hue-button-color: var(--output-color, var(--main-color));
+  --bs-btn-color: var(--hue-button-color);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--hue-button-color);
+  --bs-btn-hover-color: var(--bs-black);
+  --bs-btn-hover-bg: var(--hover-color, var(--hue-button-color));
+  --bs-btn-hover-border-color: var(--hover-color, var(--hue-button-color));
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  --bs-btn-active-bg: var(--hover-color, var(--hue-button-color));
+  --bs-btn-active-border-color: var(--hover-color, var(--hue-button-color));
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+/* Hover Modifier Classes */
+.hover-lighten {
+  --hover-color: oklch(from var(--output-color, var(--main-color)) calc(l * 1.2) calc(c * 1.2) h);
+}
+.hover-darken {
+  --hover-color: oklch(from var(--output-color, var(--main-color)) calc(l * 0.7) calc(c * 1.2) h);
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
+/* #endregion Color Classes */
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+a:hover, a:focus, a:active {
+  color: var(--link-hover-color);
+}
+/* Bootstrap Pagination */
+.pagination a.page-link {
+  --bs-pagination-color: var(--link-color) !important;
+  --bs-pagination-hover-color: var(--link-hover-color) !important;
+  --bs-pagination-focus-color: var(--link-hover-color) !important;
+}
+
+/*  Navbar links  */
+.navbar-brand:is(:hover, :focus) {
+  color: var(--hover-color)
+}
+nav li.nav-item:first-child .nav-link {
+  color: oklch(from var(--color-primary) calc(l * 0.9) 0 h)
+}
+nav a.nav-link {
+  text-decoration: underline;
+  text-underline-offset: 0.5em;
+  text-decoration-thickness: 2px;
+  text-decoration-color: transparent;
+}
+nav a.nav-link:is(:hover, :focus, .active) {
+  text-decoration-color: currentColor;
+  transition: text-decoration-color 0.3s ease-in-out;
+}
+
+/* Inbox Icon Link */
+#inbox-icon svg {
+  width: 2em;
+  height: 2em;
+  fill: var(--color-gray-light);
+  opacity: 0.6;
+  transition: fill 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+#inbox-icon:hover svg {
+  fill: currentColor;
+  opacity: 1;
+}
+#inbox-icon.has-unread svg {
+  fill: currentColor;
+}
+
+nav .nav-tab .nav-link.active {
+  color: unset;
+}
+
+/* Sort Indicators */
+.sort-caret svg {
+  --sort-dir: 0deg;
+  transform: rotate(var(--sort-dir));
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+  opacity: 0.2;
+}
+
+.sort-invert .sort-caret svg { --sort-dir: 180deg; }
+
+th a.sort-active .sort-caret svg,
+th a:not(.sort-active):hover .sort-caret svg {
+  opacity: 1;
+}
+
+th a.sort-active:hover .sort-caret svg {
+  transform: rotate(calc(180deg - var(--sort-dir)));
+}
+
 html {
   font-size: 14px;
 }
@@ -33,22 +187,6 @@ html {
   html {
     font-size: 16px;
   }
-}
-
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
 }
 
 /* Sticky footer styles
@@ -63,10 +201,6 @@ body {
   padding-bottom: 60px;
 }
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
 
@@ -76,90 +210,184 @@ body {
 
 body {
   height: 100vh;
-  /* background-color: #4a81be; */
+  display: flex;
+  flex-direction: column;
 }
 
-.main-container {
-  box-sizing: border-box;
-  height: calc(100% - 60px);
-  max-height: calc(100% - 60px);
+td {
+  --bs-table-bg: transparent;
 }
 
-main {
-  height:100%;
-  max-height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+button.member-count-badge:hover {
+  background-color:  var(--output-color, var(--main-color)) !important;
+}
+.member-list-popover {
+  --hue-popover-color: oklch(from var(--color-primary) calc(l * 0.77) calc(c * 0.5) h);
+  --bs-popover-border-color: var(--hue-popover-color);
+  --bs-popover-header-bg: var(--hue-popover-color);
+  --bs-popover-header-color: var(--bs-black);
+  --bs-popover-body-padding-x: 1rem;
+  --bs-popover-body-padding-y: .5rem;
 }
 
-/* Make recipient box look like form */
-#selected-recipients {
-  font-size: 0.8rem;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  margin-left:0.5rem;
-  padding: 0.375rem 0.75rem;
-}
-
-.td-member {
-  max-width: 150px !important;
+p.message-text {
+  white-space: pre-wrap;
 }
 
 /* Collapse Indicator */
-.card-header i {
+.card-header span.toggle-icon svg {
+  stroke: currentColor;
+  stroke-width: 1;
   transition: .3s transform ease-in-out;
 }
-.card-header.collapsed i {
+.card-header.collapsed span.toggle-icon svg {
   transform: rotate(-90deg);
 }
 
 /* Extendable Buttons */
-.extend > span {
-  max-width: 0px;
+.extend {
   display: inline-flex;
+  align-items: center;
+}
+
+.extend>span.extend-shrinkable {
+  max-width: 0px;
   white-space: nowrap;
-  transition: max-width 0.5s, padding-right 0.45s; /* Transition width and padding to avoid "popping" */
+  transition: max-width 0.5s;
   overflow: hidden;
 }
 
-.extend:hover > span, .extend:focus > span {
-  max-width: 150px; /* how far the text can expand, adjust based on content */
+.extend>span.extend-shrinkable::before {
+  content: '';
+  display: inline-block;
+  width: 0.5em;
 }
 
+.extend:is(:hover, :focus)>span.extend-shrinkable {
+  max-width: 150px;
+  /* how far the text can expand, adjust based on content */
+}
+
+.new-message-icon {
+  stroke: currentColor;
+  stroke-width: 0.5;
+}
 
 /* Scrolling for dropdown */
 .vert-scroll{
-  max-height: 500px;
+  max-height: 70vh;
   overflow-y: auto;
 }
 
-/* Sticky patient header info */
-.sticky-header{
-  position: sticky;
-  top:0;
+/* #region Demo Login Styles */
+
+.demo-login-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+.demo-login-buttons {
+  max-height: 110px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--main-color) oklch(from var(--main-color) calc(50% + var(--l-mod) * 47%) 0.03 h);
+}
+
+/* #endregion Demo Login Styles */
+
+/* #region Form Styles */
+
+.form-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid oklch(from var(--color-primary) calc(l * 0.7) 0.1 h);
+  text-align: right;
+}
+
+.form-constrained {
+  display: block;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* #endregion Form Styles */
+
+/* #region Patient Info Sections */
+
+.patient-dl {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.patient-dl > div {
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+}
+
+.patient-dl > div > * {
+  padding: 0.5rem;
+}
+
+.patient-dl > div > dt {
+  padding-left: 0;
+  font-weight: bold;
+}
+
+@media (min-width: 576px) {
+  .patient-dl > div {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .patient-dl > div > dt {
+    flex: 0 0 25%;
+    padding-top: 0.6rem;
+  }
+
+  .patient-dl > div > dd {
+    flex: 1;
+    margin: 0;
+    min-width: 0;
+  }
+}
+
+/* #endregion Patient Info Sections */
+
+/* #region Dark Theme */
+[data-bs-theme="dark"] {
+  --l-mod: var(--l-mod-dark);
+  --bs-body-bg: var(--dark-body);
+}
+
+#theme-toggle {
+  position:relative;
+}
+#theme-toggle, #theme-toggle span svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+#theme-toggle span {
+  position:absolute;
+  top: 0;
+  left: 0;
+  opacity:0.3;
+  transition: opacity 0.5s ease-in-out;
+}
+#theme-toggle span:not(.active-theme),
+#theme-toggle:hover span.active-theme {
+  opacity:0.1;
+  z-index: 1;
+}
+#theme-toggle span.active-theme,
+#theme-toggle:hover span:not(.active-theme) {
   z-index: 2;
 }
 
-/* ===== Test Login Scrollbar CSS ===== */
-  /* Firefox */
-  .test-login {
-    overflow-x: auto;
-    scrollbar-width: auto;
-    scrollbar-color: #4ebaca #ffffff;
-  }
-
-  /* Chrome, Edge, and Safari */
-  .test-login::-webkit-scrollbar {
-    width: 5px;
-    height: 10px;
-  }
-
-  .test-login::-webkit-scrollbar-track {
-    background: #ffffff;
-  }
-
-  .test-login::-webkit-scrollbar-thumb {
-    background-color: #4ebaca;
-    border-radius: 10px;
-    border: 2px outset #75cbd7;
-  }
+#theme-toggle:hover span:not(.active-theme) {
+  opacity:1;
+}
+/* #endregion Dark Theme */

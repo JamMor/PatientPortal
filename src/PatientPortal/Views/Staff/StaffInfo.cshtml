@@ -1,7 +1,10 @@
 @model StaffInfoViewModel
 
 <div class="d-flex mt-3">
-    <a asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.MessagingLinkId" class="btn btn-outline-primary btn-sm extend ml-auto mr-2"><i class="far fa-file-alt"></i><span>&nbsp; Message Staffmember</span></a>
+    <link-button-primary asp-controller="Messaging" asp-action="NewConversation" asp-route-toLinkId="@Model.MessagingLinkId" class="extend ms-auto me-2" small outline>
+        <partial name="~/Views/Shared/_NewMessageIcon.cshtml" />
+        <span class="extend-shrinkable">Message Staffmember</span>
+    </link-button-primary>
 </div>
 <table class="table">
     <tbody>
@@ -27,6 +30,6 @@
         </tr>
     </tbody>
 </table>
-<form class="text-right" asp-controller="Staff" asp-action="StaffDelete" asp-route-staffId="@Model.StaffId">
-    <button class="btn btn-sm btn-outline-danger" href="#">Delete Staff</button>
+<form class="text-end" asp-controller="Staff" asp-action="StaffDelete" asp-route-staffId="@Model.StaffId">
+    <button-danger small outline type="submit">Delete Staff</button-danger>
 </form>

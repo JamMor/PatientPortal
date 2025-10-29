@@ -1,13 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using PatientPortal.Authorization;
+using PatientPortal.DTOs;
 using PatientPortal.Interfaces;
 using PatientPortal.Models;
-using PatientPortal.Authorization;
-using Microsoft.AspNetCore.Authorization;
 
 namespace PatientPortal.Controllers
 {
@@ -15,37 +11,36 @@ namespace PatientPortal.Controllers
     [Route("/provider/patients/{patientId}/issue")]
     public class HealthIssueController : Controller
     {
-        private IPatientViewService _patientViewService;
         private IHealthIssueService _healthIssueService;
-        public HealthIssueController(IPatientViewService patientViewService, IHealthIssueService healthIssueService)
+        public HealthIssueController(IHealthIssueService healthIssueService)
         {
-            _patientViewService = patientViewService;
             _healthIssueService = healthIssueService;
         }
 
         //=====================Create HealthIssue===========================
         [HttpGet("")]
-        public IActionResult HealthIssueAdd(int patientId)
+        public IActionResult HealthIssueAdd()
         {
-            HealthIssueFormView viewModel = new HealthIssueFormView()
-                {
-                    Patient = _patientViewService.GetPatientInfoHeader(patientId)
-                };
-
-            return View("HealthIssueForm", viewModel);
+            return View("HealthIssueForm", new HealthIssueForm());
         }
         
         [HttpPost("")]
-        public IActionResult HealthIssueCreate(int patientId, HealthIssueFormView formData)
+        public IActionResult HealthIssueCreate(int patientId, HealthIssueForm formData)
         {
             if(ModelState.IsValid)
             {
-                _healthIssueService.CreateHealthIssue(patientId, formData.HealthIssue);
-
+                try
+                {
+                    var healthIssueDTO = formData.ToHealthIssueDTO();
+                    _healthIssueService.CreateHealthIssue(patientId, healthIssueDTO);
+                }
+                catch
+                {
+                    // Log the exception (not implemented here)
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred while creating the health issue.");
+                }
                 return RedirectToAction("PatientInfo", "Patients", new {patientId = patientId});
             }
-            
-            formData.Patient = _patientViewService.GetPatientInfoHeader(patientId);
 
             return View("HealthIssueForm", formData);
         }

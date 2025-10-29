@@ -1,11 +1,14 @@
 @model MessageInboxView
-@* TODO: Change patient/staff routes to use hardcoded InboxTypes *@
 
-<div class="d-flex mt-3">
-    <h4 class="my-0 mr-auto">Messages <span class="badge badge-pill badge-secondary">@Model.UnreadTotal</span>:</h4>
-
+<div class="d-flex align-items-center mt-3">
+    <h2 class="my-0 me-auto fs-5 fw-semibold">
+        Messages
+        <span class='badge align-middle hue-primary @(Model.UnreadTotal > 0 ? "and-dimmed" : "and-highlight") on-bg text-dark'>
+            @Model.UnreadTotal
+        </span>
+    </h2>
     <div class="dropdown">
-        <button class="btn btn-outline-primary btn-sm dropdown-toggle" data-toggle="dropdown">+</button>
+        <button-primary small outline class="dropdown-toggle" data-bs-toggle="dropdown">+</button-primary>
         <div class="dropdown-menu">
             <a href="#" class="dropdown-item disabled">New Message to Patient</a>
             <a asp-controller="Messaging" asp-action="NewConversationForm" class="dropdown-item">New Message to Staff</a>
@@ -14,35 +17,38 @@
 </div>
 
 <ul class="nav nav-tabs align-items-center justify-content-end">
-    <li class="nav-item mr-auto">
-        <form id="unread-select" method="get" asp-controller="Messaging" asp-action="Inbox" asp-route-inbox='@(@Model.InboxFilters.IsPatientInbox ? "patient" : "staff")'>
+    <li class="nav-item me-auto">
+        <form id="unread-select" method="get" asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="@Model.Query.Type.Route">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" asp-for="@Model.InboxFilters.OnlyUnread">
-                <label class="form-check-label" asp-for="@Model.InboxFilters.OnlyUnread"></label>
+                <input class="form-check-input" type="checkbox" asp-for="SearchForm.OnlyUnread">
+                <label class="form-check-label" asp-for="SearchForm.OnlyUnread"></label>
             </div>
         </form>
     </li>
-    <li class="nav-item">
-        <a class='nav-link @(@Model.InboxFilters.IsPatientInbox ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="patient">Patient <span class="badge badge-pill badge-secondary">@Model.UnreadPatient</span></a>
-    </li>
-    <li class="nav-item">
-        <a class='nav-link @(!@Model.InboxFilters.IsPatientInbox ? "active" : "")' asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="staff">Staff <span class="badge badge-pill badge-secondary">@Model.UnreadStaff</span></a>
-    </li>
+    @foreach (var tab in Model.Tabs)
+    {
+        string linkClasses = tab.IsActive
+            ? "active fw-semibold"
+            : "text-secondary";
+        string activeTabColorClass = tab.IsActive ? "hue-primary" : "hue-secondary";
+        string hasUnreadsModifierClass = tab.UnreadCount > 0 ? "and-dimmed" : "and-highlight";
+        string badgeClasses = $"{activeTabColorClass} {hasUnreadsModifierClass} on-bg text-dark";
+
+        <li class="nav-item">
+            <a class="nav-link @linkClasses" asp-controller="Messaging" asp-action="Inbox" asp-route-inbox="@tab.Route">
+                @tab.Label <span class="badge @badgeClasses">@tab.UnreadCount</span>
+            </a>
+        </li>
+    }
 </ul>
+
 <partial name="_Conversations.cshtml" />
 
-@{
-    ViewData["queryRoutes"] = new Dictionary<string, string>()
-    {
-        {"inbox", @Model.InboxFilters.IsPatientInbox ? "patient" : "staff"},
-        {"OnlyUnread", @Model.InboxFilters.OnlyUnread.ToString()}
-    };
-}
-<partial name="~/Views/Shared/_PaginationBar.cshtml" for="PaginationSettings" view-data="ViewData" />
+<partial name="~/Views/Shared/_PaginationBar.cshtml" model="new PaginationBarModel { Paging = Model.Query.Paging, Routes = Model.Query.ToRouteDict() }" />
 
 <script>
     $(document).ready(function() {
-        $('#InboxFilters_OnlyUnread').on('change', function(){
+        $('#SearchForm_OnlyUnread').on('change', function(){
             $('#unread-select').submit();
         });
     });
